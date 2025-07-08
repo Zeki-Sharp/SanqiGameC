@@ -161,7 +161,7 @@ public class BlockPlacementManager : MonoBehaviour
         previewBlock.transform.position = worldPos;
         
         // 检查是否可以放置
-        bool canPlace = gameMap.CanPlaceBlock(previewPosition, block.Shape);
+        bool canPlace = gameMap.CanPlaceBlock(previewPosition, block.Config);
         
         // 更新预览颜色
         Renderer renderer = previewBlock.GetComponent<Renderer>();
@@ -188,7 +188,7 @@ public class BlockPlacementManager : MonoBehaviour
         block.Init(currentShapeName);
         
         // 检查是否可以放置
-        if (!gameMap.CanPlaceBlock(position, block.Shape))
+        if (!gameMap.CanPlaceBlock(position, block.Config))
         {
             Debug.LogWarning($"无法在位置 ({position.x}, {position.y}) 放置方块");
             Destroy(blockObject);
@@ -223,17 +223,17 @@ public class BlockPlacementManager : MonoBehaviour
     /// <param name="towerData">塔数据</param>
     private void GenerateTowersForBlock(Block block, TowerData towerData)
     {
-        if (block.Shape == null) return;
+        if (block.Config == null) return;
         
         // 获取Tilemap引用
         Tilemap tilemap = gameMap != null ? gameMap.GetTilemap() : null;
         
-        foreach (Vector2Int coord in block.Shape.Coordinates)
+        foreach (Vector2Int coord in block.Config.Coordinates)
         {
             block.GenerateTower(coord, towerData, tilemap);
         }
         
-        Debug.Log($"为方块生成了 {block.Shape.Coordinates.Length} 座塔");
+        Debug.Log($"为方块生成了 {block.Config.Coordinates.Length} 座塔");
     }
     
     /// <summary>
@@ -298,6 +298,7 @@ public class BlockPlacementManager : MonoBehaviour
         return testData;
     }
     
+    
     /// <summary>
     /// 清空地图（用于测试）
     /// </summary>
@@ -308,4 +309,5 @@ public class BlockPlacementManager : MonoBehaviour
             gameMap.ClearMap();
         }
     }
+    
 } 

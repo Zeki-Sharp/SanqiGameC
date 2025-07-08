@@ -46,35 +46,35 @@ public class BlockTestManager : MonoBehaviour
     /// </summary>
     private void TestBlockShapeCreation()
     {
-        Debug.Log("--- 测试方块形状创建 ---");
-        
-        string[] testShapes = { "LINE2H", "L3", "SQUARE2", "SINGLE", "LINE3H" };
-        
-        foreach (string shapeName in testShapes)
-        {
-            BlockShape shape = BlockShape.GetShape(shapeName);
-            
-            if (shape != null && shape.Coordinates != null)
-            {
-                Debug.Log($"✓ {shapeName}: 创建成功，包含 {shape.Coordinates.Length} 个格子");
-                
-                // 输出格子坐标
-                string coords = "";
-                foreach (Vector2Int coord in shape.Coordinates)
-                {
-                    coords += $"({coord.x},{coord.y}) ";
-                }
-                Debug.Log($"  坐标: {coords}");
-                
-                // 输出形状大小
-                Vector2Int size = shape.GetSize();
-                Debug.Log($"  大小: {size.x}x{size.y}");
-            }
-            else
-            {
-                Debug.LogError($"✗ {shapeName}: 创建失败");
-            }
-        }
+        // Debug.Log("--- 测试方块形状创建 ---");
+        //
+        // string[] testShapes = { "LINE2H", "L3", "SQUARE2", "SINGLE", "LINE3H" };
+        //
+        // foreach (string shapeName in testShapes)
+        // {
+        //     BlockShape shape = BlockShape.GetShape(shapeName);
+        //     
+        //     if (shape != null && shape.Coordinates != null)
+        //     {
+        //         Debug.Log($"✓ {shapeName}: 创建成功，包含 {shape.Coordinates.Length} 个格子");
+        //         
+        //         // 输出格子坐标
+        //         string coords = "";
+        //         foreach (Vector2Int coord in shape.Coordinates)
+        //         {
+        //             coords += $"({coord.x},{coord.y}) ";
+        //         }
+        //         Debug.Log($"  坐标: {coords}");
+        //         
+        //         // 输出形状大小
+        //         Vector2Int size = shape.GetSize();
+        //         Debug.Log($"  大小: {size.x}x{size.y}");
+        //     }
+        //     else
+        //     {
+        //         Debug.LogError($"✗ {shapeName}: 创建失败");
+        //     }
+        // }
     }
     
     /// <summary>
@@ -95,14 +95,14 @@ public class BlockTestManager : MonoBehaviour
             block.Init(shapeName);
             
             // 验证初始化结果
-            if (block.Shape != null && block.Shape.Coordinates != null)
+            if (block.Config != null && block.Config.Coordinates != null)
             {
                 Debug.Log($"✓ {shapeName}: 初始化成功");
                 Debug.Log($"  格子数: {block.GetTotalCellCount()}");
                 Debug.Log($"  塔数: {block.GetTowerCount()}");
                 
                 // 检查每个格子是否已预留
-                foreach (Vector2Int coord in block.Shape.Coordinates)
+                foreach (Vector2Int coord in block.Config.Coordinates)
                 {
                     if (block.IsCellEmpty(coord))
                     {
@@ -146,7 +146,7 @@ public class BlockTestManager : MonoBehaviour
             
             // 为每个格子生成塔
             int generatedTowers = 0;
-            foreach (Vector2Int coord in block.Shape.Coordinates)
+            foreach (Vector2Int coord in block.Config.Coordinates)
             {
                 Tower tower = block.GenerateTower(coord, testTowerData);
                 if (tower != null)
@@ -160,7 +160,7 @@ public class BlockTestManager : MonoBehaviour
                 }
             }
             
-            Debug.Log($"✓ {shapeName}: 塔生成测试完成，预期 {block.Shape.Coordinates.Length} 座塔");
+            Debug.Log($"✓ {shapeName}: 塔生成测试完成，预期 {block.Config.Coordinates.Length} 座塔");
             
             // 清理测试对象
             Destroy(blockObject);
@@ -197,7 +197,7 @@ public class BlockTestManager : MonoBehaviour
             block.Init(shapeName);
             
             // 检查是否可以放置
-            bool canPlace = gameMap.CanPlaceBlock(position, block.Shape);
+            bool canPlace = gameMap.CanPlaceBlock(position, block.Config);
             Debug.Log($"✓ {shapeName} 在位置 ({position.x},{position.y}) 可放置: {canPlace}");
             
             if (canPlace)
@@ -233,7 +233,7 @@ public class BlockTestManager : MonoBehaviour
         Block overlapBlockComponent = overlapBlock.AddComponent<Block>();
         overlapBlockComponent.Init("LINE2H");
         
-        bool canOverlap = gameMap.CanPlaceBlock(new Vector2Int(2, 2), overlapBlockComponent.Shape);
+        bool canOverlap = gameMap.CanPlaceBlock(new Vector2Int(2, 2), overlapBlockComponent.Config);
         Debug.Log($"✓ 重叠放置测试: {!canOverlap} (应该为false)");
         
         Destroy(overlapBlock);
