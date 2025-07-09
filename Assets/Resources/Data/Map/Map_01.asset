@@ -13,3 +13,5 @@ MonoBehaviour:
   m_Name: Map_01
   m_EditorClassIdentifier: 
   centerTower: {fileID: 7002921581114174909, guid: 3c575f98f3a079743b33b7a924a013a8, type: 3}
+  BlockPrefab: {fileID: 8190983881543204575, guid: 9cc02b47670998348940085eed0862ba, type: 3}
+  BlockGenerationSettings: {fileID: 11400000, guid: ca8e674e631e1f54bba8c3d5b2aa7e3f, type: 2}

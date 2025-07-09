@@ -23,6 +23,8 @@ public class GameMap : MonoBehaviour
     [SerializeField,LabelText("塔的生成区域物体名")]
     private string towerAreaName = "TowerArea";
     private Transform towerArea;
+    private string prefabShowName = "PrefabArea";
+    public GameObject PrefabShowArea;
     
     
     // 公共属性
@@ -35,6 +37,11 @@ public class GameMap : MonoBehaviour
     {
         InitializeScene();
         InitializeMap();
+        Debug.Log(tilemap.cellSize);
+    }
+    public MapData GetMapData()
+    {
+        return mapData;
     }
 #if UNITY_EDITOR
     [Button("自动化生成/查找物体")]
@@ -61,7 +68,7 @@ public class GameMap : MonoBehaviour
     {
         if (towerArea == null)
         {
-            towerArea = transform.Find(towerAreaName);
+            towerArea = GameObject.Find(towerAreaName).transform;
         }
         return towerArea;
     }
@@ -93,7 +100,7 @@ public class GameMap : MonoBehaviour
         
         //创建中心塔
         GameObject centerTower = Instantiate(mapData.centerTower,towerArea);
-        PlaceBlock(new Vector2Int(mapWidth / 2, mapHeight / 2), centerTower.GetComponent<Block>());
+        PlaceBlock(BaseUtility.GetCenter(mapWidth, mapHeight), centerTower.GetComponent<Block>());
         Debug.Log($"地图初始化完成: {mapWidth}x{mapHeight}, 格子大小: {cellSize}");
     }
     // /// <summary>

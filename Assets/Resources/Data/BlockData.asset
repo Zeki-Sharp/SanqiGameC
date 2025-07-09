@@ -16,3 +16,17 @@ MonoBehaviour:
   - {fileID: 8732031508292489554, guid: 8dc11cd1dfb10b0458a98588f73496b4, type: 3}
   TowerProbability:
   - 100
+  BlockProbabilities:
+  - Config: {fileID: 11400000, guid: e6ef6c9b0425c744ba8a04f8e7c4cfbb, type: 2}
+    Value: 16.5
+  - Config: {fileID: 11400000, guid: 8ce81e2111255f44780689b43a02fa21, type: 2}
+    Value: 16.5
+  - Config: {fileID: 11400000, guid: b03985fdd09a84d44b76c39e8639910a, type: 2}
+    Value: 16.5
+  - Config: {fileID: 11400000, guid: f62da1e755004f84ca7ffb86da418562, type: 2}
+    Value: 16.5
+  - Config: {fileID: 11400000, guid: 7e417d25897d7644d94afdb10b9f13ce, type: 2}
+    Value: 16.5
+  - Config: {fileID: 11400000, guid: d9d48ba79fef1514a9ea92618fb24869, type: 2}
+    Value: 16.5
+  probability: 100

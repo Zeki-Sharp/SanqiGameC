@@ -2,20 +2,33 @@ using System;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "BlockGenerationConfig", menuName = "Scriptable Objects/BlockGenerationConfig"),Serializable]
+[CreateAssetMenu(fileName = "BlockGenerationConfig", menuName = "Scriptable Objects/BlockGenerationConfig"), Serializable]
 public class BlockGenerationConfig : ScriptableObject
 {
     [SerializeField]
     private string shapeName;
-    [SerializeField]
-    private bool[,] blockGrid = new bool[4, 4];
+    
+    // 使用一维数组保存 4x4 网格数据
+    private bool[] blockGrid = new bool[16];
 
     [ShowInInspector]
     [PropertySpace(5)]
     [TableMatrix(HorizontalTitle = "X", VerticalTitle = "Y")]
     public bool[,] BlockGrid
     {
-        get { return blockGrid; }
+        get
+        {
+            // 从一维数组构建二维数组用于显示
+            bool[,] grid = new bool[4, 4];
+            for (int y = 0; y < 4; y++)
+            {
+                for (int x = 0; x < 4; x++)
+                {
+                    grid[y, x] = blockGrid[y * 4 + x];
+                }
+            }
+            return grid;
+        }
         set
         {
             if (value == null || value.GetLength(0) != 4 || value.GetLength(1) != 4)
@@ -28,7 +41,7 @@ public class BlockGenerationConfig : ScriptableObject
             {
                 for (int x = 0; x < 4; x++)
                 {
-                    blockGrid[y, x] = value[y, x];
+                    blockGrid[y * 4 + x] = value[y, x];
                 }
             }
         }
@@ -40,9 +53,8 @@ public class BlockGenerationConfig : ScriptableObject
         cellCount = GetCellCount(out int count);
         coordinates = GetCellCoords(count);
     }
-    // [ShowInInspector]
+
     private int cellCount;
-    // [ShowInInspector]
     private Vector2Int[] coordinates;
 
     public Vector2Int[] Coordinates => coordinates;
@@ -58,7 +70,7 @@ public class BlockGenerationConfig : ScriptableObject
         {
             for (int x = 0; x < 4; x++)
             {
-                Debug.Log(blockGrid[y, x]);
+                Debug.Log(BlockGrid[y, x]);
             }
         }
 #endif
@@ -69,14 +81,11 @@ public class BlockGenerationConfig : ScriptableObject
     public int GetCellCount(out int count)
     {
         count = 0;
-        for (int y = 0; y < 4; y++)
+        for (int i = 0; i < 16; i++)
         {
-            for (int x = 0; x < 4; x++)
+            if (blockGrid[i])
             {
-                if (blockGrid[y, x])
-                {
-                    count++;
-                }
+                count++;
             }
         }
         return count;
@@ -86,15 +95,14 @@ public class BlockGenerationConfig : ScriptableObject
     {
         Vector2Int[] coords = new Vector2Int[cellCount];
         int index = 0;
-        for (int y = 0; y < 4; y++)
+        for (int i = 0; i < 16; i++)
         {
-            for (int x = 0; x < 4; x++)
+            if (blockGrid[i])
             {
-                if (blockGrid[y, x])
-                {
-                    coords[index] = new Vector2Int(x, y);
-                    index++;
-                }
+                int x = i % 4;
+                int y = i / 4;
+                coords[index] = new Vector2Int(x, y);
+                index++;
             }
         }
         return coords;

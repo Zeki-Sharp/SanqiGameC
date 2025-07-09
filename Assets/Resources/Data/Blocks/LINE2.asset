@@ -12,3 +12,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 67e17c156ef2490448da07ab587e59bb, type: 3}
   m_Name: LINE2
   m_EditorClassIdentifier: 
+  shapeName: LINE2

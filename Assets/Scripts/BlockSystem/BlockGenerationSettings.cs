@@ -11,9 +11,9 @@ public class BlockGenerationSettings : ScriptableObject
     [ShowInInspector] public List<float> TowerProbability = new List<float>();
 
     [Serializable]
-    public struct BlockProbability
+    public class BlockProbability
     {
-        public BlockGenerationConfig Key;
+        public BlockGenerationConfig Config;
         [Unit(Units.Percent)]
         public float Value;
     }
@@ -21,8 +21,24 @@ public class BlockGenerationSettings : ScriptableObject
     [Header("Block Setting")]
     [ShowInInspector,Tooltip("概率,总和为100%")]
     public List<BlockProbability> BlockProbabilities = new List<BlockProbability>();
-
-
+    [SerializeField,ReadOnly]
+    public float probability = 1f;
+    
+    [Button("概率均分")]
+    public void EqualizeProbability()
+    {
+        float probability = (100f-1) / BlockProbabilities.Count;
+        for (int i = 0; i < BlockProbabilities.Count; i++)
+        {
+            BlockProbabilities[i].Value = probability;
+        }
+        float sum = 1;
+        foreach (var item in BlockProbabilities)
+        {
+            sum += item.Value;
+        }
+        probability = sum;
+    }
     private void OnValidate()
     {
        
@@ -35,7 +51,7 @@ public class BlockGenerationSettings : ScriptableObject
         {
             Debug.LogError("BlockProbability 总和不能小于或等于0");
         }
-        if (sum > 1f)
+        if (sum > 100f)
         {
             Debug.LogError("BlockProbability 总和需在100%或以内");
         }
@@ -43,7 +59,7 @@ public class BlockGenerationSettings : ScriptableObject
         {
             Debug.LogError("TowerPrefabs 与 TowerProbability 长度不一致");
         }
-        
+        probability = sum;
     }
     public BlockGenerationConfig GetRandomShape()
     {
@@ -54,10 +70,10 @@ public class BlockGenerationSettings : ScriptableObject
             total += item.Value;
             if (random <= total)
             {
-                return item.Key;
+                return item.Config;
             }
         }
-        return  BlockProbabilities[0].Key;
+        return  BlockProbabilities[0].Config;
     }
     public GameObject GetRandomTower()
     {
