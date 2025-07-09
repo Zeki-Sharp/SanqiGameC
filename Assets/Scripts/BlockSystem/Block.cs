@@ -5,16 +5,19 @@ using UnityEngine.Tilemaps;
 public class Block : MonoBehaviour
 {
     [Header("方块配置")]
-    [SerializeField] private BlockShape shape;
+    [SerializeField] private BlockGenerationConfig config;
     [SerializeField] private Vector2Int worldPosition; // 方块在世界中的位置
+    [SerializeField] private bool canBeOverridden = true;
     
     [Header("塔管理")]
     [SerializeField] private Dictionary<Vector2Int, Tower> towers = new Dictionary<Vector2Int, Tower>();
     
     // 公共属性
-    public BlockShape Shape => shape;
+    public BlockGenerationConfig Config => config;
     public Vector2Int WorldPosition => worldPosition;
     public Dictionary<Vector2Int, Tower> Towers => towers;
+    
+    public bool CanBeOverridden => canBeOverridden;
     
     /// <summary>
     /// 初始化方块
@@ -23,9 +26,10 @@ public class Block : MonoBehaviour
     public void Init(string shapeName)
     {
         // 获取对应的方块形状
-        shape = BlockShape.GetShape(shapeName);
+        config = Resources.Load<BlockGenerationConfig>("Assets/Resources/Data/Blocks/" + shapeName);
+        // config = BlockShape.GetShape(shapeName);
         
-        if (shape == null || shape.Coordinates == null)
+        if (config == null || config.BlockGrid == null)
         {
             Debug.LogError($"无法获取形状: {shapeName}");
             return;
@@ -35,13 +39,13 @@ public class Block : MonoBehaviour
         towers.Clear();
         
         // 遍历格子坐标，为每个格子预留塔的位置
-        foreach (Vector2Int coord in shape.Coordinates)
+        foreach (Vector2Int coord in config.Coordinates)
         {
             towers[coord] = null; // 初始化为null，表示还没有生成塔
             Debug.Log($"生成塔于格子 ({coord.x}, {coord.y})");
         }
         
-        Debug.Log($"方块初始化完成，形状: {shapeName}，包含 {shape.Coordinates.Length} 个格子");
+        Debug.Log($"方块初始化完成，形状: {shapeName}，包含 {config.CellCount} 个格子");
     }
     
     /// <summary>
@@ -49,23 +53,60 @@ public class Block : MonoBehaviour
     /// </summary>
     /// <param name="position">格子坐标</param>
     /// <param name="tilemap">Tilemap引用</param>
-    public void SetWorldPosition(Vector2Int position, Tilemap tilemap = null)
+    // public void SetWorldPosition(Vector2Int position, Tilemap tilemap = null)
+    // {
+    //     worldPosition = position;
+    //     
+    //     if (tilemap != null)
+    //     {
+    //         // 使用Tilemap的坐标转换
+    //         Vector3 cellOrigin = tilemap.CellToWorld(new Vector3Int(position.x, position.y, 0));
+    //         transform.position = cellOrigin + tilemap.cellSize / 2f;
+    //     }
+    //     else
+    //     {
+    //         // 备用方案：直接使用格子坐标
+    //         transform.position = new Vector3(position.x, position.y, 0);
+    //     }
+    // }
+    /// <summary>
+    /// 设置方块的世界坐标并根据地图大小调整尺寸
+    /// </summary>
+    /// <param name="position">地图格子坐标</param>
+    /// <param name="grid">使用的Grid组件（优先级高于Tilemap）</param>
+    /// <param name="tilemap">使用的Tilemap组件（可选）</param>
+    /// <param name="mapWidth">地图宽度（用于缩放适配）</param>
+    /// <param name="mapHeight">地图高度（用于缩放适配）</param>
+    public void SetWorldPosition(Vector2Int position, Tilemap tilemap = null, int mapWidth = 20, int mapHeight = 15)
     {
         worldPosition = position;
-        
+
+        // 默认缩放因子
+        float baseScale = 1.5f;
+
+        // 根据地图大小动态调整缩放
+        float scaleFactor = Mathf.Min(1f, 10f / Mathf.Max(mapWidth, mapHeight));
+        transform.localScale = Vector3.one * (baseScale * scaleFactor);
+
         if (tilemap != null)
         {
-            // 使用Tilemap的坐标转换
-            Vector3 cellOrigin = tilemap.CellToWorld(new Vector3Int(position.x, position.y, 0));
-            transform.position = cellOrigin + tilemap.cellSize / 2f;
+            Vector3 cellCenter = tilemap.GetCellCenterWorld(new Vector3Int(position.x, position.y, 0));
+            transform.position = new Vector3(cellCenter.x, cellCenter.y - 0.5f, 0);
         }
+        // else if (tilemap != null)
+        // {
+        //     Vector3 cellOrigin = tilemap.CellToWorld(new Vector3Int(position.x, position.y, 0));
+        //     transform.position = new Vector3(
+        //         cellOrigin.x + tilemap.cellSize.x / 2f,
+        //         cellOrigin.y + tilemap.cellSize.y / 2f,
+        //         0
+        //     );
+        // }
         else
         {
-            // 备用方案：直接使用格子坐标
             transform.position = new Vector3(position.x, position.y, 0);
         }
     }
-    
     /// <summary>
     /// 在指定格子位置生成塔
     /// </summary>
@@ -171,6 +212,6 @@ public class Block : MonoBehaviour
     /// <returns>总格子数</returns>
     public int GetTotalCellCount()
     {
-        return shape != null ? shape.Coordinates.Length : 0;
+        return config != null ? config.CellCount : 0;
     }
 } 
