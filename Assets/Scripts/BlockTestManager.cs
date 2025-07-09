@@ -1,13 +1,14 @@
 
+using System.Collections.Generic;
 using UnityEngine;
 
 public class BlockTestManager : MonoBehaviour
 {
     [Header("测试配置")]
     [SerializeField] private GameMap gameMap;
+    [SerializeField] private CreatePrefab createPrefab;
     [SerializeField] private bool runTestsOnStart = true;
     [SerializeField] private string prefabShowName = "PrefabArea";
-    [SerializeField] private GameObject PrefabShowArea;
     [SerializeField] private MapData mapData;
     private void Start()
     {
@@ -36,29 +37,36 @@ public class BlockTestManager : MonoBehaviour
     public void RunAllTests()
     {
         Debug.Log("=== 开始运行方块塔绑定测试 ===");
-        
-        TestBlockShapeCreation();
-        TestBlockInitialization();
-        TestTowerGeneration();
-        TestMapPlacement();
+        Test_01();
+        // TestBlockShapeCreation();
+        // TestBlockInitialization();
+        // TestTowerGeneration();
+        // TestMapPlacement();
         
         Debug.Log("=== 测试完成 ===");
     }
-    
+
+    public void Test_01()
+    {
+        Debug.Log("--- 测试方块进入待建造池 ---");
+        BlockGenerationConfig config =  mapData.BlockGenerationSettings.GetRandomShape();
+        List<TowerData> towerDatas = new List<TowerData>();
+        foreach (var vector2 in config.GetCellCoords(config.CellCount))
+        {
+            towerDatas.Add(mapData.BlockGenerationSettings.GetRandomTower());
+            Debug.Log($"方块初始化中，方块坐标: {vector2}，替换塔{towerDatas[towerDatas.Count-1].name}");
+        }
+        createPrefab.CreateBlock(mapData.BlockPrefab, towerDatas, config.GetCellCoords(config.CellCount), config);
+        Debug.Log($"方块完成，形状: {config.name}，包含 {config.GetCellCount(out int count)} 个格子");
+        
+        
+    }
     /// <summary>
     /// 测试方块形状创建
     /// </summary>
     private void TestBlockShapeCreation()
     {
-        Debug.Log("--- 测试方块形状创建 ---");
-        BlockGenerationConfig config =  mapData.BlockGenerationSettings.GetRandomShape();
-        foreach (var vector2 in config.GetCellCoords(config.CellCount))
-        { 
-            
-            Debug.Log($"方块初始化中，方块坐标: {vector2}，替换塔");
-        }
-        Debug.Log($"方块完成，形状: {config.name}，包含 {config.GetCellCount(out int count)} 个格子");
-        // string[] testShapes = { "LINE2H", "L3", "SQUARE2", "SINGLE", "LINE3H" };
+           // string[] testShapes = { "LINE2H", "L3", "SQUARE2", "SINGLE", "LINE3H" };
         //
         // foreach (string shapeName in testShapes)
         // {

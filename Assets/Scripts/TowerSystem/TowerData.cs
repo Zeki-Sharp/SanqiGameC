@@ -6,6 +6,7 @@ public class TowerData : ScriptableObject
     [Header("基础信息")]
     [SerializeField] private int id;
     [SerializeField] private string towerName;
+    [SerializeField] private Sprite towerSprite;
     
     [Header("生命值")]
     [SerializeField] private float health;
@@ -27,6 +28,7 @@ public class TowerData : ScriptableObject
     // 公共属性访问器
     public int ID => id;
     public string TowerName => towerName;
+    public Sprite TowerSprite => towerSprite;
     public float Health => health;
     public float AttackRange => attackRange;
     public float AttackInterval => attackInterval;
