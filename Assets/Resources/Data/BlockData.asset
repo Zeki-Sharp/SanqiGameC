@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b05e87a53ccab084eb651ad2465ea153, type: 3}
   m_Name: BlockData
   m_EditorClassIdentifier: 
-  TowerPrefabs:
-  - {fileID: 8732031508292489554, guid: 8dc11cd1dfb10b0458a98588f73496b4, type: 3}
+  TowerDatas:
+  - {fileID: 11400000, guid: 2c56d48c1b17cd04e8bfca12c88f6655, type: 2}
   TowerProbability:
   - 100
   BlockProbabilities:

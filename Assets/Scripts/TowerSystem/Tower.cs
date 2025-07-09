@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public class Tower : MonoBehaviour
@@ -8,12 +9,18 @@ public class Tower : MonoBehaviour
     [Header("状态")]
     [SerializeField] private float currentHealth;
     [SerializeField] private Vector2Int position;
-    
+    [SerializeField] private SpriteRenderer spriteRenderer;
+     
     // 公共属性
     public TowerData TowerData => towerData;
     public float CurrentHealth => currentHealth;
     public Vector2Int Position => position;
-    
+
+    private void Awake()
+    {
+        spriteRenderer = GetComponentInChildren<SpriteRenderer>();
+    }
+
     /// <summary>
     /// 初始化塔
     /// </summary>
@@ -24,7 +31,7 @@ public class Tower : MonoBehaviour
         towerData = data;
         position = pos;
         currentHealth = data.Health;
-        
+        spriteRenderer.sprite = data.TowerSprite;
         // 设置位置
         transform.position = new Vector3(pos.x, pos.y, 0);
         

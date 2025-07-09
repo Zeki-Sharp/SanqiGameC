@@ -126,8 +126,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4294967295
-  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
+    rgba: 4284434388
+  m_fontColor: {r: 0.8301887, g: 0.27803493, b: 0.37066785, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -201,6 +201,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5965266069931466106}
   - component: {fileID: -7628005892329325224}
+  - component: {fileID: 8622939898402481615}
   m_Layer: 0
   m_Name: CenterTower_01
   m_TagString: Untagged
@@ -240,6 +241,22 @@ MonoBehaviour:
   config: {fileID: 11400000, guid: f62da1e755004f84ca7ffb86da418562, type: 2}
   worldPosition: {x: 0, y: 0}
   canBeOverridden: 0
+--- !u!114 &8622939898402481615
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7002921581114174909}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f3e2c2569723b5a4580f45bc79151879, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  towerData: {fileID: 0}
+  currentHealth: 0
+  position: {x: 0, y: 0}
+  spriteRenderer: {fileID: 0}
 --- !u!1 &7371399421173341675
 GameObject:
   m_ObjectHideFlags: 0

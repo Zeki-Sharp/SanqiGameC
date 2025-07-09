@@ -26,6 +26,9 @@ public class GameMap : MonoBehaviour
     private string prefabShowName = "PrefabArea";
     public GameObject PrefabShowArea;
     
+    public static GameMap instance;
+    
+
     
     // 公共属性
     public int MapWidth => mapWidth;
@@ -38,6 +41,8 @@ public class GameMap : MonoBehaviour
         InitializeScene();
         InitializeMap();
         Debug.Log(tilemap.cellSize);
+        if (instance == null)
+            instance = this;
     }
     public MapData GetMapData()
     {
@@ -97,11 +102,12 @@ public class GameMap : MonoBehaviour
             }
         }
         
-        
+        Debug.Log($"地图初始化完成: {mapWidth}x{mapHeight}, 格子大小: {cellSize}");
+
         //创建中心塔
         GameObject centerTower = Instantiate(mapData.centerTower,towerArea);
         PlaceBlock(BaseUtility.GetCenter(mapWidth, mapHeight), centerTower.GetComponent<Block>());
-        Debug.Log($"地图初始化完成: {mapWidth}x{mapHeight}, 格子大小: {cellSize}");
+        Debug.Log("中心塔已创建");
     }
     // /// <summary>
     // /// 创建塔

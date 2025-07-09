@@ -230,7 +230,7 @@ public class BlockPlacementManager : MonoBehaviour
         
         foreach (Vector2Int coord in block.Config.Coordinates)
         {
-            block.GenerateTower(coord, towerData, tilemap);
+            // block.GenerateTower(coord, towerData, tilemap);
         }
         
         Debug.Log($"为方块生成了 {block.Config.Coordinates.Length} 座塔");

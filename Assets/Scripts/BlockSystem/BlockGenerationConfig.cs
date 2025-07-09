@@ -9,7 +9,7 @@ public class BlockGenerationConfig : ScriptableObject
     private string shapeName;
     
     // 使用一维数组保存 4x4 网格数据
-    private bool[] blockGrid = new bool[16];
+    public bool[] blockGrid = new bool[16];
 
     [ShowInInspector]
     [PropertySpace(5)]
@@ -44,6 +44,10 @@ public class BlockGenerationConfig : ScriptableObject
                     blockGrid[y * 4 + x] = value[y, x];
                 }
             }
+#if UNITY_EDITOR
+            UnityEditor.EditorUtility.SetDirty(this);
+            UnityEditor.AssetDatabase.SaveAssets();
+#endif
         }
     }
 
@@ -52,10 +56,15 @@ public class BlockGenerationConfig : ScriptableObject
     {
         cellCount = GetCellCount(out int count);
         coordinates = GetCellCoords(count);
+#if UNITY_EDITOR
+        UnityEditor.EditorUtility.SetDirty(this);
+        UnityEditor.AssetDatabase.SaveAssets();
+#endif
     }
-
-    private int cellCount;
-    private Vector2Int[] coordinates;
+    [HideInInspector]
+    public int cellCount;
+    [HideInInspector]
+    public Vector2Int[] coordinates;
 
     public Vector2Int[] Coordinates => coordinates;
     public int CellCount => cellCount;
@@ -74,8 +83,7 @@ public class BlockGenerationConfig : ScriptableObject
             }
         }
 #endif
-
-        Save();
+        
     }
 
     public int GetCellCount(out int count)

@@ -7,7 +7,7 @@ using UnityEngine;
 public class BlockGenerationSettings : ScriptableObject
 {
     [Header("Tower Setting")]
-    [ShowInInspector] public List<GameObject> TowerPrefabs = new List<GameObject>();
+    [ShowInInspector] public List<TowerData> TowerDatas = new List<TowerData>();
     [ShowInInspector] public List<float> TowerProbability = new List<float>();
 
     [Serializable]
@@ -55,7 +55,7 @@ public class BlockGenerationSettings : ScriptableObject
         {
             Debug.LogError("BlockProbability 总和需在100%或以内");
         }
-        if (TowerPrefabs.Count != TowerProbability.Count)
+        if (TowerDatas.Count != TowerProbability.Count)
         {
             Debug.LogError("TowerPrefabs 与 TowerProbability 长度不一致");
         }
@@ -75,8 +75,12 @@ public class BlockGenerationSettings : ScriptableObject
         }
         return  BlockProbabilities[0].Config;
     }
-    public GameObject GetRandomTower()
+    public TowerData GetRandomTower()
     {
+        if (TowerDatas.Count == 0)
+        {
+            return null;
+        }
         float total = 0;
         float random = UnityEngine.Random.Range(0, 1);
         int index = 0;
@@ -85,11 +89,11 @@ public class BlockGenerationSettings : ScriptableObject
             total += item;
             if (random <= total)
             {
-                return TowerPrefabs[index];
+                return TowerDatas[index];
             }
             index++;
         }
-        return TowerPrefabs[0];
+        return TowerDatas[0];
     }
 
     
