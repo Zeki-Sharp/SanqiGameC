@@ -27,6 +27,10 @@ public class CreatePrefab : MonoBehaviour
     private void Awake()
     {
         InitializeMap();
+        Debug.Log("(0,0)"+tilemap.GetCellCenterWorld(new Vector3Int(4,0, 0)));
+        Debug.Log("(0,1)"+tilemap.GetCellCenterWorld(new Vector3Int(4,1, 0)));
+        Debug.Log("(1,0)"+tilemap.GetCellCenterWorld(new Vector3Int(3,0, 0)));
+        Debug.Log("(1,1)"+tilemap.GetCellCenterWorld(new Vector3Int(3,1, 0)));
     }
     /// <summary>
     /// 初始化地图
@@ -70,7 +74,7 @@ public class CreatePrefab : MonoBehaviour
         // 取最近的整数坐标
         Vector2Int center = new Vector2Int(Mathf.RoundToInt(centerX), Mathf.RoundToInt(centerY));
         Debug.Log($"几何中心: {center}");
-        block.transform.position = tilemap.GetCellCenterWorld(new Vector3Int(center.x, center.y, 0));
+        block.transform.position = tilemap.GetCellCenterLocal(new Vector3Int(center.x, center.y, 0));
         block.Init(config);
         block.GenerateTowers(position,towerDatas.ToArray(),tilemap);
        

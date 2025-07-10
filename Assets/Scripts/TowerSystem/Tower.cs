@@ -23,6 +23,10 @@ public class Tower : MonoBehaviour
     {
       
     }
+    public void SetOrder(int order)
+    {
+        spriteRenderer.sortingOrder = order;
+    }
 
     /// <summary>
     /// 初始化塔
