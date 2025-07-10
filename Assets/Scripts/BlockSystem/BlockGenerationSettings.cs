@@ -64,7 +64,7 @@ public class BlockGenerationSettings : ScriptableObject
     public BlockGenerationConfig GetRandomShape()
     {
         float total = 0;
-        float random = UnityEngine.Random.Range(0, 1);
+        float random = UnityEngine.Random.Range(0, 100);
         foreach (var item in BlockProbabilities)
         {
             total += item.Value;
@@ -82,7 +82,7 @@ public class BlockGenerationSettings : ScriptableObject
             return null;
         }
         float total = 0;
-        float random = UnityEngine.Random.Range(0, 1);
+        float random = UnityEngine.Random.Range(0, 100);
         int index = 0;
         foreach (var item in TowerProbability)
         {

@@ -14,8 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   TowerDatas:
   - {fileID: 11400000, guid: 2c56d48c1b17cd04e8bfca12c88f6655, type: 2}
+  - {fileID: 11400000, guid: 6f3e3f82a00f30a4984541325bfcbbc0, type: 2}
   TowerProbability:
-  - 100
+  - 50
+  - 50
   BlockProbabilities:
   - Config: {fileID: 11400000, guid: e6ef6c9b0425c744ba8a04f8e7c4cfbb, type: 2}
     Value: 16.5

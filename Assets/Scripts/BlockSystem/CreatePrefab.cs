@@ -56,12 +56,26 @@ public class CreatePrefab : MonoBehaviour
     public void CreateBlock(GameObject blockPrefab,List<TowerData> towerDatas,Vector2Int[] position,BlockGenerationConfig config)
     { 
         GameObject blockObj = Instantiate(blockPrefab,prefabShowArea.transform);
-        Block block = blockObj.GetComponent<Block>();
+        Block block = blockObj.GetComponent<Block>(); 
+        // 计算几何中心
+        float centerX = 0, centerY = 0;
+        foreach (var pos in position)
+        {
+            centerX += pos.x;
+            centerY += pos.y;
+        }
+        centerX /= position.Length;
+        centerY /= position.Length;
+
+        // 取最近的整数坐标
+        Vector2Int center = new Vector2Int(Mathf.RoundToInt(centerX), Mathf.RoundToInt(centerY));
+        Debug.Log($"几何中心: {center}");
+        block.transform.position = tilemap.GetCellCenterWorld(new Vector3Int(center.x, center.y, 0));
         block.Init(config);
         block.GenerateTowers(position,towerDatas.ToArray(),tilemap);
        
         GameMap.instance.PlaceBlock(position[0], block);
         
-        // block.transform.position = tilemap.CellToWorld(new Vector3Int(position.x, position.y, 0));
+       
     }
 }
