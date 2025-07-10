@@ -1,4 +1,5 @@
 using System;
+using TMPro;
 using UnityEngine;
 
 public class Tower : MonoBehaviour
@@ -9,8 +10,10 @@ public class Tower : MonoBehaviour
     [Header("状态")]
     [SerializeField] private float currentHealth;
     [SerializeField] private Vector2Int position;
+    
+    [Header("绑定")]
     [SerializeField] private SpriteRenderer spriteRenderer;
-     
+    [SerializeField] private TextMeshPro text;
     // 公共属性
     public TowerData TowerData => towerData;
     public float CurrentHealth => currentHealth;
@@ -18,7 +21,7 @@ public class Tower : MonoBehaviour
 
     private void Awake()
     {
-        spriteRenderer = GetComponentInChildren<SpriteRenderer>();
+      
     }
 
     /// <summary>
@@ -28,12 +31,15 @@ public class Tower : MonoBehaviour
     /// <param name="pos">塔的位置</param>
     public void Initialize(TowerData data, Vector2Int pos)
     {
+        spriteRenderer = GetComponentInChildren<SpriteRenderer>();
+        // text = GetComponentInChildren<TextMeshProUGUI>();
         towerData = data;
         position = pos;
         currentHealth = data.Health;
         spriteRenderer.sprite = data.TowerSprite;
+        text.text = data.TowerName;
         // 设置位置
-        transform.position = new Vector3(pos.x, pos.y, 0);
+        // transform.position = new Vector3(pos.x, pos.y, 0);
         
         Debug.Log($"塔初始化完成: {data.TowerName} 在位置 ({pos.x}, {pos.y})");
     }
