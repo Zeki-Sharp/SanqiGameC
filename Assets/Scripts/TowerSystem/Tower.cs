@@ -26,6 +26,8 @@ public class Tower : MonoBehaviour
     public void SetOrder(int order)
     {
         spriteRenderer.sortingOrder = order;
+        MeshRenderer renderer = GetComponentInChildren<MeshRenderer>();
+        renderer.sortingOrder = order;
     }
 
     /// <summary>
@@ -36,6 +38,7 @@ public class Tower : MonoBehaviour
     public void Initialize(TowerData data, Vector2Int pos)
     {
         spriteRenderer = GetComponentInChildren<SpriteRenderer>();
+     
         // text = GetComponentInChildren<TextMeshProUGUI>();
         towerData = data;
         position = pos;

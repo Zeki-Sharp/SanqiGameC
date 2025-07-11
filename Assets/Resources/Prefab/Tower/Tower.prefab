@@ -98,7 +98,6 @@ GameObject:
   - component: {fileID: 9054151160336859648}
   - component: {fileID: 1967903675104210712}
   - component: {fileID: 1863550285456472549}
-  - component: {fileID: 6079381234863995808}
   m_Layer: 0
   m_Name: Text (TMP)
   m_TagString: Untagged
@@ -122,8 +121,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0.008, y: 0.467}
-  m_SizeDelta: {x: 0.877, y: 0.417}
+  m_AnchoredPosition: {x: -0.002, y: 0.366}
+  m_SizeDelta: {x: 1.1989, y: 0.2291}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!23 &1967903675104210712
 MeshRenderer:
@@ -264,20 +263,6 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_renderer: {fileID: 1967903675104210712}
   m_maskType: 0
---- !u!114 &6079381234863995808
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5343205042941032988}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e536fb11cc79d0247b8cb9484c0fe508, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  sortingLayerName: Default
-  sortingOrder: 5
 --- !u!1 &8732031508292489554
 GameObject:
   m_ObjectHideFlags: 0

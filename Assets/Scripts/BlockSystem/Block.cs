@@ -85,18 +85,26 @@ public class Block : MonoBehaviour
         worldPosition = position;
 
         float baseScale = 1.5f;
-        float scaleFactor = Mathf.Min(1f, 10f / Mathf.Max(mapWidth, mapHeight));
-        transform.localScale = Vector3.one * (baseScale * scaleFactor);
+        int maxMapSize = Mathf.Max(mapWidth, mapHeight);
+        if (maxMapSize <= 0)
+        {
+            Debug.LogWarning("地图尺寸无效，无法缩放");
+            transform.localScale = Vector3.one * baseScale;
+        }
+        else
+        {
+            float scaleFactor = Mathf.Min(1f, 10f / maxMapSize);
+            transform.localScale = Vector3.one * (baseScale * scaleFactor);
+        }
 
         if (tilemap != null)
         {
             Vector3 cellCenter = tilemap.GetCellCenterWorld(new Vector3Int(position.x, position.y, 0));
-            Debug.Log($"格子 ({position.x}, {position.y}) 的世界坐标: {cellCenter}");
-            transform.localPosition = new Vector3(cellCenter.x, cellCenter.y - 0.4f, 0);
+            transform.position = new Vector3(cellCenter.x, cellCenter.y -0.4f, 0);
         }
         else
         {
-            transform.localPosition = new Vector3(position.x, position.y, 0);
+            transform.position = new Vector3(position.x, position.y, 0);
         }
     }
 
@@ -105,7 +113,10 @@ public class Block : MonoBehaviour
         for (int i = 0; i < localCoord.Length; i++)
         {
             if (i >= towerData.Length)
+            {
+                Debug.LogWarning($"索引 {i} 超出塔数据长度");
                 break;
+            }
 
             Tower tower = GenerateTower(localCoord[i], towerData[i], tilemap);
             towers[localCoord[i]] = tower;
@@ -117,25 +128,27 @@ public class Block : MonoBehaviour
     /// </summary>
     public Tower GenerateTower(Vector2Int localCoord, TowerData towerData, Tilemap tilemap = null)
     {
-        if (!towers.ContainsKey(localCoord))
-        {
-            Debug.LogError($"格子 ({localCoord.x}, {localCoord.y}) 不在当前方块范围内");
-            return null;
-        }
+        // if (!towers.ContainsKey(localCoord))
+        // {
+        //     Debug.LogError($"格子 ({localCoord.x}, {localCoord.y}) 不在当前方块范围内");
+        //     return null;
+        // }
 
         if (towers[localCoord] != null)
         {
             Debug.LogWarning($"格子 ({localCoord.x}, {localCoord.y}) 已经有塔了");
             return towers[localCoord];
         }
-        // Vector2Int towerGridPos =  localCoord;
+
         Vector2Int towerGridPos = worldPosition + localCoord;
         Vector3 towerWorldPos;
 
         if (tilemap != null)
         {
-            Vector3 cellOrigin = tilemap.GetCellCenterLocal(new Vector3Int(towerGridPos.x, towerGridPos.y, 0));
+            Vector3 cellOrigin = tilemap.GetCellCenterWorld(new Vector3Int(towerGridPos.x, towerGridPos.y, 0));
+#if UNITY_EDITOR
             Debug.Log($"格子 ({localCoord.x}, {localCoord.y}) 的世界坐标: {cellOrigin}");
+#endif
             towerWorldPos = new Vector3(cellOrigin.x, cellOrigin.y, 0);
         }
         else
@@ -148,7 +161,11 @@ public class Block : MonoBehaviour
             Debug.LogError("Tower prefab is null when trying to instantiate.");
             return null;
         }
+
+#if UNITY_EDITOR
         Debug.Log($"生成塔于世界坐标: {towerWorldPos}");
+#endif
+
         GameObject go = Instantiate(towerPrefab, transform);
         go.transform.position = towerWorldPos;
         Tower towerComponent = go.GetComponent<Tower>();
@@ -157,23 +174,27 @@ public class Block : MonoBehaviour
             Debug.LogError("Tower prefab does not have a Tower component.");
             return null;
         }
+
+#if UNITY_EDITOR
         Debug.Log($"生成塔于格子 ({towerGridPos.x}, {towerGridPos.y})");
-        towerComponent.Initialize(towerData, towerGridPos);
-        towers[localCoord] = towerComponent;
-        // 新增：根据Y坐标设置渲染顺序（越往下层级越低）
-        int baseOrder = 1000; // 基础层级
-        int verticalOffset = Mathf.RoundToInt(-towerWorldPos.y * 10); // 每单位Y差10层
-        int finalOrder = baseOrder + verticalOffset;
+#endif
+
+        const int BaseOrder = 1000;
+        const int VerticalOffsetMultiplier = 10;
+        int verticalOffset = Mathf.RoundToInt(-towerWorldPos.y * VerticalOffsetMultiplier);
+        int finalOrder = BaseOrder + verticalOffset;
         
         towerComponent.Initialize(towerData, towerGridPos);
-        towerComponent.SetOrder(finalOrder); // 应用动态计算的排序值
-        
+        towerComponent.SetOrder(finalOrder);
         towers[localCoord] = towerComponent;
+
+#if UNITY_EDITOR
         Debug.Log($"生成塔于格子 ({towerGridPos.x}, {towerGridPos.y})，排序层级: {finalOrder}");
+#endif
 
         return towerComponent;
-        return towerComponent;
     }
+
 
     public bool IsCellEmpty(Vector2Int localCoord)
     {
@@ -190,7 +211,9 @@ public class Block : MonoBehaviour
     {
         if (towers.TryGetValue(localCoord, out var tower) && tower != null)
         {
+            #if UNITY_EDITOR
             Debug.Log($"移除格子 ({localCoord.x}, {localCoord.y}) 的塔");
+            #endif
             Destroy(tower.gameObject);
             towers[localCoord] = null;
         }

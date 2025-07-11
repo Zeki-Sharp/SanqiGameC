@@ -1,6 +1,7 @@
 using System;
 using Sirenix.OdinInspector;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 [CreateAssetMenu(fileName = "BlockGenerationConfig", menuName = "Scriptable Objects/BlockGenerationConfig"), Serializable]
 public class BlockGenerationConfig : ScriptableObject
@@ -85,6 +86,42 @@ public class BlockGenerationConfig : ScriptableObject
 #endif
         
     }
+    [Button("旋转90°"), PropertySpace(10)]
+    public void Rotate()
+    {
+        // 创建新的旋转后的网格数据
+        bool[,] rotated = new bool[4, 4];
+        
+        // 实现顺时针旋转90度的算法
+        for(int y = 0; y < 4; y++)
+        {
+            for(int x = 0; x < 4; x++)
+            {
+                rotated[x, 3 - y] = BlockGrid[y, x];
+            }
+        }
+        
+        // 更新一维数组
+        for (int y = 0; y < 4; y++)
+        {
+            for (int x = 0; x < 4; x++)
+            {
+                blockGrid[y * 4 + x] = rotated[y, x];
+            }
+        }
+        
+        // 更新坐标缓存
+        cellCount = GetCellCount(out int count);
+        coordinates = GetCellCoords(count);
+        
+// #if UNITY_EDITOR
+//         if (!Application.isPlaying)
+//         {
+//             UnityEditor.EditorUtility.SetDirty(this);
+//             UnityEditor.AssetDatabase.SaveAssets();
+//         }
+// #endif
+    }
 
     public int GetCellCount(out int count)
     {
@@ -101,6 +138,7 @@ public class BlockGenerationConfig : ScriptableObject
 
     public Vector2Int[] GetCellCoords(int cellCount)
     {
+        // 删除此处的 Rotate(times) 调用以避免递归
         Vector2Int[] coords = new Vector2Int[cellCount];
         int index = 0;
         for (int i = 0; i < 16; i++)
@@ -114,5 +152,13 @@ public class BlockGenerationConfig : ScriptableObject
             }
         }
         return coords;
+    }
+    //旋转几次
+    public void Rotate(int times)
+    {
+        for (int i = 0; i < times; i++)
+        {
+            Rotate();
+        }
     }
 }
