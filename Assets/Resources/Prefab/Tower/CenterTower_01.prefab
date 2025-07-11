@@ -204,7 +204,7 @@ GameObject:
   - component: {fileID: 8622939898402481615}
   m_Layer: 0
   m_Name: CenterTower_01
-  m_TagString: Untagged
+  m_TagString: centerTower
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -241,6 +241,7 @@ MonoBehaviour:
   config: {fileID: 11400000, guid: f62da1e755004f84ca7ffb86da418562, type: 2}
   worldPosition: {x: 0, y: 0}
   canBeOverridden: 0
+  towerPrefab: {fileID: 0}
 --- !u!114 &8622939898402481615
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -257,6 +258,7 @@ MonoBehaviour:
   currentHealth: 0
   position: {x: 0, y: 0}
   spriteRenderer: {fileID: 0}
+  text: {fileID: 0}
 --- !u!1 &7371399421173341675
 GameObject:
   m_ObjectHideFlags: 0
