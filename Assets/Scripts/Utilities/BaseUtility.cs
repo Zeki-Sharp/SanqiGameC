@@ -1,4 +1,6 @@
+using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class BaseUtility 
 {
@@ -16,5 +18,24 @@ public class BaseUtility
         return new Vector2Int(centerX, centerY);
     }
 
+
+    /// <summary>
+    /// 点击屏幕坐标
+    /// </summary>
+    /// <param name="position"></param>
+    /// <returns></returns>
+    public static GameObject GetFirstPickGameObject(Vector2 position)
+    {
+        EventSystem eventSystem = EventSystem.current;
+        PointerEventData pointerEventData = new PointerEventData(eventSystem);
+        pointerEventData.position = position;
+        //射线检测ui
+        List<RaycastResult> uiRaycastResultCache = new List<RaycastResult>();
+        eventSystem.RaycastAll(pointerEventData, uiRaycastResultCache);
+        if (uiRaycastResultCache.Count > 0)
+            return uiRaycastResultCache[0].gameObject;
+        return null;
+    }
+    
 
 }
