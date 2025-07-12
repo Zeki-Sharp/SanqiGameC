@@ -29,6 +29,20 @@ public class EnemyController : MonoBehaviour
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
         currentHealth = maxHealth;
+        
+        // 确保敌人有正确的标签
+        if (string.IsNullOrEmpty(gameObject.tag) || gameObject.tag != "Enemy")
+        {
+            gameObject.tag = "Enemy";
+        }
+        
+        // 确保Z轴位置正确
+        Vector3 position = transform.position;
+        if (position.z != 0f)
+        {
+            position.z = 0f;
+            transform.position = position;
+        }
     }
     
     private void Start()
