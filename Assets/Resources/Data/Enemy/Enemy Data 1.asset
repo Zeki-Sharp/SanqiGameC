@@ -10,15 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1f556f0894dd32c4691f268d4766ac85, type: 3}
-  m_Name: Enemy Data 2
+  m_Name: Enemy Data 1
   m_EditorClassIdentifier: 
   enemyName: Enemy
-  enemySprite: {fileID: 0}
-  enemyPrefab: {fileID: 3081488358046641282, guid: 5f99a0d2ca6c81942abe717868b11cb3, type: 3}
   maxHealth: 100
   moveSpeed: 2
   attackRange: 1.5
-  attackDamage: 10
-  attackCooldown: 1
+  attackBehavior: {fileID: 11400000, guid: f8e6a5643e2672f47b4f65008aaf27a2, type: 2}
   goldReward: 10
-  experienceReward: 5

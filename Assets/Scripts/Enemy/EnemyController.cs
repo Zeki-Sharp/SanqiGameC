@@ -20,6 +20,7 @@ public class EnemyController : MonoBehaviour
     public float MoveSpeed => data != null ? data.MoveSpeed : 2f;
     public float CurrentHealth => currentHealth;
     public float MaxHealth => data != null ? data.MaxHealth : 100f;
+    public IAttackBehavior AttackBehavior => data != null ? data.AttackBehavior : null;
     
     private void Awake()
     {
