@@ -4,14 +4,12 @@ using UnityEngine.Tilemaps;
 
 public class Block : MonoBehaviour
 {
-    [Header("方块配置")] 
-    [SerializeField] private BlockGenerationConfig config;
+    [Header("方块配置")] [SerializeField] private BlockGenerationConfig config;
     [SerializeField] private Vector2Int worldPosition; // 方块在世界中的位置
     [SerializeField] private bool canBeOverridden = true;
     [SerializeField] private GameObject towerPrefab;
-    
-    [Header("塔管理")] 
-    [SerializeField] private Dictionary<Vector2Int, Tower> towers = new Dictionary<Vector2Int, Tower>();
+
+    [Header("塔管理")] [SerializeField] private Dictionary<Vector2Int, Tower> towers = new Dictionary<Vector2Int, Tower>();
 
     // 公共属性（返回只读副本）
     public BlockGenerationConfig Config => config;
@@ -25,7 +23,7 @@ public class Block : MonoBehaviour
     public void Init(string shapeName)
     {
         LoadTowerPrefab();
-        
+
         if (towerPrefab == null)
         {
             Debug.LogError("Tower prefab not found at the specified path.");
@@ -100,7 +98,7 @@ public class Block : MonoBehaviour
         if (tilemap != null)
         {
             Vector3 cellCenter = tilemap.GetCellCenterWorld(new Vector3Int(position.x, position.y, 0));
-            transform.position = new Vector3(cellCenter.x, cellCenter.y -0.4f, 0);
+            transform.position = new Vector3(cellCenter.x, cellCenter.y - 0.4f, 0);
         }
         else
         {
@@ -128,16 +126,19 @@ public class Block : MonoBehaviour
     /// </summary>
     public Tower GenerateTower(Vector2Int localCoord, TowerData towerData, Tilemap tilemap = null)
     {
-        // if (!towers.ContainsKey(localCoord))
-        // {
-        //     Debug.LogError($"格子 ({localCoord.x}, {localCoord.y}) 不在当前方块范围内");
-        //     return null;
-        // }
-
-        if (towers[localCoord] != null)
+        if (towers.Count > 0)
         {
-            Debug.LogWarning($"格子 ({localCoord.x}, {localCoord.y}) 已经有塔了");
-            return towers[localCoord];
+            // if (!towers.ContainsKey(localCoord))
+            // {
+            //     Debug.LogError($"格子 ({localCoord.x}, {localCoord.y}) 不在当前方块范围内");
+            //     return null;
+            // }
+
+            if (towers.TryGetValue(localCoord, out Tower tower) && tower != null)
+            {
+                Debug.LogWarning($"格子 ({localCoord.x}, {localCoord.y}) 已经有塔了");
+                return towers[localCoord];
+            }
         }
 
         Vector2Int towerGridPos = worldPosition + localCoord;
@@ -145,9 +146,9 @@ public class Block : MonoBehaviour
 
         if (tilemap != null)
         {
-            Vector3 cellOrigin = tilemap.GetCellCenterWorld(new Vector3Int(towerGridPos.x, towerGridPos.y, 0));
+            Vector3 cellOrigin = tilemap.GetCellCenterLocal(new Vector3Int(towerGridPos.x, towerGridPos.y, 0));
 #if UNITY_EDITOR
-            Debug.Log($"格子 ({localCoord.x}, {localCoord.y}) 的世界坐标: {cellOrigin}");
+            Debug.Log($"格子 ({localCoord.x}, {localCoord.y}) 的本地坐标: {cellOrigin}");
 #endif
             towerWorldPos = new Vector3(cellOrigin.x, cellOrigin.y, 0);
         }
@@ -163,7 +164,7 @@ public class Block : MonoBehaviour
         }
 
 #if UNITY_EDITOR
-        Debug.Log($"生成塔于世界坐标: {towerWorldPos}");
+        Debug.Log($"生成塔于本地坐标: {towerWorldPos}");
 #endif
 
         GameObject go = Instantiate(towerPrefab, transform);
@@ -183,7 +184,7 @@ public class Block : MonoBehaviour
         const int VerticalOffsetMultiplier = 10;
         int verticalOffset = Mathf.RoundToInt(-towerWorldPos.y * VerticalOffsetMultiplier);
         int finalOrder = BaseOrder + verticalOffset;
-        
+
         towerComponent.Initialize(towerData, towerGridPos);
         towerComponent.SetOrder(finalOrder);
         towers[localCoord] = towerComponent;
@@ -211,9 +212,9 @@ public class Block : MonoBehaviour
     {
         if (towers.TryGetValue(localCoord, out var tower) && tower != null)
         {
-            #if UNITY_EDITOR
+#if UNITY_EDITOR
             Debug.Log($"移除格子 ({localCoord.x}, {localCoord.y}) 的塔");
-            #endif
+#endif
             Destroy(tower.gameObject);
             towers[localCoord] = null;
         }
@@ -226,6 +227,7 @@ public class Block : MonoBehaviour
         {
             if (tower != null) count++;
         }
+
         return count;
     }
 

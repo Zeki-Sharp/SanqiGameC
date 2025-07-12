@@ -111,8 +111,8 @@ public class BlockGenerationConfig : ScriptableObject
         }
         
         // 更新坐标缓存
-        cellCount = GetCellCount(out int count);
-        coordinates = GetCellCoords(count);
+        // cellCount = GetCellCount(out int count);
+        // coordinates = GetCellCoords(count);
         
 // #if UNITY_EDITOR
 //         if (!Application.isPlaying)
@@ -138,7 +138,8 @@ public class BlockGenerationConfig : ScriptableObject
 
     public Vector2Int[] GetCellCoords(int cellCount)
     {
-        // 删除此处的 Rotate(times) 调用以避免递归
+        int count = Random.Range(0,5);
+        Rotate( count);
         Vector2Int[] coords = new Vector2Int[cellCount];
         int index = 0;
         for (int i = 0; i < 16; i++)
