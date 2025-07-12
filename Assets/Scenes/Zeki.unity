@@ -578,10 +578,6 @@ MonoBehaviour:
       count: 3
     - enemyPrefab: {fileID: 3081488358046641282, guid: 5f99a0d2ca6c81942abe717868b11cb3, type: 3}
       count: 3
-    - enemyPrefab: {fileID: 0}
-      count: 1
-    - enemyPrefab: {fileID: 0}
-      count: 1
   - delayBeforeWave: 2
     enemies:
     - enemyPrefab: {fileID: 9133360019857942620, guid: f31b65574579733499fe1d9b7001b360, type: 3}
