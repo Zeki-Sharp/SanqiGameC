@@ -1,0 +1,85 @@
+using UnityEngine;
+
+/// <summary>
+/// 远程攻击行为 - 发射子弹攻击目标
+/// </summary>
+[CreateAssetMenu(fileName = "Ranged Attack", menuName = "Tower Defense/Attack Behaviors/Ranged Attack")]
+public class RangedAttackBehavior : ScriptableObject, IAttackBehavior
+{
+    [Header("远程攻击配置")]
+    [SerializeField] private float damage = 15f;
+    [SerializeField] private float attackCooldown = 1.5f;
+    [SerializeField] private float attackRange = 5f;
+    [SerializeField] private float bulletSpeed = 8f;
+    [SerializeField] private string attackAnimationTrigger = "Attack";
+    
+    [Header("子弹配置")]
+    [SerializeField] private GameObject bulletPrefab;
+    
+    [Header("特效配置")]
+    [SerializeField] private AudioClip attackSound;
+    [SerializeField] private AudioClip bulletHitSound;
+    
+    public void PerformAttack(EnemyController attacker, GameObject target)
+    {
+        if (!CanAttack(attacker, target))
+            return;
+        
+        Debug.Log($"{attacker.name} 执行远程攻击，目标: {target.name}");
+        
+        // 播放攻击动画
+        Animator animator = attacker.GetComponent<Animator>();
+        if (animator != null)
+        {
+            animator.SetTrigger(attackAnimationTrigger);
+        }
+        
+        // 播放攻击音效
+        AudioSource audioSource = attacker.GetComponent<AudioSource>();
+        if (audioSource != null && attackSound != null)
+        {
+            audioSource.PlayOneShot(attackSound);
+        }
+        
+        // 查找FirePoint
+        Transform firePoint = attacker.transform.Find("FirePoint");
+        Vector3 firePosition = firePoint != null ? firePoint.position : attacker.transform.position;
+        Vector3 direction = (target.transform.position - firePosition).normalized;
+        
+        if (bulletPrefab != null)
+        {
+            GameObject bullet = Instantiate(bulletPrefab, firePosition, Quaternion.identity);
+            EnemyBullet enemyBullet = bullet.GetComponent<EnemyBullet>();
+            if (enemyBullet != null)
+            {
+                enemyBullet.Initialize(direction, bulletSpeed, damage, attacker.gameObject);
+            }
+            else
+            {
+                Rigidbody2D rb = bullet.GetComponent<Rigidbody2D>();
+                if (rb != null)
+                {
+                    rb.linearVelocity = direction * bulletSpeed;
+                }
+                Debug.LogWarning("子弹预制体缺少EnemyBullet组件，请添加该组件以获得完整的子弹功能");
+            }
+        }
+    }
+    
+    public bool CanAttack(EnemyController attacker, GameObject target)
+    {
+        if (attacker == null || target == null)
+            return false;
+        float distance = Vector3.Distance(attacker.transform.position, target.transform.position);
+        return distance <= attackRange;
+    }
+    
+    public float GetAttackCooldown()
+    {
+        return attackCooldown;
+    }
+    
+    public float Damage => damage;
+    public float AttackRange => attackRange;
+    public float BulletSpeed => bulletSpeed;
+} 

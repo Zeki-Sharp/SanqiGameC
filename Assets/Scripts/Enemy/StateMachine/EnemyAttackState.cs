@@ -1,13 +1,11 @@
 using UnityEngine;
 
 /// <summary>
-/// 敌人攻击状态 - 抽象类，等待集成具体攻击逻辑
+/// 敌人攻击状态 - 使用配置的攻击行为
 /// </summary>
 public class EnemyAttackState : EnemyState
 {
     private GameObject targetTower;
-    private float attackRange = 1.5f;
-    private float attackCooldown = 1f;
     private float lastAttackTime;
     
     public EnemyAttackState(EnemyController controller) : base(controller) { }
@@ -16,7 +14,10 @@ public class EnemyAttackState : EnemyState
     {
         Debug.Log($"{controller.name} 进入攻击状态");
         FindTargetTower();
-        lastAttackTime = -attackCooldown; // 允许立即攻击
+        
+        // 获取攻击冷却时间，允许立即攻击
+        float attackCooldown = controller.AttackBehavior != null ? controller.AttackBehavior.GetAttackCooldown() : 1f;
+        lastAttackTime = -attackCooldown;
     }
     
     public override void Update()
@@ -29,6 +30,7 @@ public class EnemyAttackState : EnemyState
         
         // 检查目标是否在攻击范围内
         float distanceToTarget = Vector3.Distance(controller.transform.position, targetTower.transform.position);
+        float attackRange = controller.AttackRange;
         
         if (distanceToTarget <= attackRange)
         {
@@ -40,6 +42,7 @@ public class EnemyAttackState : EnemyState
             }
             
             // 执行攻击
+            float attackCooldown = controller.AttackBehavior != null ? controller.AttackBehavior.GetAttackCooldown() : 1f;
             if (Time.time - lastAttackTime >= attackCooldown)
             {
                 PerformAttack();
@@ -86,17 +89,17 @@ public class EnemyAttackState : EnemyState
     
     
     /// <summary>
-    /// 执行攻击 - 抽象方法，等待具体实现
+    /// 执行攻击 - 使用配置的攻击行为
     /// </summary>
     protected virtual void PerformAttack()
     {
-        Debug.Log($"{controller.name} 攻击目标塔: {targetTower.name}");
-        
-        // TODO: 在这里集成具体的攻击逻辑
-        // 例如：
-        // - 播放攻击动画
-        // - 造成伤害
-        // - 播放音效
-        // - 生成特效等
+        if (controller.AttackBehavior != null)
+        {
+            controller.AttackBehavior.PerformAttack(controller, targetTower);
+        }
+        else
+        {
+            Debug.LogWarning($"{controller.name} 没有配置攻击行为！");
+        }
     }
 }   

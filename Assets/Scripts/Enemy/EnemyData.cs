@@ -13,8 +13,10 @@ public class EnemyData : ScriptableObject
     [SerializeField] private float maxHealth = 100f;
     [SerializeField] private float moveSpeed = 2f;
     [SerializeField] private float attackRange = 1.5f;
-    [SerializeField] private float attackDamage = 10f;
-    [SerializeField] private float attackCooldown = 1f;
+    
+    [Header("攻击配置")]
+    [SerializeField] private ScriptableObject attackBehavior;
+
     
     [Header("奖励")]
     [SerializeField] private int goldReward = 10;
@@ -24,7 +26,6 @@ public class EnemyData : ScriptableObject
     public float MaxHealth => maxHealth;
     public float MoveSpeed => moveSpeed;
     public float AttackRange => attackRange;
-    public float AttackDamage => attackDamage;
-    public float AttackCooldown => attackCooldown;
+    public IAttackBehavior AttackBehavior => attackBehavior as IAttackBehavior;
     public int GoldReward => goldReward;
 } 
