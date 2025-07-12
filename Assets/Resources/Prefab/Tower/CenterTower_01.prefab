@@ -202,9 +202,11 @@ GameObject:
   - component: {fileID: 5965266069931466106}
   - component: {fileID: -7628005892329325224}
   - component: {fileID: 8622939898402481615}
+  - component: {fileID: 2274610060129136706}
+  - component: {fileID: 8938938391962000119}
   m_Layer: 0
   m_Name: CenterTower_01
-  m_TagString: Untagged
+  m_TagString: centerTower
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -241,6 +243,7 @@ MonoBehaviour:
   config: {fileID: 11400000, guid: f62da1e755004f84ca7ffb86da418562, type: 2}
   worldPosition: {x: 0, y: 0}
   canBeOverridden: 0
+  towerPrefab: {fileID: 0}
 --- !u!114 &8622939898402481615
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -253,10 +256,64 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f3e2c2569723b5a4580f45bc79151879, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  towerData: {fileID: 0}
+  towerData: {fileID: 11400000, guid: 2c56d48c1b17cd04e8bfca12c88f6655, type: 2}
   currentHealth: 0
   position: {x: 0, y: 0}
   spriteRenderer: {fileID: 0}
+  text: {fileID: 0}
+  bulletPrefab: {fileID: 3447451743312656527, guid: 2fb7abf005420a1429b21a013ddbccb1, type: 3}
+  bulletConfig: {fileID: 11400000, guid: 9854841db7f1c6e4189096b2f0f052ac, type: 2}
+--- !u!70 &2274610060129136706
+CapsuleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7002921581114174909}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
+  m_Offset: {x: 0, y: 0}
+  m_Size: {x: 0.5, y: 1}
+  m_Direction: 0
+--- !u!114 &8938938391962000119
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7002921581114174909}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 66cea6256f9448144a47a534a9ead3ee, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxHealth: 0
+  currentHealth: 0
 --- !u!1 &7371399421173341675
 GameObject:
   m_ObjectHideFlags: 0

@@ -19,6 +19,7 @@ MonoBehaviour:
   attackRange: 100
   attackInterval: 100
   physicAttack: 100
+  attackSpeed: 5
   magicAttack: 100
   criticalHitRate: 100
   criticalHitMulti: 100
