@@ -18,3 +18,4 @@ MonoBehaviour:
   coordinates:
   - {x: 0, y: 0}
   - {x: 1, y: 0}
+  offset: {x: -0.222, y: -0.111}

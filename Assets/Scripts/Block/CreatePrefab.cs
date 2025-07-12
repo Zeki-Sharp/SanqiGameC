@@ -80,55 +80,7 @@ public class CreatePrefab : MonoBehaviour
         Debug.Log($"地图初始化完成: {mapWidth}x{mapHeight}, 格子大小: {cellSize}");
     }
  
-    /// <summary>
-    /// 根据给定坐标调整Tilemap大小
-    /// </summary>
-    // private void AdjustTilemapSize(Vector2Int[] positions)
-    // {
-    //     // 查找坐标范围
-    //     int minX = int.MaxValue, maxX = int.MinValue;
-    //     int minY = int.MaxValue, maxY = int.MinValue;
-    //     
-    //     foreach (var pos in positions)
-    //     {
-    //         minX = Mathf.Min(minX, pos.x);
-    //         maxX = Mathf.Max(maxX, pos.x);
-    //         minY = Mathf.Min(minY, pos.y);
-    //         minY = Mathf.Max(minY, pos.y); // 这里修复了逻辑错误
-    //         maxY = Mathf.Max(maxY, pos.y);
-    //     }
-    //     
-    //     // 计算地图尺寸（增加1个单位的边距）
-    //     mapWidth = maxX - minX + 1 + 2;  // +1 是因为包括起始点，+2 是边距
-    //     mapHeight = maxY - minY + 1 + 2;
-    //     
-    //     // 确保最小尺寸
-    //     mapWidth = Mathf.Max(mapWidth, 5);
-    //     mapHeight = Mathf.Max(mapHeight, 5);
-    //     
-    //     // 清空现有Tilemap
-    //     if (tilemap != null)
-    //     {
-    //         tilemap.ClearAllTiles();
-    //         
-    //         // 设置cellSize（遵循Tilemap生成规范）
-    //         tilemap.size = new Vector3Int(mapWidth, mapHeight, 1);
-    //         
-    //         // 重新填充地面瓦片
-    //         if (groundTile != null)
-    //         {
-    //             for (int x = minX - 1; x <= maxX + 1; x++)
-    //             {
-    //                 for (int y = minY - 1; y <= maxY + 1; y++)
-    //                 {
-    //                     tilemap.SetTile(new Vector3Int(x, y, 0), groundTile);
-    //                 }
-    //             }
-    //         }
-    //     }
-    //     
-    //     Debug.Log($"Tilemap尺寸已调整: {mapWidth}x{mapHeight}, 覆盖范围: ({minX},{minY})-({maxX},{maxY}), 格子大小: {cellSize}");
-    // }
+ 
     /// <summary>
     /// 根据当前Tilemap范围计算中心点
     /// </summary>
@@ -193,7 +145,8 @@ public class CreatePrefab : MonoBehaviour
         
         // 实例化方块
         GameObject blockObj = Instantiate(blockPrefab, prefabShowArea.transform);
-        Block block = blockObj.GetComponent<Block>(); 
+        Block block = blockObj.GetComponent<Block>();
+       
 
         if (block == null)
         {
@@ -215,7 +168,7 @@ public class CreatePrefab : MonoBehaviour
         
         // 对齐到Tilemap中心格子
         AlignObjectToTile(block, tilemapCenter, initialParentPosition);
-        
+        block.transform.parent.position = block.transform.parent.position + (Vector3)config.offset;
         // 注册到地图
         if (GameMap.instance == null)
         {
@@ -277,6 +230,7 @@ public class CreatePrefab : MonoBehaviour
         
         // 设置物体位置
         block.transform.position = finalPosition;
+        
 
         // 输出完整的调试信息
         Debug.Log($"物体已对齐到格子位置 {targetTilePosition}，世界坐标：{finalPosition}，应用Pivot偏移：{pivotOffset}" +

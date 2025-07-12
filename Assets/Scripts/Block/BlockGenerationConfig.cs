@@ -69,6 +69,8 @@ public class BlockGenerationConfig : ScriptableObject
 
     public Vector2Int[] Coordinates => coordinates;
     public int CellCount => cellCount;
+    
+    public Vector2 offset;
 
     private void OnValidate()
     {
