@@ -15,6 +15,6 @@ MonoBehaviour:
   enemyName: Enemy
   maxHealth: 100
   moveSpeed: 2
-  attackRange: 1.5
+  attackRange: 4
   attackBehavior: {fileID: 11400000, guid: f8e6a5643e2672f47b4f65008aaf27a2, type: 2}
   goldReward: 10

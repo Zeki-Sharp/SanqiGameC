@@ -15,7 +15,7 @@ MonoBehaviour:
   id: 100
   towerName: TestTower
   towerSprite: {fileID: 4293587053738703087, guid: b4bf0700b3c507e48b3075acc47fefb1, type: 3}
-  health: 100
+  health: 400
   attackRange: 100
   attackInterval: 100
   physicAttack: 100

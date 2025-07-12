@@ -17,8 +17,6 @@ public class Tower : MonoBehaviour
 
     [Header("攻击相关")]
     [SerializeField] private GameObject bulletPrefab;
-    [SerializeField] private BulletConfig bulletConfig;
-
 
     // 公共属性
     public TowerData TowerData => towerData;
@@ -29,7 +27,7 @@ public class Tower : MonoBehaviour
 
     public float AttackRange => towerData != null ? towerData.AttackRange : 3f;
     public float AttackInterval => towerData != null ? towerData.AttackInterval : 1f;
-    public float BulletSpeed => bulletConfig != null ? bulletConfig.BulletSpeed : 10f;
+    public float BulletSpeed => 10f; // 可根据塔数据扩展
     public float AttackDamage => towerData != null ? towerData.PhysicAttack : 10f;
 
     private void Awake()
@@ -48,40 +46,24 @@ public class Tower : MonoBehaviour
         renderer.sortingOrder = order;
     }
 
-    /// <summary>
-    /// 初始化塔
-    /// </summary>
-    /// <param name="data">塔的数据</param>
-    /// <param name="pos">塔的位置</param>
     public void Initialize(TowerData data, Vector2Int pos)
     {
         spriteRenderer = GetComponentInChildren<SpriteRenderer>();
-
-        // text = GetComponentInChildren<TextMeshProUGUI>();
         towerData = data;
         position = pos;
         currentHealth = data.Health;
         spriteRenderer.sprite = data.TowerSprite;
         text.text = data.TowerName;
-        // 设置位置
-        // transform.position = new Vector3(pos.x, pos.y, 0);
-
         Debug.Log($"塔初始化完成: {data.TowerName} 在位置 ({pos.x}, {pos.y})");
     }
 
-    /// <summary>
-    /// 受到伤害
-    /// </summary>
-    /// <param name="damage">伤害值</param>
     public void TakeDamage(float damage)
     {
         currentHealth -= damage;
-
         if (currentHealth <= 0)
         {
             currentHealth = 0;
             Debug.Log($"塔 {towerData.TowerName} 被摧毁");
-            // TODO: 播放摧毁效果
         }
         else
         {
@@ -89,34 +71,22 @@ public class Tower : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// 攻击目标
-    /// </summary>
-    /// <param name="target">目标</param>
     public void Attack(GameObject target)
     {
         if (target == null) return;
-
-        // TODO: 实现攻击逻辑
         Debug.Log($"塔 {towerData.TowerName} 攻击目标");
     }
 
-    /// <summary>
-    /// 检查是否存活
-    /// </summary>
-    /// <returns>是否存活</returns>
     public bool IsAlive()
     {
         return currentHealth > 0;
     }
 
-
-
     private float lastAttackTime;
 
     private void Update()
     {
-        if (towerData == null || bulletPrefab == null || bulletConfig == null) return;
+        if (towerData == null || bulletPrefab == null) return;
         float attackSpeed = towerData.AttackSpeed > 0 ? towerData.AttackSpeed : 1f;
         if (Time.time - lastAttackTime >= 1f / attackSpeed)
         {
@@ -149,11 +119,16 @@ public class Tower : MonoBehaviour
     private void FireAt(GameObject target)
     {
         GameObject bullet = Instantiate(bulletPrefab, transform.position, Quaternion.identity);
-        Bullet bulletScript = bullet.GetComponent<Bullet>();
+        var bulletScript = bullet.GetComponent<IBullet>();
         if (bulletScript != null)
         {
             float damage = towerData.PhysicAttack;
-            bulletScript.Init(target.transform, damage, bulletConfig);
+            float speed = 0; // 让子弹用自己的Inspector速度
+            bulletScript.Initialize((target.transform.position - transform.position).normalized, speed, damage, gameObject, target, new string[] { "Enemy" } );
+        }
+        else
+        {
+            Debug.LogWarning("塔的子弹预制体未挂载IBullet实现脚本！");
         }
     }
 }

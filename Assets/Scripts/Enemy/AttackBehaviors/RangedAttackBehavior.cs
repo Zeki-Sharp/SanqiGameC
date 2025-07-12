@@ -49,19 +49,14 @@ public class RangedAttackBehavior : ScriptableObject, IAttackBehavior
         if (bulletPrefab != null)
         {
             GameObject bullet = Instantiate(bulletPrefab, firePosition, Quaternion.identity);
-            EnemyBullet enemyBullet = bullet.GetComponent<EnemyBullet>();
-            if (enemyBullet != null)
+            var bulletScript = bullet.GetComponent<IBullet>();
+            if (bulletScript != null)
             {
-                enemyBullet.Initialize(direction, bulletSpeed, damage, attacker.gameObject);
+                bulletScript.Initialize(direction, 0, damage, attacker.gameObject, target, new string[]{"Tower", "CenterTower"});
             }
             else
             {
-                Rigidbody2D rb = bullet.GetComponent<Rigidbody2D>();
-                if (rb != null)
-                {
-                    rb.linearVelocity = direction * bulletSpeed;
-                }
-                Debug.LogWarning("子弹预制体缺少EnemyBullet组件，请添加该组件以获得完整的子弹功能");
+                Debug.LogWarning("子弹预制体未挂载IBullet实现脚本！");
             }
         }
     }

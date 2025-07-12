@@ -17,7 +17,6 @@ MonoBehaviour:
   attackRange: 5
   bulletSpeed: 8
   attackAnimationTrigger: Attack
-  bulletPrefab: {fileID: 7919333699275963451, guid: 8c11a108dea929b43ad8aeac09ed9c06, type: 3}
-  firePoint: {fileID: 0}
+  bulletPrefab: {fileID: 3447451743312656527, guid: 32d3d5890e9c433499f4e42e067ae303, type: 3}
   attackSound: {fileID: 0}
   bulletHitSound: {fileID: 0}
