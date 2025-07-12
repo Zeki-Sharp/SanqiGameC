@@ -111,13 +111,8 @@ public class BlockGenerationConfig : ScriptableObject
         }
         
         // 更新坐标缓存
-<<<<<<< HEAD:Assets/Scripts/Block/BlockGenerationConfig.cs
-        cellCount = GetCellCount(out int count);
-        coordinates = GetCellCoords(count);
-=======
         // cellCount = GetCellCount(out int count);
         // coordinates = GetCellCoords(count);
->>>>>>> origin/Zhaozhijun:Assets/Scripts/BlockSystem/BlockGenerationConfig.cs
         
 // #if UNITY_EDITOR
 //         if (!Application.isPlaying)
@@ -143,12 +138,8 @@ public class BlockGenerationConfig : ScriptableObject
 
     public Vector2Int[] GetCellCoords(int cellCount)
     {
-<<<<<<< HEAD:Assets/Scripts/Block/BlockGenerationConfig.cs
-        // 删除此处的 Rotate(times) 调用以避免递归
-=======
         int count = Random.Range(0,5);
         Rotate( count);
->>>>>>> origin/Zhaozhijun:Assets/Scripts/BlockSystem/BlockGenerationConfig.cs
         Vector2Int[] coords = new Vector2Int[cellCount];
         int index = 0;
         for (int i = 0; i < 16; i++)

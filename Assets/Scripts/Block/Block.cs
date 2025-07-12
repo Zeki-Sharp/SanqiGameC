@@ -98,11 +98,7 @@ public class Block : MonoBehaviour
         if (tilemap != null)
         {
             Vector3 cellCenter = tilemap.GetCellCenterWorld(new Vector3Int(position.x, position.y, 0));
-<<<<<<< HEAD:Assets/Scripts/Block/Block.cs
-            transform.position = new Vector3(cellCenter.x, cellCenter.y -0.4f, 0);
-=======
             transform.position = new Vector3(cellCenter.x, cellCenter.y - 0.4f, 0);
->>>>>>> origin/Zhaozhijun:Assets/Scripts/BlockSystem/Block.cs
         }
         else
         {
@@ -130,20 +126,6 @@ public class Block : MonoBehaviour
     /// </summary>
     public Tower GenerateTower(Vector2Int localCoord, TowerData towerData, Tilemap tilemap = null)
     {
-<<<<<<< HEAD:Assets/Scripts/Block/Block.cs
-        // if (!towers.ContainsKey(localCoord))
-        // {
-        //     Debug.LogError($"格子 ({localCoord.x}, {localCoord.y}) 不在当前方块范围内");
-        //     return null;
-        // }
-
-        if (towers[localCoord] != null)
-        {
-            Debug.LogWarning($"格子 ({localCoord.x}, {localCoord.y}) 已经有塔了");
-            return towers[localCoord];
-        }
-
-=======
         if (towers.Count > 0)
         {
             // if (!towers.ContainsKey(localCoord))
@@ -159,21 +141,14 @@ public class Block : MonoBehaviour
             }
         }
 
->>>>>>> origin/Zhaozhijun:Assets/Scripts/BlockSystem/Block.cs
         Vector2Int towerGridPos = worldPosition + localCoord;
         Vector3 towerWorldPos;
 
         if (tilemap != null)
         {
-<<<<<<< HEAD:Assets/Scripts/Block/Block.cs
-            Vector3 cellOrigin = tilemap.GetCellCenterWorld(new Vector3Int(towerGridPos.x, towerGridPos.y, 0));
-#if UNITY_EDITOR
-            Debug.Log($"格子 ({localCoord.x}, {localCoord.y}) 的世界坐标: {cellOrigin}");
-=======
             Vector3 cellOrigin = tilemap.GetCellCenterLocal(new Vector3Int(towerGridPos.x, towerGridPos.y, 0));
 #if UNITY_EDITOR
             Debug.Log($"格子 ({localCoord.x}, {localCoord.y}) 的本地坐标: {cellOrigin}");
->>>>>>> origin/Zhaozhijun:Assets/Scripts/BlockSystem/Block.cs
 #endif
             towerWorldPos = new Vector3(cellOrigin.x, cellOrigin.y, 0);
         }
@@ -189,11 +164,7 @@ public class Block : MonoBehaviour
         }
 
 #if UNITY_EDITOR
-<<<<<<< HEAD:Assets/Scripts/Block/Block.cs
-        Debug.Log($"生成塔于世界坐标: {towerWorldPos}");
-=======
         Debug.Log($"生成塔于本地坐标: {towerWorldPos}");
->>>>>>> origin/Zhaozhijun:Assets/Scripts/BlockSystem/Block.cs
 #endif
 
         GameObject go = Instantiate(towerPrefab, transform);
@@ -213,11 +184,7 @@ public class Block : MonoBehaviour
         const int VerticalOffsetMultiplier = 10;
         int verticalOffset = Mathf.RoundToInt(-towerWorldPos.y * VerticalOffsetMultiplier);
         int finalOrder = BaseOrder + verticalOffset;
-<<<<<<< HEAD:Assets/Scripts/Block/Block.cs
-        
-=======
 
->>>>>>> origin/Zhaozhijun:Assets/Scripts/BlockSystem/Block.cs
         towerComponent.Initialize(towerData, towerGridPos);
         towerComponent.SetOrder(finalOrder);
         towers[localCoord] = towerComponent;
@@ -245,15 +212,9 @@ public class Block : MonoBehaviour
     {
         if (towers.TryGetValue(localCoord, out var tower) && tower != null)
         {
-<<<<<<< HEAD:Assets/Scripts/Block/Block.cs
-            #if UNITY_EDITOR
-            Debug.Log($"移除格子 ({localCoord.x}, {localCoord.y}) 的塔");
-            #endif
-=======
 #if UNITY_EDITOR
             Debug.Log($"移除格子 ({localCoord.x}, {localCoord.y}) 的塔");
 #endif
->>>>>>> origin/Zhaozhijun:Assets/Scripts/BlockSystem/Block.cs
             Destroy(tower.gameObject);
             towers[localCoord] = null;
         }
