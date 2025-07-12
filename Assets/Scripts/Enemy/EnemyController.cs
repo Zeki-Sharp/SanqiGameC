@@ -5,30 +5,32 @@ using UnityEngine;
 /// </summary>
 public class EnemyController : MonoBehaviour
 {
-    [Header("敌人设置")]
-    [SerializeField] private float attackRange = 1.5f;
-    [SerializeField] private float moveSpeed = 2f;
-    [SerializeField] private float maxHealth = 100f;
-    
-    [Header("调试")]
-    [SerializeField] private bool showDebugInfo = true;
-    [SerializeField] private Color attackRangeColor = Color.red;
-    
+    [Header("数据配置")]
+    public EnemyData data; // 直接在Prefab Inspector拖拽
+
+    private DamageTaker damageTaker;
+
     // 私有变量
     private EnemyState currentState;
     private float currentHealth;
     private SpriteRenderer spriteRenderer;
     
     // 公共属性
-    public float AttackRange => attackRange;
-    public float MoveSpeed => moveSpeed;
+    public float AttackRange => data != null ? data.AttackRange : 1.5f;
+    public float MoveSpeed => data != null ? data.MoveSpeed : 2f;
     public float CurrentHealth => currentHealth;
-    public float MaxHealth => maxHealth;
+    public float MaxHealth => data != null ? data.MaxHealth : 100f;
     
     private void Awake()
     {
+        damageTaker = GetComponent<DamageTaker>();
+        if (data != null && damageTaker != null)
+        {
+            damageTaker.maxHealth = data.MaxHealth;
+            damageTaker.currentHealth = data.MaxHealth;
+        }
         spriteRenderer = GetComponent<SpriteRenderer>();
-        currentHealth = maxHealth;
+        currentHealth = MaxHealth;
         
         // 确保敌人有正确的标签
         if (string.IsNullOrEmpty(gameObject.tag) || gameObject.tag != "Enemy")
@@ -80,43 +82,27 @@ public class EnemyController : MonoBehaviour
     }
     
     /// <summary>
-    /// 检查攻击范围内是否有塔
+    /// 检查攻击范围内是否有塔（centerTower或tower标签）
     /// </summary>
     /// <returns>是否有塔在攻击范围内</returns>
     public bool IsTowerInAttackRange()
     {
-        GameObject[] towers = GameObject.FindGameObjectsWithTag("centerTower");
-        
-        foreach (GameObject tower in towers)
+        string[] tags = { "CenterTower", "Tower" };
+        foreach (string tag in tags)
         {
-            float distance = Vector3.Distance(transform.position, tower.transform.position);
-            if (distance <= attackRange)
+            GameObject[] towers = GameObject.FindGameObjectsWithTag(tag);
+            foreach (GameObject tower in towers)
             {
-                return true;
+                float distance = Vector3.Distance(transform.position, tower.transform.position);
+                if (distance <= AttackRange)
+                {
+                    return true;
+                }
             }
         }
-        
         return false;
     }
     
-    /// <summary>
-    /// 受到伤害
-    /// </summary>
-    /// <param name="damage">伤害值</param>
-    public void TakeDamage(float damage)
-    {
-        currentHealth -= damage;
-        
-        if (currentHealth <= 0)
-        {
-            currentHealth = 0;
-            Die();
-        }
-        else
-        {
-            Debug.Log($"{name} 受到 {damage} 点伤害，剩余生命值: {currentHealth}");
-        }
-    }
     
     /// <summary>
     /// 敌人死亡
@@ -139,11 +125,9 @@ public class EnemyController : MonoBehaviour
     
     private void OnDrawGizmosSelected()
     {
-        if (!showDebugInfo) return;
-        
         // 绘制攻击范围
-        Gizmos.color = attackRangeColor;
-        Gizmos.DrawWireSphere(transform.position, attackRange);
+        Gizmos.color = Color.red; // 使用默认颜色
+        Gizmos.DrawWireSphere(transform.position, AttackRange);
         
         // 绘制朝向
         Gizmos.color = Color.blue;
@@ -152,12 +136,10 @@ public class EnemyController : MonoBehaviour
     
     private void OnDrawGizmos()
     {
-        if (!showDebugInfo) return;
-        
         // 在Scene视图中显示调试信息
         #if UNITY_EDITOR
         UnityEditor.Handles.Label(transform.position + Vector3.up * 1.5f, 
-            $"状态: {GetCurrentStateName()}\n生命值: {currentHealth:F0}/{maxHealth:F0}");
+            $"状态: {GetCurrentStateName()}\n生命值: {currentHealth:F0}/{MaxHealth:F0}");
         #endif
     }
 } 

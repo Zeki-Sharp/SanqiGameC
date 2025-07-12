@@ -13,9 +13,10 @@ GameObject:
   - component: {fileID: -5103598127602065236}
   - component: {fileID: 8117376236037654526}
   - component: {fileID: 8774455131177754429}
+  - component: {fileID: -1168126699295267434}
   m_Layer: 0
   m_Name: Enemy_test
-  m_TagString: Untagged
+  m_TagString: enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -139,11 +140,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eef61beab7c0be4458a26e80d55810a4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  attackRange: 1.5
-  moveSpeed: 2
-  maxHealth: 100
-  showDebugInfo: 1
-  attackRangeColor: {r: 1, g: 0, b: 0, a: 1}
+  data: {fileID: 11400000, guid: 7aaf533f3d8c502498b868e1d33eb75f, type: 2}
 --- !u!50 &8774455131177754429
 Rigidbody2D:
   serializedVersion: 5
@@ -171,3 +168,17 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
+--- !u!114 &-1168126699295267434
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9133360019857942620}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 66cea6256f9448144a47a534a9ead3ee, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxHealth: 100
+  currentHealth: 0

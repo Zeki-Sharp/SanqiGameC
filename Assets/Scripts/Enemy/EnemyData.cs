@@ -3,13 +3,11 @@ using UnityEngine;
 /// <summary>
 /// 敌人数据 - ScriptableObject用于配置敌人属性
 /// </summary>
-[CreateAssetMenu(fileName = "New Enemy Data", menuName = "Game/Enemy Data")]
+[CreateAssetMenu(fileName = "New Enemy Data", menuName = "Tower Defense/Enemy Data")]
 public class EnemyData : ScriptableObject
 {
     [Header("基础信息")]
     [SerializeField] private string enemyName = "Enemy";
-    [SerializeField] private Sprite enemySprite;
-    [SerializeField] private GameObject enemyPrefab;
     
     [Header("属性")]
     [SerializeField] private float maxHealth = 100f;
@@ -20,17 +18,13 @@ public class EnemyData : ScriptableObject
     
     [Header("奖励")]
     [SerializeField] private int goldReward = 10;
-    [SerializeField] private int experienceReward = 5;
     
     // 公共属性
     public string EnemyName => enemyName;
-    public Sprite EnemySprite => enemySprite;
-    public GameObject EnemyPrefab => enemyPrefab;
     public float MaxHealth => maxHealth;
     public float MoveSpeed => moveSpeed;
     public float AttackRange => attackRange;
     public float AttackDamage => attackDamage;
     public float AttackCooldown => attackCooldown;
     public int GoldReward => goldReward;
-    public int ExperienceReward => experienceReward;
 } 

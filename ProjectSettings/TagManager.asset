@@ -4,7 +4,9 @@
 TagManager:
   serializedVersion: 3
   tags:
-  - centerTower
+  - Enemy
+  - CenterTower
+  - Tower
   layers:
   - Default
   - TransparentFX

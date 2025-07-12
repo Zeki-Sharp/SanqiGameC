@@ -52,7 +52,7 @@ public class EnemySpawner : MonoBehaviour
             {
                 for (int i = 0; i < enemyInfo.count; i++)
                 {
-                    SpawnEnemy(enemyInfo.enemyData);
+                    SpawnEnemy(enemyInfo.enemyPrefab);
                     yield return new WaitForSeconds(unitSpawnDelay);
                 }
             }
@@ -64,24 +64,15 @@ public class EnemySpawner : MonoBehaviour
     /// <summary>
     /// 生成单个敌人
     /// </summary>
-    public void SpawnEnemy(EnemyData enemyData)
+    public void SpawnEnemy(GameObject enemyPrefab)
     {
-        if (enemyData == null)
+        if (enemyPrefab == null)
         {
-            Debug.LogError("未设置敌人数据！");
+            Debug.LogError("未设置敌人Prefab！");
             return;
         }
         Vector3 spawnPosition = CalculateSpawnPositionInAreas();
-        GameObject enemyObject;
-        if (enemyData.EnemyPrefab != null)
-        {
-            enemyObject = Instantiate(enemyData.EnemyPrefab, spawnPosition, Quaternion.identity);
-        }
-        else
-        {
-            enemyObject = CreateBasicEnemy(spawnPosition, enemyData);
-        }
-        ConfigureEnemy(enemyObject, enemyData);
+        GameObject enemyObject = Instantiate(enemyPrefab, spawnPosition, Quaternion.identity);
         currentEnemyCount++;
         if (debugSpawnInfo)
         {
@@ -104,50 +95,6 @@ public class EnemySpawner : MonoBehaviour
         float x = Random.Range(area.min.x, area.max.x);
         float y = Random.Range(area.min.y, area.max.y);
         return new Vector3(x, y, 0f);
-    }
-
-    private GameObject CreateBasicEnemy(Vector3 spawnPosition, EnemyData enemyData)
-    {
-        GameObject enemyObject = new GameObject($"Enemy_{currentEnemyCount}");
-        enemyObject.transform.position = spawnPosition;
-        SpriteRenderer spriteRenderer = enemyObject.AddComponent<SpriteRenderer>();
-        if (enemyData.EnemySprite != null)
-        {
-            spriteRenderer.sprite = enemyData.EnemySprite;
-        }
-        else
-        {
-            spriteRenderer.color = Color.red;
-            spriteRenderer.sprite = CreateDefaultSprite();
-        }
-        spriteRenderer.sortingOrder = 1;
-        CircleCollider2D collider = enemyObject.AddComponent<CircleCollider2D>();
-        collider.radius = 0.5f;
-        collider.isTrigger = false;
-        enemyObject.AddComponent<EnemyController>();
-        return enemyObject;
-    }
-
-    private Sprite CreateDefaultSprite()
-    {
-        Texture2D texture = new Texture2D(32, 32);
-        Color[] pixels = new Color[32 * 32];
-        for (int i = 0; i < pixels.Length; i++)
-            pixels[i] = Color.white;
-        texture.SetPixels(pixels);
-        texture.Apply();
-        return Sprite.Create(texture, new Rect(0, 0, 32, 32), new Vector2(0.5f, 0.5f));
-    }
-
-    private void ConfigureEnemy(GameObject enemyObject, EnemyData enemyData)
-    {
-        EnemyController controller = enemyObject.GetComponent<EnemyController>();
-        if (controller != null)
-        {
-            // 可在此处扩展，将enemyData属性传递给controller
-        }
-        enemyObject.tag = "Enemy";
-        enemyObject.name = $"{enemyData.EnemyName}_{currentEnemyCount}";
     }
 
     [ContextMenu("开始波次生成")]
@@ -195,23 +142,25 @@ public class EnemySpawner : MonoBehaviour
                 var area = spawnAreas[i];
                 Handles.color = Color.yellow;
                 Vector3 p0 = new Vector3(area.min.x, area.min.y, 0f);
-                Vector3 p1 = new Vector3(area.max.x, area.min.y, 0f);
                 Vector3 p2 = new Vector3(area.max.x, area.max.y, 0f);
-                Vector3 p3 = new Vector3(area.min.x, area.max.y, 0f);
-                Handles.DrawLine(p0, p1);
-                Handles.DrawLine(p1, p2);
-                Handles.DrawLine(p2, p3);
-                Handles.DrawLine(p3, p0);
-                // 拖动编辑角点
                 EditorGUI.BeginChangeCheck();
-                var fmh_207_61_638879143306192057 = Quaternion.identity; Vector3 newMin = Handles.FreeMoveHandle(p0, 0.15f, Vector3.zero, Handles.SphereHandleCap);
-                var fmh_208_61_638879143306202205 = Quaternion.identity; Vector3 newMax = Handles.FreeMoveHandle(p2, 0.15f, Vector3.zero, Handles.SphereHandleCap);
+                Vector3 newMin = Handles.FreeMoveHandle(p0, 0.15f, Vector3.zero, Handles.SphereHandleCap);
+                Vector3 newMax = Handles.FreeMoveHandle(p2, 0.15f, Vector3.zero, Handles.SphereHandleCap);
                 if (EditorGUI.EndChangeCheck())
                 {
                     Undo.RecordObject(this, "Move Spawn Area Corner");
                     area.min = new Vector2(Mathf.Min(newMin.x, newMax.x), Mathf.Min(newMin.y, newMax.y));
                     area.max = new Vector2(Mathf.Max(newMin.x, newMax.x), Mathf.Max(newMin.y, newMax.y));
+                    EditorUtility.SetDirty(this);
                 }
+                // 可视化区域
+                Handles.color = Color.yellow;
+                Vector3 p1 = new Vector3(area.max.x, area.min.y, 0f);
+                Vector3 p3 = new Vector3(area.min.x, area.max.y, 0f);
+                Handles.DrawLine(p0, p1);
+                Handles.DrawLine(p1, p2);
+                Handles.DrawLine(p2, p3);
+                Handles.DrawLine(p3, p0);
             }
         }
     }

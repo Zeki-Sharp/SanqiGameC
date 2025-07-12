@@ -59,27 +59,31 @@ public class EnemyAttackState : EnemyState
     
     private void FindTargetTower()
     {
-        GameObject[] towers = GameObject.FindGameObjectsWithTag("centerTower");
-        
-        if (towers.Length > 0)
+        string[] tags = { "CenterTower", "Tower" };
+        foreach (string tag in tags)
         {
-            // 找到最近的塔
-            float closestDistance = float.MaxValue;
-            GameObject closestTower = null;
-            
-            foreach (GameObject tower in towers)
-            {
-                float distance = Vector3.Distance(controller.transform.position, tower.transform.position);
-                if (distance < closestDistance)
+            GameObject[] towers = GameObject.FindGameObjectsWithTag(tag);
+            if (towers.Length > 0)
+            {   
+                // 找到最近的塔
+                float closestDistance = float.MaxValue;
+                GameObject closestTower = null;
+                
+                foreach (GameObject tower in towers)
                 {
-                    closestDistance = distance;
-                    closestTower = tower;
+                    float distance = Vector3.Distance(controller.transform.position, tower.transform.position);
+                    if (distance < closestDistance)
+                    {
+                        closestDistance = distance;
+                        closestTower = tower;
+                    }
                 }
+                
+                targetTower = closestTower;
             }
-            
-            targetTower = closestTower;
         }
     }
+    
     
     /// <summary>
     /// 执行攻击 - 抽象方法，等待具体实现
@@ -95,4 +99,4 @@ public class EnemyAttackState : EnemyState
         // - 播放音效
         // - 生成特效等
     }
-} 
+}   

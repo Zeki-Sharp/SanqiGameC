@@ -46,30 +46,35 @@ public class EnemyMoveState : EnemyState
     
     private void FindTargetTower()
     {
-        GameObject[] towers = GameObject.FindGameObjectsWithTag("centerTower");
-        
-        if (towers.Length > 0)
+        string[] tags = { "CenterTower", "Tower" };
+        foreach (string tag in tags)
         {
-            // 找到最近的塔
-            float closestDistance = float.MaxValue;
-            GameObject closestTower = null;
-            
-            foreach (GameObject tower in towers)
+            GameObject[] towers = GameObject.FindGameObjectsWithTag(tag);
+            if (towers.Length > 0)
             {
-                float distance = Vector3.Distance(controller.transform.position, tower.transform.position);
-                if (distance < closestDistance)
+                // 找到最近的塔
+                float closestDistance = float.MaxValue;
+                GameObject closestTower = null;
+                
+                foreach (GameObject tower in towers)
                 {
-                    closestDistance = distance;
-                    closestTower = tower;
+                    float distance = Vector3.Distance(controller.transform.position, tower.transform.position);
+                    if (distance < closestDistance)
+                    {
+                        closestDistance = distance;
+                        closestTower = tower;
+                    }
                 }
+                
+                targetTower = closestTower;
+                Debug.Log($"{controller.name} 找到目标塔: {targetTower.name}");
             }
-            
-            targetTower = closestTower;
-            Debug.Log($"{controller.name} 找到目标塔: {targetTower.name}");
+            else
+            {
+                Debug.LogWarning("场景中没有找到Tower标签的物体");
+            }
         }
-        else
-        {
-            Debug.LogWarning("场景中没有找到centerTower标签的物体");
-        }
+        
+        
     }
 } 

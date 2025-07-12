@@ -15,6 +15,7 @@ public class TowerData : ScriptableObject
     [SerializeField] private float attackRange;
     [SerializeField] private float attackInterval;
     [SerializeField] private float physicAttack;
+    [SerializeField] private float attackSpeed;
     [SerializeField] private float magicAttack;
     
     [Header("暴击属性")]
@@ -33,6 +34,7 @@ public class TowerData : ScriptableObject
     public float AttackRange => attackRange;
     public float AttackInterval => attackInterval;
     public float PhysicAttack => physicAttack;
+    public float AttackSpeed => attackSpeed;
     public float MagicAttack => magicAttack;
     public float CriticalHitRate => criticalHitRate;
     public float CriticalHitMulti => criticalHitMulti;
