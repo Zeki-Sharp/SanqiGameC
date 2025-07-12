@@ -3,7 +3,19 @@
   "WorkspaceRootPath": "D:\\C_sharp_scripts\\SanqiGameC\\SanqiGameC\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{758F276D-82CA-738F-0126-617160E20B10}|Assembly-CSharp.csproj|d:\\c_sharp_scripts\\sanqigamec\\sanqigamec\\assets\\scripts\\enemy\\enemycontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{758F276D-82CA-738F-0126-617160E20B10}|Assembly-CSharp.csproj|d:\\c_sharp_scripts\\sanqigamec\\sanqigamec\\assets\\scripts\\tower\\tower.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{758F276D-82CA-738F-0126-617160E20B10}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\tower\\tower.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{758F276D-82CA-738F-0126-617160E20B10}|Assembly-CSharp.csproj|d:\\c_sharp_scripts\\sanqigamec\\sanqigamec\\assets\\scripts\\towersystem\\tower.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{758F276D-82CA-738F-0126-617160E20B10}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\towersystem\\tower.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{758F276D-82CA-738F-0126-617160E20B10}|Assembly-CSharp.csproj|d:\\c_sharp_scripts\\sanqigamec\\sanqigamec\\assets\\scripts\\enemy\\statemachine\\enemyattackstate.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{758F276D-82CA-738F-0126-617160E20B10}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\enemy\\statemachine\\enemyattackstate.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{758F276D-82CA-738F-0126-617160E20B10}|Assembly-CSharp.csproj|D:\\C_sharp_scripts\\SanqiGameC\\SanqiGameC\\assets\\scripts\\enemy\\enemycontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{758F276D-82CA-738F-0126-617160E20B10}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\enemy\\enemycontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
@@ -39,8 +51,8 @@
       "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Library\\PackageCache\\com.unity.2d.tilemap@bcd28ed819cb\\Editor\\GridEditorUtility.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\C_sharp_scripts\\SanqiGameC\\SanqiGameC\\assets\\scripts\\bullet\\bullet.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:assets\\scripts\\bullet\\bullet.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\C_sharp_scripts\\SanqiGameC\\SanqiGameC\\Assets\\Scripts\\Bullet\\Bullet.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Assets\\Scripts\\Bullet\\Bullet.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -50,11 +62,50 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 2,
+          "SelectedChildIndex": 0,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 9,
+              "DocumentIndex": 0,
+              "Title": "Tower.cs",
+              "DocumentMoniker": "D:\\C_sharp_scripts\\SanqiGameC\\SanqiGameC\\Assets\\Scripts\\Tower\\Tower.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\Tower\\Tower.cs",
+              "ToolTip": "D:\\C_sharp_scripts\\SanqiGameC\\SanqiGameC\\Assets\\Scripts\\Tower\\Tower.cs",
+              "RelativeToolTip": "Assets\\Scripts\\Tower\\Tower.cs",
+              "ViewState": "AgIAAIAAAAAAAAAAAAAswJ4AAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-12T07:13:13.555Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "Tower.cs",
+              "DocumentMoniker": "D:\\C_sharp_scripts\\SanqiGameC\\SanqiGameC\\Assets\\Scripts\\TowerSystem\\Tower.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\TowerSystem\\Tower.cs",
+              "ToolTip": "D:\\C_sharp_scripts\\SanqiGameC\\SanqiGameC\\Assets\\Scripts\\TowerSystem\\Tower.cs",
+              "RelativeToolTip": "Assets\\Scripts\\TowerSystem\\Tower.cs",
+              "ViewState": "AgIAAEEAAAAAAAAAAAAowF0AAAACAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-12T07:13:04.527Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "EnemyAttackState.cs",
+              "DocumentMoniker": "D:\\C_sharp_scripts\\SanqiGameC\\SanqiGameC\\Assets\\Scripts\\Enemy\\StateMachine\\EnemyAttackState.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\Enemy\\StateMachine\\EnemyAttackState.cs",
+              "ToolTip": "D:\\C_sharp_scripts\\SanqiGameC\\SanqiGameC\\Assets\\Scripts\\Enemy\\StateMachine\\EnemyAttackState.cs",
+              "RelativeToolTip": "Assets\\Scripts\\Enemy\\StateMachine\\EnemyAttackState.cs",
+              "ViewState": "AgIAAEsAAAAAAAAAAAAswFQAAAAFAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-12T05:45:02.15Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 12,
               "Title": "Bullet.cs",
               "DocumentMoniker": "D:\\C_sharp_scripts\\SanqiGameC\\SanqiGameC\\Assets\\Scripts\\Bullet\\Bullet.cs",
               "RelativeDocumentMoniker": "Assets\\Scripts\\Bullet\\Bullet.cs",
@@ -66,7 +117,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 8,
+              "DocumentIndex": 11,
               "Title": "GridEditorUtility.cs",
               "DocumentMoniker": "D:\\C_sharp_scripts\\SanqiGameC\\SanqiGameC\\Library\\PackageCache\\com.unity.2d.tilemap@bcd28ed819cb\\Editor\\GridEditorUtility.cs",
               "RelativeDocumentMoniker": "Library\\PackageCache\\com.unity.2d.tilemap@bcd28ed819cb\\Editor\\GridEditorUtility.cs",
@@ -74,12 +125,11 @@
               "RelativeToolTip": "Library\\PackageCache\\com.unity.2d.tilemap@bcd28ed819cb\\Editor\\GridEditorUtility.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAACMAAABVAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-07-11T15:16:44.129Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-07-11T15:16:44.129Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 3,
               "Title": "EnemyController.cs",
               "DocumentMoniker": "D:\\C_sharp_scripts\\SanqiGameC\\SanqiGameC\\Assets\\Scripts\\Enemy\\EnemyController.cs",
               "RelativeDocumentMoniker": "Assets\\Scripts\\Enemy\\EnemyController.cs",
@@ -87,12 +137,11 @@
               "RelativeToolTip": "Assets\\Scripts\\Enemy\\EnemyController.cs",
               "ViewState": "AgIAAFEAAAAAAAAAAAAswGUAAAAJAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-07-11T16:08:45.166Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-07-11T16:08:45.166Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 7,
+              "DocumentIndex": 10,
               "Title": "EnemyStateMachine.cs",
               "DocumentMoniker": "D:\\C_sharp_scripts\\SanqiGameC\\SanqiGameC\\Assets\\Scripts\\Enemy\\EnemyStateMachine.cs",
               "RelativeDocumentMoniker": "Assets\\Scripts\\Enemy\\EnemyStateMachine.cs",
@@ -104,7 +153,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 8,
               "Title": "LevelManager.cs",
               "DocumentMoniker": "D:\\C_sharp_scripts\\SanqiGameC\\SanqiGameC\\Assets\\Scripts\\Level\\LevelManager.cs",
               "RelativeDocumentMoniker": "Assets\\Scripts\\Level\\LevelManager.cs",
@@ -116,7 +165,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 5,
               "Title": "ShowInfo.cs",
               "DocumentMoniker": "D:\\C_sharp_scripts\\SanqiGameC\\SanqiGameC\\Assets\\UI\\ShowInfo.cs",
               "RelativeDocumentMoniker": "Assets\\UI\\ShowInfo.cs",
@@ -127,7 +176,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
+              "DocumentIndex": 9,
               "Title": "BlockGenerationConfig.cs",
               "DocumentMoniker": "D:\\C_sharp_scripts\\SanqiGameC\\SanqiGameC\\Assets\\Scripts\\BlockSystem\\BlockGenerationConfig.cs",
               "RelativeDocumentMoniker": "Assets\\Scripts\\BlockSystem\\BlockGenerationConfig.cs",
@@ -139,7 +188,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 7,
               "Title": "Create.cs",
               "DocumentMoniker": "D:\\C_sharp_scripts\\SanqiGameC\\SanqiGameC\\Assets\\Scripts\\Editor\\Create.cs",
               "RelativeDocumentMoniker": "Assets\\Scripts\\Editor\\Create.cs",
@@ -151,7 +200,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 4,
               "Title": "EnemyMoveState.cs",
               "DocumentMoniker": "D:\\C_sharp_scripts\\SanqiGameC\\SanqiGameC\\Assets\\Scripts\\Enemy\\EnemyMoveState.cs",
               "RelativeDocumentMoniker": "Assets\\Scripts\\Enemy\\EnemyMoveState.cs",
@@ -163,7 +212,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 6,
               "Title": "TowerBuildUtility.cs",
               "DocumentMoniker": "D:\\C_sharp_scripts\\SanqiGameC\\SanqiGameC\\Assets\\Scripts\\Utilities\\TowerBuildUtility.cs",
               "RelativeDocumentMoniker": "Assets\\Scripts\\Utilities\\TowerBuildUtility.cs",

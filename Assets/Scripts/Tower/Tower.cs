@@ -6,11 +6,11 @@ public class Tower : MonoBehaviour
 {
     [Header("塔数据")]
     [SerializeField] private TowerData towerData;
-    
+
     [Header("状态")]
     [SerializeField] private float currentHealth;
     [SerializeField] private Vector2Int position;
-    
+
     [Header("绑定")]
     [SerializeField] private SpriteRenderer spriteRenderer;
     [SerializeField] private TextMeshPro text;
@@ -56,7 +56,7 @@ public class Tower : MonoBehaviour
     public void Initialize(TowerData data, Vector2Int pos)
     {
         spriteRenderer = GetComponentInChildren<SpriteRenderer>();
-     
+
         // text = GetComponentInChildren<TextMeshProUGUI>();
         towerData = data;
         position = pos;
@@ -65,10 +65,29 @@ public class Tower : MonoBehaviour
         text.text = data.TowerName;
         // 设置位置
         // transform.position = new Vector3(pos.x, pos.y, 0);
-        
+
         Debug.Log($"塔初始化完成: {data.TowerName} 在位置 ({pos.x}, {pos.y})");
     }
-    
+
+    /// <summary>
+    /// 受到伤害
+    /// </summary>
+    /// <param name="damage">伤害值</param>
+    public void TakeDamage(float damage)
+    {
+        currentHealth -= damage;
+
+        if (currentHealth <= 0)
+        {
+            currentHealth = 0;
+            Debug.Log($"塔 {towerData.TowerName} 被摧毁");
+            // TODO: 播放摧毁效果
+        }
+        else
+        {
+            Debug.Log($"塔 {towerData.TowerName} 受到 {damage} 点伤害，剩余生命值: {currentHealth}");
+        }
+    }
 
     /// <summary>
     /// 攻击目标
@@ -77,11 +96,11 @@ public class Tower : MonoBehaviour
     public void Attack(GameObject target)
     {
         if (target == null) return;
-        
+
         // TODO: 实现攻击逻辑
         Debug.Log($"塔 {towerData.TowerName} 攻击目标");
     }
-    
+
     /// <summary>
     /// 检查是否存活
     /// </summary>
@@ -137,4 +156,4 @@ public class Tower : MonoBehaviour
             bulletScript.Init(target.transform, damage, bulletConfig);
         }
     }
-} 
+}
