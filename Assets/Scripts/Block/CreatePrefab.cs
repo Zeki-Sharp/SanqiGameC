@@ -332,12 +332,7 @@ public class CreatePrefab : MonoBehaviour
     public void RefreshShowArea()
     {
         ClearShowArea();
+        BlockTestManager.instance.Test_01();
 
-        // 2. 直接用上一次参数重建
-        if (lastPreviewConfig != null && lastPreviewTowerDatas != null && lastPreviewOriginalPositions != null)
-        {
-            GameObject blockPrefab = Resources.Load<GameObject>("Prefab/Block/Block");
-            CreateBlock(blockPrefab, lastPreviewTowerDatas, lastPreviewOriginalPositions, lastPreviewConfig);
-        }
     }
 }

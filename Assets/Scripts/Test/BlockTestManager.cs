@@ -10,8 +10,13 @@ public class BlockTestManager : MonoBehaviour
     [SerializeField] private bool runTestsOnStart = true;
     [SerializeField] private string prefabShowName = "PrefabArea";
     [SerializeField] private MapData mapData;
+
+    public static BlockTestManager instance;
     private void Start()
     {
+        if (instance == null) instance = this;
+        else Destroy(gameObject);
+
         if (gameMap == null)
             gameMap = FindFirstObjectByType<GameMap>();
         if (mapData == null)
