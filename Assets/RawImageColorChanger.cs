@@ -65,7 +65,7 @@ public class RawImageColorController : MonoBehaviour, IPointerClickHandler
         // 确保最终颜色精确到位
         rawImage.color = targetColor;
         currentTransition = null;
-        
+        ResetToNormalColorAfter(0.05f);
         Debug.Log($"颜色过渡完成: {gameObject.name}，最终颜色: {targetColor}");
     }
 
