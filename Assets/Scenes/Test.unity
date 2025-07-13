@@ -354,6 +354,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   previewShowName: Preview_Show
+  previewArea: {fileID: 0}
+  hasClick: 0
+  gameMap: {fileID: 0}
+  blockPlacementManager: {fileID: 0}
 --- !u!1 &218421369
 GameObject:
   m_ObjectHideFlags: 0
@@ -528,7 +532,7 @@ MonoBehaviour:
   currentTowerData: {fileID: 0}
   isPlacing: 0
   previewBlock: {fileID: 0}
-  previewPosition: {x: 0, y: 0}
+  previewPosition: {x: 0, y: 0, z: 0}
 --- !u!4 &318562945
 Transform:
   m_ObjectHideFlags: 0
@@ -794,7 +798,7 @@ Tilemap:
   m_Origin: {x: -26, y: 0, z: 0}
   m_Size: {x: 26, y: 27, z: 1}
   m_TileAnchor: {x: 0.5, y: 0.5, z: 0}
-  m_TileOrientation: 0
+  m_TileOrientation: 6
   m_TileOrientationMatrix:
     e00: 1
     e01: 0

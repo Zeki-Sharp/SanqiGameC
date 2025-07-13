@@ -13,15 +13,15 @@ public class BaseUtility
     /// <returns>中心点坐标</returns>
     public static Vector2Int GetCenter(int width, int height)
     {
-        int centerX = Mathf.CeilToInt(width / 2f);
-        int centerY = Mathf.CeilToInt(height / 2f);
+        int centerX = Mathf.FloorToInt(width / 2f);
+        int centerY = Mathf.FloorToInt(height / 2f);
         return new Vector2Int(centerX, centerY);
     }
 
     public static Vector3Int GetCenterCell(int width, int height)
     {
-        int centerX = Mathf.CeilToInt(width / 2f);
-        int centerY = Mathf.CeilToInt(height / 2f);
+        int centerX = Mathf.FloorToInt(width / 2f);
+        int centerY = Mathf.FloorToInt(height / 2f);
         return new Vector3Int(centerX, centerY, 0);
     }
 

@@ -766,11 +766,11 @@ PlayerSettings:
   captureStartupLogs: {}
   activeInputHandler: 2
   windowsGamepadBackendHint: 0
-  cloudProjectId: c256063b-ab2b-485a-b7e9-4ca0d35f1736
+  cloudProjectId: d08842a0-a57d-46a5-a731-23570576c2b2
   framebufferDepthMemorylessMode: 0
   qualitySettingsNames: []
-  projectName: SanqiGameC
-  organizationId: sanqigameinnovationcompetition
+  projectName: My project
+  organizationId: zhouziqi2017
   cloudEnabled: 0
   legacyClampBlendShapeWeights: 0
   hmiLoadingImage: {fileID: 0}

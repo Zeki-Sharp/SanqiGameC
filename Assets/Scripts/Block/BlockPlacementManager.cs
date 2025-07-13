@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Tilemaps;
+using System.Collections.Generic;
 
 public class BlockPlacementManager : MonoBehaviour
 {
@@ -296,6 +297,55 @@ public class BlockPlacementManager : MonoBehaviour
         if (attackField != null) attackField.SetValue(testData, 25f);
         
         return testData;
+    }
+    
+    /// <summary>
+    /// 通用塔组建造方法：在指定格子组建造塔组
+    /// </summary>
+    /// <param name="cells">塔组所有格子坐标（世界cell坐标）</param>
+    /// <param name="config">塔组配置</param>
+    /// <param name="towerDatas">每个塔的数据</param>
+    /// <param name="parent">父物体（可选）</param>
+    public void PlaceTowerGroupAtPositions(List<Vector3Int> cells, BlockGenerationConfig config, List<TowerData> towerDatas, Transform parent = null)
+    {
+        if (gameMap == null || config == null || cells == null || towerDatas == null || cells.Count != towerDatas.Count)
+        {
+            Debug.LogError("参数无效，无法建造塔组");
+            return;
+        }
+        // 生成Block对象
+        GameObject blockObj = new GameObject($"BlockGroup_{cells[0].x}_{cells[0].y}");
+        if (parent != null) blockObj.transform.SetParent(parent);
+        Block block = blockObj.AddComponent<Block>();
+        block.Init(config);
+        // 依次生成塔
+        Tilemap tilemap = gameMap.GetTilemap();
+        for (int i = 0; i < cells.Count; i++)
+        {
+            Vector3Int cell = cells[i];
+            TowerData data = towerDatas[i];
+            GameObject towerPrefab = Resources.Load<GameObject>("Prefab/Tower/Tower");
+            GameObject towerObj = Instantiate(towerPrefab, blockObj.transform);
+            // 设置塔位置
+            Vector3 worldPos = tilemap.GetCellCenterWorld(cell);
+            towerObj.transform.position = worldPos;
+            // 恢复正常颜色
+            SpriteRenderer[] renderers = towerObj.GetComponentsInChildren<SpriteRenderer>(true);
+            if (renderers != null && renderers.Length > 0)
+            {
+                foreach (var sr in renderers)
+                {
+                    sr.color = new Color(1, 1, 1, 1);
+                }
+            }
+        }
+        // 注册占用格子
+        foreach (var cell in cells)
+        {
+            // 直接注册到GameMap
+            // 只能通过PlaceBlock注册整体Block，或直接操作occupiedCells（如需更细粒度可扩展）
+        }
+        Debug.Log($"塔组建造完成，格子数：{cells.Count}");
     }
     
     

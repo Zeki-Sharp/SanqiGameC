@@ -30,9 +30,15 @@ public class CreatePrefab : MonoBehaviour
     public int MapHeight => mapHeight;
     public float CellSize => cellSize;
 
+
+
+    public static CreatePrefab instance;
+
     private void Awake()
     {
         InitializeMap();
+        if (instance == null) instance = this;  
+        else Destroy(gameObject);
     }
     public void ClickBuildingButton()
     {
@@ -301,5 +307,37 @@ public class CreatePrefab : MonoBehaviour
         // 如果没有渲染器组件，返回零偏移
         Debug.LogWarning($"无法获取物体{block.name}的渲染器组件，使用默认pivot偏移");
         return Vector3.zero;
+    }
+
+
+    public void ClearShowArea()
+    {
+        lastPreviewConfig = null;
+        lastPreviewTowerDatas = null;
+        lastPreviewOriginalPositions = null;
+        lastPreviewAdjustedPositions = null;
+        if (prefabShowArea != null)
+        {
+            for (int i = prefabShowArea.transform.childCount - 1; i >= 0; i--)
+            {
+                DestroyImmediate(prefabShowArea.transform.GetChild(i).gameObject);
+            }
+        }
+    }
+
+
+    /// <summary>
+    /// 刷新showarea：清除原有内容并用上一次参数重建block/tower组
+    /// </summary>
+    public void RefreshShowArea()
+    {
+        ClearShowArea();
+
+        // 2. 直接用上一次参数重建
+        if (lastPreviewConfig != null && lastPreviewTowerDatas != null && lastPreviewOriginalPositions != null)
+        {
+            GameObject blockPrefab = Resources.Load<GameObject>("Prefab/Block/Block");
+            CreateBlock(blockPrefab, lastPreviewTowerDatas, lastPreviewOriginalPositions, lastPreviewConfig);
+        }
     }
 }

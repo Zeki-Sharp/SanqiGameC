@@ -11,6 +11,7 @@ public class Preview_Click : MonoBehaviour
     [SerializeField]private GameObject previewArea;
     [SerializeField]private bool hasClick = false;
     [SerializeField]private GameMap gameMap;
+    [SerializeField]private BlockPlacementManager blockPlacementManager;
     
     private GameObject previewBlockObj; // 预览塔组对象
     private Block previewBlock;
@@ -22,6 +23,8 @@ public class Preview_Click : MonoBehaviour
     void Start()
     {
         gameMap = GameObject.Find("GameMap").GetComponent<GameMap>();
+        if (blockPlacementManager == null)
+            blockPlacementManager = FindFirstObjectByType<BlockPlacementManager>();
     }
     
     private void Update()
@@ -130,6 +133,18 @@ public class Preview_Click : MonoBehaviour
                             sr.color = previewColor;
                         }
                     }
+                }
+                // 建造逻辑：合法且点击左键
+                if (isValid && Input.GetMouseButtonDown(0))
+                {
+                    // 调用BlockPlacementManager通用建造方法
+                    if (blockPlacementManager != null)
+                    {
+                        blockPlacementManager.PlaceTowerGroupAtPositions(previewCells, previewConfig, previewTowerDatas, gameMap.GetTowerArea());
+                    }
+                    hasClick = false; // 禁止连续建造
+                    // 刷新showarea
+                    CreatePrefab.instance.RefreshShowArea();
                 }
             }
         }

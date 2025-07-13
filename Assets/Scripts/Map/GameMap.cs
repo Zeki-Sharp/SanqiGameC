@@ -336,38 +336,8 @@ public class GameMap : MonoBehaviour
     /// </summary>
     private void OnDrawGizmos()
     {
-        Gizmos.color = Color.red;
-        Gizmos.DrawWireCube(tilemap.GetCellCenterWorld(new Vector3Int(0, 0, 0)), tilemap.cellSize * 0.5f);
-
-
-        // if (tilemap == null) return;
-        // Gizmos.color = Color.yellow;
-        // Vector3 min = tilemap.GetCellCenterWorld(new Vector3Int(0, 0, 0));
-        // Vector3 max = tilemap.GetCellCenterWorld(new Vector3Int(mapWidth, mapHeight, 0));
-        // Vector3 center = (min + max) / 2f;
-        // Vector3 size = new Vector3(Mathf.Abs(max.x - min.x), Mathf.Abs(max.y - min.y), 0.1f);
-        // Gizmos.DrawWireCube(center, size);
-        // // 绘制所有未被占用的格子（绿色）
-        // for (int x = 0; x < mapWidth; x++)
-        // {
-        //     for (int y = 0; y < mapHeight; y++)
-        //     {
-        //         Vector3Int cell = new Vector3Int(x, y, 0);
-        //         Vector3 cellCenter = tilemap.GetCellCenterWorld(cell);
-        //         if (!occupiedCells.Contains(cell))
-        //         {
-        //             Gizmos.color = new Color(0, 1, 0, 0.3f);
-        //             Gizmos.DrawCube(cellCenter, tilemap.cellSize * 0.8f);
-        //         }
-        //     }
-        // }
-        // // 绘制被占用的格子（红色）
-        // foreach (var cell in occupiedCells)
-        // {
-        //     Vector3 cellCenter = tilemap.GetCellCenterWorld(cell);
-        //     Gizmos.color = new Color(1, 0, 0, 0.5f);
-        //     Gizmos.DrawCube(cellCenter, tilemap.cellSize * 0.8f);
-        // }
+        // Gizmos.color = Color.red;
+        // Gizmos.DrawWireCube(tilemap.GetCellCenterWorld(new Vector3Int(0, 0, 0)), tilemap.cellSize * 0.5f);
     }
 
     /// <summary>
