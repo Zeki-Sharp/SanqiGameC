@@ -189,6 +189,11 @@ public class Block : MonoBehaviour
         }
     }
 
+    public void  SetTower(Vector2Int localCoord, Tower tower)
+    {
+        towers[localCoord] = tower;
+    }
+
     public int GetTowerCount()
     {
         int count = 0;

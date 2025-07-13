@@ -338,6 +338,7 @@ public class BlockPlacementManager : MonoBehaviour
             int finalOrder = BaseOrder + verticalOffset;
             towerComponent.Initialize(data,  new Vector2Int(cell.x, cell.y));
             towerComponent.SetOrder(finalOrder);
+            block.SetTower(new Vector2Int(cell.x, cell.y), towerComponent);
             if (renderers != null && renderers.Length > 0)
             {
                 foreach (var sr in renderers)

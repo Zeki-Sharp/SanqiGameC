@@ -153,7 +153,7 @@ public class Tower : MonoBehaviour
             damageTaker.maxHealth = towerData.GetHealth(level);
             // damageTaker.maxHealth = towerData.GetHealth(level);
         }
-        spriteRenderer.sprite = towerData.TowerSprite;
+        // spriteRenderer.sprite = towerData.TowerSprite;
         level+=1;
         text.text = $"塔名：{towerData.TowerName} \n 等级：{ level/towerData.MaxLevel}";
     }
