@@ -110,6 +110,11 @@ public class CreatePrefab : MonoBehaviour
     /// <param name="towerDatas">塔数据列表</param>
     /// <param name="positions">方块覆盖的格子坐标</param>
     /// <param name="config">生成配置</param>
+    public static BlockGenerationConfig lastPreviewConfig;
+    public static List<TowerData> lastPreviewTowerDatas;
+    public static Vector2Int lastPreviewAnchorOffset; // 记录原始左下角坐标
+    public static Vector2Int[] lastPreviewOriginalPositions; // 记录原始相对坐标
+    public static Vector2Int[] lastPreviewAdjustedPositions; // 记录调整后的坐标
     public void CreateBlock(GameObject blockPrefab, List<TowerData> towerDatas, Vector2Int[] positions, BlockGenerationConfig config)
     { 
         // 参数验证
@@ -139,6 +144,17 @@ public class CreatePrefab : MonoBehaviour
         
         // 替换positions数组为相对于Tilemap中心的新坐标
         Vector2Int[] adjustedPositions = AdjustPositionsToTilemapCenter(positions, tilemapCenter);
+        
+        // 记录原始左下角
+        int minX = int.MaxValue, minY = int.MaxValue;
+        foreach (var pos in positions)
+        {
+            if (pos.x < minX) minX = pos.x;
+            if (pos.y < minY) minY = pos.y;
+        }
+        lastPreviewAnchorOffset = new Vector2Int(minX, minY);
+        lastPreviewOriginalPositions = positions;
+        lastPreviewAdjustedPositions = adjustedPositions;
         
         // 记录父物体的初始位置
         Vector3 initialParentPosition = transform.position;
@@ -175,6 +191,9 @@ public class CreatePrefab : MonoBehaviour
             Debug.LogError("GameMap单例未初始化");
             return;
         }
+        // 缓存当前showarea塔组配置
+        lastPreviewConfig = config;
+        lastPreviewTowerDatas = towerDatas != null ? new List<TowerData>(towerDatas) : null;
     }
     
     /// <summary>
