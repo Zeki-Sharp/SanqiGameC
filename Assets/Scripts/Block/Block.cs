@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
+using Sirenix.OdinInspector;
 using UnityEngine.Tilemaps;
 
 public class Block : MonoBehaviour
@@ -9,7 +10,7 @@ public class Block : MonoBehaviour
     [SerializeField] private bool canBeOverridden = true;
     [SerializeField] private GameObject towerPrefab;
 
-    [Header("塔管理")] [SerializeField] private Dictionary<Vector2Int, Tower> towers = new Dictionary<Vector2Int, Tower>();
+    [Header("塔管理")] [ShowInInspector] private Dictionary<Vector2Int, Tower> towers = new Dictionary<Vector2Int, Tower>();
 
     // 公共属性（返回只读副本）
     public BlockGenerationConfig Config => config;
@@ -158,7 +159,7 @@ public class Block : MonoBehaviour
         const int VerticalOffsetMultiplier = 10;
         int verticalOffset = Mathf.RoundToInt(-cellCenter.y * VerticalOffsetMultiplier);
         int finalOrder = BaseOrder + verticalOffset;
-        towerComponent.Initialize(towerData, new Vector2Int(towerCellPos.x, towerCellPos.y));
+        towerComponent.Initialize(towerData,localCoord);
         towerComponent.SetOrder(finalOrder);
         towers[localCoord] = towerComponent;
         return towerComponent;

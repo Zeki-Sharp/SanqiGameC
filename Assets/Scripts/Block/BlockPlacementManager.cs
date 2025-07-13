@@ -331,6 +331,13 @@ public class BlockPlacementManager : MonoBehaviour
             towerObj.transform.position = worldPos;
             // 恢复正常颜色
             SpriteRenderer[] renderers = towerObj.GetComponentsInChildren<SpriteRenderer>(true);
+            Tower towerComponent = towerObj.GetComponent<Tower>();
+            const int BaseOrder = 1000;
+            const int VerticalOffsetMultiplier = 10;
+            int verticalOffset = Mathf.RoundToInt(-worldPos.y * VerticalOffsetMultiplier);
+            int finalOrder = BaseOrder + verticalOffset;
+            towerComponent.Initialize(data,  new Vector2Int(cell.x, cell.y));
+            towerComponent.SetOrder(finalOrder);
             if (renderers != null && renderers.Length > 0)
             {
                 foreach (var sr in renderers)

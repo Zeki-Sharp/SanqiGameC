@@ -259,7 +259,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   towerData: {fileID: 11400000, guid: 2c56d48c1b17cd04e8bfca12c88f6655, type: 2}
   currentHealth: 0
-  position: {x: 0, y: 0}
+  level: 0
   spriteRenderer: {fileID: 0}
   text: {fileID: 0}
   bulletPrefab: {fileID: 3447451743312656527, guid: 2fb7abf005420a1429b21a013ddbccb1, type: 3}
@@ -297,8 +297,8 @@ CapsuleCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0, y: 0}
-  m_Size: {x: 0.5, y: 1}
+  m_Offset: {x: 0, y: 0.3260514}
+  m_Size: {x: 0.5, y: 0.82403576}
   m_Direction: 0
 --- !u!114 &8938938391962000119
 MonoBehaviour:
