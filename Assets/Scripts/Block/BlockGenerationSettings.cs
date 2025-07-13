@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "BlockGenerationSettings", menuName = "Scriptable Objects/BlockGenerationSettings"),Serializable]
+[CreateAssetMenu(fileName = "BlockGenerationSettings", menuName = "Tower Defense/BlockGeneration/BlockGenerationSettings"),Serializable]
 public class BlockGenerationSettings : ScriptableObject
 {
     [Header("Tower Setting")]

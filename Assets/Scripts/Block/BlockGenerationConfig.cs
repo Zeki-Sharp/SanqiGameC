@@ -3,7 +3,7 @@ using Sirenix.OdinInspector;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-[CreateAssetMenu(fileName = "BlockGenerationConfig", menuName = "Scriptable Objects/BlockGenerationConfig"), Serializable]
+[CreateAssetMenu(fileName = "BlockGenerationConfig", menuName = "Tower Defense/Block/BlockGenerationConfig"), Serializable]
 public class BlockGenerationConfig : ScriptableObject
 {
     [SerializeField]
