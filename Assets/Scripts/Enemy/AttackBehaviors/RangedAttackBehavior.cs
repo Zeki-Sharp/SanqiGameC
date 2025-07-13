@@ -52,7 +52,7 @@ public class RangedAttackBehavior : ScriptableObject, IAttackBehavior
             var bulletScript = bullet.GetComponent<IBullet>();
             if (bulletScript != null)
             {
-                bulletScript.Initialize(direction, 0, damage, attacker.gameObject, target, new string[]{"Tower", "CenterTower"});
+                bulletScript.Initialize(direction, bulletSpeed, attacker.gameObject, target, new string[]{"Tower", "CenterTower"}, damage);
             }
             else
             {

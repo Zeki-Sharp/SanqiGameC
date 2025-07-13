@@ -166,5 +166,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   defaultSpeed: 10
-  defaultDamage: 10
   lifetime: 5
+  targetTags:
+  - Enemy
+  targetType: 0
+  aoeRadius: 1.5
+  aoeLayer:
+    serializedVersion: 2
+    m_Bits: 0

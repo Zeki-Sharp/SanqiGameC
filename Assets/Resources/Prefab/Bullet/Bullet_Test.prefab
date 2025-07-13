@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 8498916782821409798}
   - component: {fileID: 4032237375440005743}
   - component: {fileID: 8856315114042948262}
+  - component: {fileID: 4051412511425562908}
   m_Layer: 0
   m_Name: Bullet_Test
   m_TagString: Bullet
@@ -166,6 +167,31 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   defaultSpeed: 10
-  defaultDamage: 10
   lifetime: 5
   height: 2
+  targetTags:
+  - Enemy
+  targetType: 0
+  aoeRadius: 1.5
+  aoeLayer:
+    serializedVersion: 2
+    m_Bits: 0
+--- !u!114 &4051412511425562908
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3447451743312656527}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 27a8e2c4775579449a471727898b2c88, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  effectData:
+    effectName: Speed
+    modifier: 1
+    duration: 1
+    effectFx: {fileID: 0}
+    effectFxDuration: 0
+    sfx: {fileID: 0}

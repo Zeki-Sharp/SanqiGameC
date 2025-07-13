@@ -57,25 +57,6 @@ public class Tower : MonoBehaviour
         Debug.Log($"塔初始化完成: {data.TowerName} 在位置 ({pos.x}, {pos.y})");
     }
 
-    public void TakeDamage(float damage)
-    {
-        currentHealth -= damage;
-        if (currentHealth <= 0)
-        {
-            currentHealth = 0;
-            Debug.Log($"塔 {towerData.TowerName} 被摧毁");
-        }
-        else
-        {
-            Debug.Log($"塔 {towerData.TowerName} 受到 {damage} 点伤害，剩余生命值: {currentHealth}");
-        }
-    }
-
-    public void Attack(GameObject target)
-    {
-        if (target == null) return;
-        Debug.Log($"塔 {towerData.TowerName} 攻击目标");
-    }
 
     public bool IsAlive()
     {
@@ -122,9 +103,8 @@ public class Tower : MonoBehaviour
         var bulletScript = bullet.GetComponent<IBullet>();
         if (bulletScript != null)
         {
-            float damage = towerData.PhysicAttack;
             float speed = 0; // 让子弹用自己的Inspector速度
-            bulletScript.Initialize((target.transform.position - transform.position).normalized, speed, damage, gameObject, target, new string[] { "Enemy" } );
+            bulletScript.Initialize((target.transform.position - transform.position).normalized, speed, gameObject, target, new string[] { "Enemy" }, towerData.PhysicAttack);
         }
         else
         {

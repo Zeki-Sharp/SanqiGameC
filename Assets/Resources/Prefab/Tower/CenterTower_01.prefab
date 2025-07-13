@@ -204,6 +204,7 @@ GameObject:
   - component: {fileID: 8622939898402481615}
   - component: {fileID: 2274610060129136706}
   - component: {fileID: 8938938391962000119}
+  - component: {fileID: 669885837155348704}
   m_Layer: 0
   m_Name: CenterTower_01
   m_TagString: centerTower
@@ -262,7 +263,6 @@ MonoBehaviour:
   spriteRenderer: {fileID: 0}
   text: {fileID: 0}
   bulletPrefab: {fileID: 3447451743312656527, guid: 2fb7abf005420a1429b21a013ddbccb1, type: 3}
-  bulletConfig: {fileID: 11400000, guid: 9854841db7f1c6e4189096b2f0f052ac, type: 2}
 --- !u!70 &2274610060129136706
 CapsuleCollider2D:
   m_ObjectHideFlags: 0
@@ -314,6 +314,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxHealth: 0
   currentHealth: 0
+--- !u!114 &669885837155348704
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7002921581114174909}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9ddf768f2191ea645abdafa45170e4e2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &7371399421173341675
 GameObject:
   m_ObjectHideFlags: 0

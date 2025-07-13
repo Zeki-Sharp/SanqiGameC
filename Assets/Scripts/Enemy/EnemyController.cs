@@ -14,10 +14,19 @@ public class EnemyController : MonoBehaviour
     private EnemyState currentState;
     private float currentHealth;
     private SpriteRenderer spriteRenderer;
+    private float moveSpeedOverride = -1f;
     
     // 公共属性
     public float AttackRange => data != null ? data.AttackRange : 1.5f;
-    public float MoveSpeed => data != null ? data.MoveSpeed : 2f;
+    public float MoveSpeed {
+        get {
+            if (moveSpeedOverride >= 0f) return moveSpeedOverride;
+            return data != null ? data.MoveSpeed : 2f;
+        }
+        set {
+            moveSpeedOverride = value;
+        }
+    }
     public float CurrentHealth => currentHealth;
     public float MaxHealth => data != null ? data.MaxHealth : 100f;
     public IAttackBehavior AttackBehavior => data != null ? data.AttackBehavior : null;
