@@ -18,6 +18,13 @@ public class BaseUtility
         return new Vector2Int(centerX, centerY);
     }
 
+    public static Vector3Int GetCenterCell(int width, int height)
+    {
+        int centerX = Mathf.CeilToInt(width / 2f);
+        int centerY = Mathf.CeilToInt(height / 2f);
+        return new Vector3Int(centerX, centerY, 0);
+    }
+
 
     /// <summary>
     /// 点击屏幕坐标

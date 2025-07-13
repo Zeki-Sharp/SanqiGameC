@@ -78,31 +78,18 @@ public class Block : MonoBehaviour
     /// <summary>
     /// 设置方块的世界坐标并根据地图大小调整尺寸
     /// </summary>
-    public void SetWorldPosition(Vector2Int position, Tilemap tilemap = null, int mapWidth = 20, int mapHeight = 15)
+    public void SetWorldPosition(Vector3Int cellPos, Tilemap tilemap = null)
     {
-        worldPosition = position;
-
+        worldPosition = new Vector2Int(cellPos.x, cellPos.y);
         float baseScale = 1.5f;
-        int maxMapSize = Mathf.Max(mapWidth, mapHeight);
-        if (maxMapSize <= 0)
-        {
-            Debug.LogWarning("地图尺寸无效，无法缩放");
-            transform.localScale = Vector3.one * baseScale;
-        }
-        else
-        {
-            float scaleFactor = Mathf.Min(1f, 10f / maxMapSize);
-            transform.localScale = Vector3.one * (baseScale * scaleFactor);
-        }
-
         if (tilemap != null)
         {
-            Vector3 cellCenter = tilemap.GetCellCenterWorld(new Vector3Int(position.x, position.y, 0));
-            transform.position = new Vector3(cellCenter.x, cellCenter.y - 0.4f, 0);
+            Vector3 cellCenter = tilemap.GetCellCenterWorld(cellPos);
+            transform.position = cellCenter;
         }
         else
         {
-            transform.position = new Vector3(position.x, position.y, 0);
+            transform.position = new Vector3(cellPos.x, cellPos.y, 0);
         }
     }
 
@@ -141,58 +128,39 @@ public class Block : MonoBehaviour
             }
         }
 
-        Vector2Int towerGridPos = worldPosition + localCoord;
-        Vector3 towerWorldPos;
-
-        if (tilemap != null)
-        {
-            Vector3 cellOrigin = tilemap.GetCellCenterLocal(new Vector3Int(towerGridPos.x, towerGridPos.y, 0));
-#if UNITY_EDITOR
-            Debug.Log($"格子 ({localCoord.x}, {localCoord.y}) 的本地坐标: {cellOrigin}");
-#endif
-            towerWorldPos = new Vector3(cellOrigin.x, cellOrigin.y, 0);
-        }
-        else
-        {
-            towerWorldPos = new Vector3(towerGridPos.x, towerGridPos.y, 0);
-        }
-
+        Vector3Int towerCellPos = new Vector3Int(worldPosition.x + localCoord.x, worldPosition.y + localCoord.y, 0);
+        Vector3 cellCenter = tilemap != null ? tilemap.GetCellCenterWorld(towerCellPos) : new Vector3(towerCellPos.x, towerCellPos.y, 0);
         if (towerPrefab == null)
         {
             Debug.LogError("Tower prefab is null when trying to instantiate.");
             return null;
         }
-
-#if UNITY_EDITOR
-        Debug.Log($"生成塔于本地坐标: {towerWorldPos}");
-#endif
-
         GameObject go = Instantiate(towerPrefab, transform);
-        go.transform.position = towerWorldPos;
+        // 计算塔底部到pivot的偏移
+        Renderer renderer = go.GetComponentInChildren<Renderer>();
+        float yOffset = 0f;
+        if (renderer != null)
+        {
+            Bounds bounds = renderer.bounds;
+            // bounds.center.y - bounds.extents.y 是世界坐标下底部
+            float bottomWorld = bounds.center.y - bounds.extents.y;
+            float pivotWorld = go.transform.position.y;
+            yOffset = pivotWorld - bottomWorld;
+        }
+        go.transform.position = cellCenter + new Vector3(0, yOffset, 0);
         Tower towerComponent = go.GetComponent<Tower>();
         if (towerComponent == null)
         {
             Debug.LogError("Tower prefab does not have a Tower component.");
             return null;
         }
-
-#if UNITY_EDITOR
-        Debug.Log($"生成塔于格子 ({towerGridPos.x}, {towerGridPos.y})");
-#endif
-
         const int BaseOrder = 1000;
         const int VerticalOffsetMultiplier = 10;
-        int verticalOffset = Mathf.RoundToInt(-towerWorldPos.y * VerticalOffsetMultiplier);
+        int verticalOffset = Mathf.RoundToInt(-cellCenter.y * VerticalOffsetMultiplier);
         int finalOrder = BaseOrder + verticalOffset;
-
-        towerComponent.Initialize(towerData, towerGridPos);
+        towerComponent.Initialize(towerData, new Vector2Int(towerCellPos.x, towerCellPos.y));
         towerComponent.SetOrder(finalOrder);
         towers[localCoord] = towerComponent;
-
-#if UNITY_EDITOR
-        Debug.Log($"生成塔于格子 ({towerGridPos.x}, {towerGridPos.y})，排序层级: {finalOrder}");
-#endif
-
         return towerComponent;
     }
 

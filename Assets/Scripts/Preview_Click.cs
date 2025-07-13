@@ -3,6 +3,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using System.Collections.Generic;
+using UnityEngine.Tilemaps;
 
 public class Preview_Click : MonoBehaviour
 {
@@ -15,7 +16,7 @@ public class Preview_Click : MonoBehaviour
     private Block previewBlock;
     private List<TowerData> previewTowerDatas;
     private BlockGenerationConfig previewConfig;
-    private Vector2Int[] previewRelativeShape; // 预览塔组的相对形状
+    private Vector3Int[] previewRelativeShape; // 预览塔组的相对形状
     private List<GameObject> previewTowers = new List<GameObject>();
     
     void Start()
@@ -47,15 +48,15 @@ public class Preview_Click : MonoBehaviour
                     if (previewConfig != null && previewTowerDatas != null && previewTowerDatas.Count > 0 && CreatePrefab.lastPreviewAdjustedPositions != null)
                     {
                         // 1. 计算adjustedPositions的左下角
-                        Vector2Int[] adjusted = CreatePrefab.lastPreviewAdjustedPositions;
+                        Vector3Int[] adjusted = CreatePrefab.lastPreviewAdjustedPositions;
                         int minX = int.MaxValue, minY = int.MaxValue;
                         foreach (var pos in adjusted) {
                             if (pos.x < minX) minX = pos.x;
                             if (pos.y < minY) minY = pos.y;
                         }
-                        Vector2Int anchor = new Vector2Int(minX, minY);
+                        Vector3Int anchor = new Vector3Int(minX, minY, 0);
                         // 2. 生成“相对形状”坐标
-                        previewRelativeShape = new Vector2Int[adjusted.Length];
+                        previewRelativeShape = new Vector3Int[adjusted.Length];
                         for (int i = 0; i < adjusted.Length; i++) {
                             previewRelativeShape[i] = adjusted[i] - anchor;
                         }
@@ -97,12 +98,38 @@ public class Preview_Click : MonoBehaviour
             mouseWorldPos.z = 0;
             if (gameMap != null)
             {
-                Vector2Int gridPos = gameMap.WorldToGridPosition(mouseWorldPos);
-                // 让预览塔组的左下角锚点对齐到鼠标所在格子
+                Vector3Int gridPos = gameMap.WorldToGridPosition(mouseWorldPos);
+                bool isValid = true;
+                Tilemap tilemap = gameMap.GetTilemap();
+                // 收集所有预览塔的目标格子坐标
+                List<Vector3Int> previewCells = new List<Vector3Int>();
                 for (int i = 0; i < previewRelativeShape.Length; i++) {
-                    Vector2Int towerGrid = gridPos + previewRelativeShape[i];
-                    Vector3 worldPos = gameMap.GridToWorldPosition(towerGrid);
+                    Vector3Int towerGrid = gridPos + new Vector3Int(previewRelativeShape[i].x, previewRelativeShape[i].y, 0);
+                    previewCells.Add(towerGrid);
+                    Vector3 worldPos = tilemap.GetCellCenterWorld(towerGrid);
                     previewTowers[i].transform.position = worldPos;
+                }
+                // 判定是否合法
+                foreach (var cell in previewCells)
+                {
+                    if (!tilemap.HasTile(cell) || gameMap.IsCellOccupied(cell))
+                    {
+                        isValid = false;
+                        break;
+                    }
+                }
+                // 变色
+                Color previewColor = isValid ? new Color(0, 1, 0, 0.5f) : new Color(1, 0, 0, 0.5f);
+                foreach (var tower in previewTowers)
+                {
+                    SpriteRenderer[] renderers = tower.GetComponentsInChildren<SpriteRenderer>(true);
+                    if (renderers != null && renderers.Length > 0)
+                    {
+                        foreach (var sr in renderers)
+                        {
+                            sr.color = previewColor;
+                        }
+                    }
                 }
             }
         }

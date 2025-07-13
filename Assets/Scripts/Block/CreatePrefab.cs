@@ -114,7 +114,7 @@ public class CreatePrefab : MonoBehaviour
     public static List<TowerData> lastPreviewTowerDatas;
     public static Vector2Int lastPreviewAnchorOffset; // 记录原始左下角坐标
     public static Vector2Int[] lastPreviewOriginalPositions; // 记录原始相对坐标
-    public static Vector2Int[] lastPreviewAdjustedPositions; // 记录调整后的坐标
+    public static Vector3Int[] lastPreviewAdjustedPositions; // 记录调整后的坐标
     public void CreateBlock(GameObject blockPrefab, List<TowerData> towerDatas, Vector2Int[] positions, BlockGenerationConfig config)
     { 
         // 参数验证
@@ -143,7 +143,9 @@ public class CreatePrefab : MonoBehaviour
         Vector3Int tilemapCenter = CalculateTilemapCenter();
         
         // 替换positions数组为相对于Tilemap中心的新坐标
-        Vector2Int[] adjustedPositions = AdjustPositionsToTilemapCenter(positions, tilemapCenter);
+        Vector2Int[] adjustedPositions2 = AdjustPositionsToTilemapCenter(positions, tilemapCenter);
+        Vector3Int[] adjustedPositions = new Vector3Int[adjustedPositions2.Length];
+        for (int i = 0; i < adjustedPositions2.Length; i++) adjustedPositions[i] = new Vector3Int(adjustedPositions2[i].x, adjustedPositions2[i].y, 0);
         
         // 记录原始左下角
         int minX = int.MaxValue, minY = int.MaxValue;
@@ -175,11 +177,15 @@ public class CreatePrefab : MonoBehaviour
         if (towerDatas == null || towerDatas.Count == 0)
         {
             Debug.LogWarning("塔数据为空，仅生成基础方块");
-            block.GenerateTowers(adjustedPositions, new TowerData[0], tilemap);
+            Vector2Int[] adjusted2D = new Vector2Int[adjustedPositions.Length];
+            for (int i = 0; i < adjustedPositions.Length; i++) adjusted2D[i] = new Vector2Int(adjustedPositions[i].x, adjustedPositions[i].y);
+            block.GenerateTowers(adjusted2D, new TowerData[0], tilemap);
         }
         else
         {
-            block.GenerateTowers(adjustedPositions, towerDatas.ToArray(), tilemap);
+            Vector2Int[] adjusted2D = new Vector2Int[adjustedPositions.Length];
+            for (int i = 0; i < adjustedPositions.Length; i++) adjusted2D[i] = new Vector2Int(adjustedPositions[i].x, adjustedPositions[i].y);
+            block.GenerateTowers(adjusted2D, towerDatas.ToArray(), tilemap);
         } 
         
         // 对齐到Tilemap中心格子

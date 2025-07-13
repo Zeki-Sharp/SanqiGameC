@@ -16,7 +16,7 @@ public class BlockPlacementManager : MonoBehaviour
     [Header("放置状态")]
     [SerializeField] private bool isPlacing = false; // 是否正在放置模式
     [SerializeField] private GameObject previewBlock; // 预览方块
-    [SerializeField] private Vector2Int previewPosition; // 预览位置
+    [SerializeField] private Vector3Int previewPosition; // 预览位置
     
     // 公共属性
     public bool IsPlacing => isPlacing;
@@ -94,7 +94,7 @@ public class BlockPlacementManager : MonoBehaviour
         mouseWorldPos.z = 0;
         
         // 转换为地图格子坐标
-        Vector2Int gridPos = gameMap.WorldToGridPosition(mouseWorldPos);
+        Vector3Int gridPos = gameMap.WorldToGridPosition(mouseWorldPos);
         
         // 更新预览位置
         if (previewPosition != gridPos)
@@ -176,7 +176,7 @@ public class BlockPlacementManager : MonoBehaviour
     /// 在指定位置放置方块
     /// </summary>
     /// <param name="position">地图格子坐标</param>
-    private void PlaceBlockAtPosition(Vector2Int position)
+    private void PlaceBlockAtPosition(Vector3Int position)
     {
         if (gameMap == null) return;
         
@@ -257,7 +257,7 @@ public class BlockPlacementManager : MonoBehaviour
         block.Init(shapeName);
         
         // 放置方块
-        if (gameMap.PlaceBlock(position, block))
+        if (gameMap.PlaceBlock(new Vector3Int(position.x, position.y, 0), block))
         {
             Debug.Log($"测试方块放置成功: {shapeName} 在位置 ({position.x}, {position.y})");
             
