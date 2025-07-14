@@ -49,6 +49,7 @@ public class BlockGenerationConfig : ScriptableObject
             UnityEditor.EditorUtility.SetDirty(this);
             UnityEditor.AssetDatabase.SaveAssets();
 #endif
+            Save(); // 新增：每次修改后自动同步
         }
     }
 
@@ -75,7 +76,7 @@ public class BlockGenerationConfig : ScriptableObject
     private void OnValidate()
     {
         shapeName = name;
-
+        Save(); // 新增：每次编辑器变更后自动同步
 #if UNITY_EDITOR
         // 调试信息只在编辑器下启用
         for (int y = 0; y < 4; y++)
@@ -140,14 +141,18 @@ public class BlockGenerationConfig : ScriptableObject
 
     public Vector2Int[] GetCellCoords(int cellCount)
     {
-        int count = Random.Range(0,5);
-        Rotate( count);
+        // 修复：不再随机旋转，直接根据当前blockGrid生成坐标
         Vector2Int[] coords = new Vector2Int[cellCount];
         int index = 0;
         for (int i = 0; i < 16; i++)
         {
             if (blockGrid[i])
             {
+                if (index >= cellCount)
+                {
+                    Debug.LogWarning($"[BlockGenerationConfig] cellCount不匹配，index={index}, cellCount={cellCount}");
+                    break;
+                }
                 int x = i % 4;
                 int y = i / 4;
                 coords[index] = new Vector2Int(x, y);

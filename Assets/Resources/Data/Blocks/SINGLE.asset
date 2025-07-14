@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: SINGLE
   m_EditorClassIdentifier: 
   shapeName: SINGLE
-  blockGrid: 01000000000000000000000000000000
+  blockGrid: 00000001000000000000000000000000
   cellCount: 1
   coordinates:
-  - {x: 0, y: 0}
+  - {x: 3, y: 0}
   offset: {x: 0, y: 0}
