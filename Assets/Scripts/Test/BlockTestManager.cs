@@ -9,7 +9,7 @@ public class BlockTestManager : MonoBehaviour
     [SerializeField] private CreatePrefab createPrefab;
     [SerializeField] private bool runTestsOnStart = true;
     [SerializeField] private string prefabShowName = "PrefabArea";
-    [SerializeField] private MapData mapData;
+    [SerializeField] private MapConfig mapConfig;
 
     public static BlockTestManager instance;
     private void Start()
@@ -19,8 +19,8 @@ public class BlockTestManager : MonoBehaviour
 
         if (gameMap == null)
             gameMap = FindFirstObjectByType<GameMap>();
-        if (mapData == null)
-            mapData = gameMap.GetMapData();
+        if (mapConfig == null)
+            mapConfig = gameMap.GetMapData();
         if (runTestsOnStart)
         {
             RunAllTests();
@@ -54,14 +54,14 @@ public class BlockTestManager : MonoBehaviour
     public void Test_01()
     {
         Debug.Log("--- 测试方块进入待建造池 ---");
-        BlockGenerationConfig config =  mapData.BlockGenerationSettings.GetRandomShape();
+        BlockGenerationConfig config =  mapConfig.blockGenerationSettings.GetRandomShape();
         List<TowerData> towerDatas = new List<TowerData>();
         foreach (var vector2 in config.GetCellCoords(config.CellCount))
         {
-            towerDatas.Add(mapData.BlockGenerationSettings.GetRandomTower());
+            towerDatas.Add(mapConfig.blockGenerationSettings.GetRandomTower());
             // Debug.Log($"方块初始化中，方块坐标: {vector2}，替换塔{towerDatas[towerDatas.Count-1].name}");
         }
-        createPrefab.CreateBlock(mapData.BlockPrefab, towerDatas, config.GetCellCoords(config.CellCount), config);
+        createPrefab.CreateBlock(mapConfig.blockPrefab, towerDatas, config.GetCellCoords(config.CellCount), config);
         // Debug.Log($"方块完成，形状: {config.name}，包含 {config.GetCellCount(out int count)} 个格子");
         
         

@@ -9,7 +9,7 @@ public class GameMap : MonoBehaviour
     [SerializeField] private int mapWidth = 20;
     [SerializeField] private int mapHeight = 15;
     [SerializeField] private float cellSize = 1f;
-    [SerializeField] private MapData mapData;
+    [SerializeField] private MapConfig mapConfig;
 
     // 移除tilemapOrigin
     // 所有API、判定、放置、Gizmos等全部用Tilemap的cell坐标(Vector3Int/x,y,z)
@@ -57,9 +57,9 @@ public class GameMap : MonoBehaviour
         Debug.Log($"世界坐标范围: Min = {worldMin}，Max = {worldMax}");
     }
 
-    public MapData GetMapData()
+    public MapConfig GetMapData()
     {
-        return mapData;
+        return mapConfig;
     }
 
 #if UNITY_EDITOR
@@ -123,7 +123,7 @@ public class GameMap : MonoBehaviour
         Debug.Log($"地图初始化完成: {mapWidth}x{mapHeight}, 格子大小: {cellSize}");
 
         // 创建中心塔
-        GameObject centerTower = Instantiate(mapData.centerTower, towerArea);
+        GameObject centerTower = Instantiate(mapConfig.centerTower, towerArea);
         Vector3Int centerCell = BaseUtility.GetCenterCell(mapWidth, mapHeight); // 新增方法，返回cell坐标
         PlaceBlock(centerCell, centerTower.GetComponent<Block>());
         Debug.Log($"中心塔已创建,位置 {centerCell}");

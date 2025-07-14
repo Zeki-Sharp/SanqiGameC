@@ -7,8 +7,8 @@ using UnityEngine;
 public class BlockGenerationSettings : ScriptableObject
 {
     [Header("Tower Setting")]
-    [ShowInInspector] public List<TowerData> TowerDatas = new List<TowerData>();
-    [ShowInInspector] public List<float> TowerProbability = new List<float>();
+    [ShowInInspector] private List<TowerData> TowerDatas = new List<TowerData>();
+    [ShowInInspector] private List<float> TowerProbability = new List<float>();
 
     [Serializable]
     public class BlockProbability
@@ -20,9 +20,9 @@ public class BlockGenerationSettings : ScriptableObject
     // 随机几率
     [Header("Block Setting")]
     [ShowInInspector,Tooltip("概率,总和为100%")]
-    public List<BlockProbability> BlockProbabilities = new List<BlockProbability>();
+    private List<BlockProbability> BlockProbabilities = new List<BlockProbability>();
     [SerializeField,ReadOnly]
-    public float probability = 1f;
+    private float probability = 1f;
     
     [Button("概率均分")]
     public void EqualizeProbability()
