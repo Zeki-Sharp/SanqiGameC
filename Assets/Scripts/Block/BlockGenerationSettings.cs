@@ -6,10 +6,35 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "BlockGenerationSettings", menuName = "Tower Defense/BlockGeneration/BlockGenerationSettings"),Serializable]
 public class BlockGenerationSettings : ScriptableObject
 {
+    [Serializable]
+    public class TowerProbability
+    {
+        public TowerData Config;
+        [Unit(Units.Percent)]
+        public float Value;
+    }
+    // 随机几率
     [Header("Tower Setting")]
-    [ShowInInspector] private List<TowerData> TowerDatas = new List<TowerData>();
-    [ShowInInspector] private List<float> TowerProbability = new List<float>();
-
+    [SerializeField,Tooltip("概率,总和为100%")]
+    private List<TowerProbability> TowerProbabilities = new List<TowerProbability>();
+    [SerializeField,ReadOnly]
+    private float Towerprobability = 1f;
+    [Button("塔概率均分")]
+    public void TowerEqualizeProbability()
+    {
+        float probability = (100f) / TowerProbabilities.Count;
+        for (int i = 0; i < TowerProbabilities.Count; i++)
+        {
+            TowerProbabilities[i].Value = probability;
+        }
+        float sum = 0;
+        foreach (var item in TowerProbabilities)
+        {
+            sum += item.Value;
+        }
+        Towerprobability = sum;
+    }
+    
     [Serializable]
     public class BlockProbability
     {
@@ -19,30 +44,31 @@ public class BlockGenerationSettings : ScriptableObject
     }
     // 随机几率
     [Header("Block Setting")]
-    [ShowInInspector,Tooltip("概率,总和为100%")]
+    [SerializeField,Tooltip("概率,总和为100%")]
     private List<BlockProbability> BlockProbabilities = new List<BlockProbability>();
     [SerializeField,ReadOnly]
-    private float probability = 1f;
+    private float Blockprobability = 1f;
     
-    [Button("概率均分")]
-    public void EqualizeProbability()
+    [Button("方块概率均分")]
+    public void BlockEqualizeProbability()
     {
-        float probability = (100f-1) / BlockProbabilities.Count;
+        float probability = (100f) / BlockProbabilities.Count;
         for (int i = 0; i < BlockProbabilities.Count; i++)
         {
             BlockProbabilities[i].Value = probability;
         }
-        float sum = 1;
+        float sum = 0;
         foreach (var item in BlockProbabilities)
         {
             sum += item.Value;
         }
-        probability = sum;
+        Blockprobability = sum;
     }
+  
     private void OnValidate()
     {
        
-        float sum = 1;
+        float sum = 0;
         foreach (var item in BlockProbabilities)
         {
             sum += item.Value;
@@ -55,11 +81,22 @@ public class BlockGenerationSettings : ScriptableObject
         {
             Debug.LogError("BlockProbability 总和需在100%或以内");
         }
-        if (TowerDatas.Count != TowerProbability.Count)
+        Blockprobability = sum;
+        sum = 0;
+        foreach (var item in TowerProbabilities)
         {
-            Debug.LogError("TowerPrefabs 与 TowerProbability 长度不一致");
+            sum += item.Value;
         }
-        probability = sum;
+        if (sum <= 0f)
+        {
+            Debug.LogError("BlockProbability 总和不能小于或等于0");
+        }
+        if (sum > 100f)
+        {
+            Debug.LogError("BlockProbability 总和需在100%或以内");
+        }
+        Towerprobability = sum;
+       
     }
     public BlockGenerationConfig GetRandomShape()
     {
@@ -77,23 +114,23 @@ public class BlockGenerationSettings : ScriptableObject
     }
     public TowerData GetRandomTower()
     {
-        if (TowerDatas.Count == 0)
+        if (TowerProbabilities.Count == 0)
         {
             return null;
         }
         float total = 0;
         float random = UnityEngine.Random.Range(0, 100);
         int index = 0;
-        foreach (var item in TowerProbability)
+        foreach (var item in TowerProbabilities)
         {
-            total += item;
+            total += item.Value;
             if (random <= total)
             {
-                return TowerDatas[index];
+                return item.Config;
             }
             index++;
         }
-        return TowerDatas[0];
+        return TowerProbabilities[0].Config;
     }
 
     
