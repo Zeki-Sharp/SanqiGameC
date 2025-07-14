@@ -151,7 +151,7 @@ MonoBehaviour:
   mapWidth: 7
   mapHeight: 7
   cellSize: 1
-  mapData: {fileID: 11400000, guid: b138276068ce4ff4f8fce4bd703f7f06, type: 2}
+  mapConfig: {fileID: 11400000, guid: b138276068ce4ff4f8fce4bd703f7f06, type: 2}
   tilemap: {fileID: 1040635485}
   groundTile: {fileID: 11400000, guid: acf57d632270e594b9a9a1afe67d5c1d, type: 2}
   towerAreaName: TowerArea
@@ -485,7 +485,7 @@ MonoBehaviour:
   createPrefab: {fileID: 81773909}
   runTestsOnStart: 1
   prefabShowName: PrefabArea
-  mapData: {fileID: 11400000, guid: b138276068ce4ff4f8fce4bd703f7f06, type: 2}
+  mapConfig: {fileID: 0}
 --- !u!4 &278181989
 Transform:
   m_ObjectHideFlags: 0
