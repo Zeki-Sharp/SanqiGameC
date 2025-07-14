@@ -8,7 +8,7 @@ public class MapConfig : ScriptableObject
     public GameObject centerTower;
     public GameObject blockPrefab;
     public BlockGenerationSettings blockGenerationSettings;
-
+    public ItemGeneratorConfig itemGeneratorConfig;
     [Header("初始设置")]
     public List<MapData> MapDatas = new List<MapData>();
 }
