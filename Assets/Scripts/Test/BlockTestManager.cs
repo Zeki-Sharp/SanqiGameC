@@ -59,10 +59,10 @@ public class BlockTestManager : MonoBehaviour
         foreach (var vector2 in config.GetCellCoords(config.CellCount))
         {
             towerDatas.Add(mapData.BlockGenerationSettings.GetRandomTower());
-            Debug.Log($"方块初始化中，方块坐标: {vector2}，替换塔{towerDatas[towerDatas.Count-1].name}");
+            // Debug.Log($"方块初始化中，方块坐标: {vector2}，替换塔{towerDatas[towerDatas.Count-1].name}");
         }
         createPrefab.CreateBlock(mapData.BlockPrefab, towerDatas, config.GetCellCoords(config.CellCount), config);
-        Debug.Log($"方块完成，形状: {config.name}，包含 {config.GetCellCount(out int count)} 个格子");
+        // Debug.Log($"方块完成，形状: {config.name}，包含 {config.GetCellCount(out int count)} 个格子");
         
         
     }

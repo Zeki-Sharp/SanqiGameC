@@ -320,7 +320,7 @@ public class CreatePrefab : MonoBehaviour
         {
             for (int i = prefabShowArea.transform.childCount - 1; i >= 0; i--)
             {
-                DestroyImmediate(prefabShowArea.transform.GetChild(i).gameObject);
+                Destroy(prefabShowArea.transform.GetChild(i).gameObject);
             }
         }
     }

@@ -184,14 +184,22 @@ public class Block : MonoBehaviour
 #if UNITY_EDITOR
             Debug.Log($"移除格子 ({localCoord.x}, {localCoord.y}) 的塔");
 #endif
+            towers.Remove(localCoord);
             Destroy(tower.gameObject);
-            towers[localCoord] = null;
+            if (towers.Count == 0)
+            {
+                Destroy(gameObject);
+            }
         }
     }
 
     public void  SetTower(Vector2Int localCoord, Tower tower)
     {
         towers[localCoord] = tower;
+    }
+    public void ClearTower()
+    {
+        towers.Clear();
     }
 
     public int GetTowerCount()

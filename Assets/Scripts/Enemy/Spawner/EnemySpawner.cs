@@ -109,7 +109,7 @@ public class EnemySpawner : MonoBehaviour
         GameObject[] enemies = GameObject.FindGameObjectsWithTag("Enemy");
         foreach (GameObject enemy in enemies)
         {
-            DestroyImmediate(enemy);
+            Destroy(enemy);
         }
         currentEnemyCount = 0;
         Debug.Log("已清除所有敌人");

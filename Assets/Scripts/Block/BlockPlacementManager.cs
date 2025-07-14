@@ -318,6 +318,7 @@ public class BlockPlacementManager : MonoBehaviour
         if (parent != null) blockObj.transform.SetParent(parent);
         Block block = blockObj.AddComponent<Block>();
         block.Init(config);
+        block.ClearTower();
         // 依次生成塔
         Tilemap tilemap = gameMap.GetTilemap();
         for (int i = 0; i < cells.Count; i++)
@@ -338,6 +339,7 @@ public class BlockPlacementManager : MonoBehaviour
             int finalOrder = BaseOrder + verticalOffset;
             towerComponent.Initialize(data,  new Vector2Int(cell.x, cell.y));
             towerComponent.SetOrder(finalOrder);
+            
             block.SetTower(new Vector2Int(cell.x, cell.y), towerComponent);
             if (renderers != null && renderers.Length > 0)
             {
