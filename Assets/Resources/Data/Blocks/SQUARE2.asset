@@ -13,11 +13,11 @@ MonoBehaviour:
   m_Name: SQUARE2
   m_EditorClassIdentifier: 
   shapeName: SQUARE2
-  blockGrid: 00000000000000000000010100000101
+  blockGrid: 00000000000000000101000001010000
   cellCount: 4
   coordinates:
-  - {x: 2, y: 2}
-  - {x: 3, y: 2}
-  - {x: 2, y: 3}
-  - {x: 3, y: 3}
+  - {x: 0, y: 2}
+  - {x: 1, y: 2}
+  - {x: 0, y: 3}
+  - {x: 1, y: 3}
   offset: {x: 0, y: 0}

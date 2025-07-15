@@ -13,10 +13,10 @@ MonoBehaviour:
   m_Name: LINE3
   m_EditorClassIdentifier: 
   shapeName: LINE3
-  blockGrid: 00000001000000010000000100000000
+  blockGrid: 01010100000000000000000000000000
   cellCount: 3
   coordinates:
-  - {x: 3, y: 0}
-  - {x: 3, y: 1}
-  - {x: 3, y: 2}
+  - {x: 0, y: 0}
+  - {x: 1, y: 0}
+  - {x: 2, y: 0}
   offset: {x: -0.5, y: 0}

@@ -13,11 +13,11 @@ MonoBehaviour:
   m_Name: T3
   m_EditorClassIdentifier: 
   shapeName: T3
-  blockGrid: 00000000000000000001000001010100
+  blockGrid: 00010101000001000000000000000000
   cellCount: 4
   coordinates:
-  - {x: 1, y: 2}
-  - {x: 0, y: 3}
-  - {x: 1, y: 3}
-  - {x: 2, y: 3}
+  - {x: 1, y: 0}
+  - {x: 2, y: 0}
+  - {x: 3, y: 0}
+  - {x: 2, y: 1}
   offset: {x: 0, y: -0.149}

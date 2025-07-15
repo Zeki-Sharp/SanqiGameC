@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class BaseUtility 
+public class BaseUtility
 {
 
     /// <summary>
@@ -43,7 +43,7 @@ public class BaseUtility
             return uiRaycastResultCache[0].gameObject;
         return null;
     }
-    
+
     /// <summary>
     /// Vector2Int[] 转 List<Vector3Int>
     /// </summary>
@@ -56,6 +56,23 @@ public class BaseUtility
         {
             list.Add(new Vector3Int(item.x, item.y, 0));
         }
+
         return list;
+    }
+
+    public static float GetValue(float value, ValueType valueType)
+    {
+        if (valueType == ValueType.Percent)
+            return value / 100f;
+        return value;
+    }
+
+    public static float MultiplyValue(float value, float multiplier, ValueType valueType)
+    {
+        // 如果是百分比类型，则按百分比增加计算：value * (1 + multiplier/100)
+        if (valueType == ValueType.Percent)
+            return value * (1 + multiplier / 100f);
+        // 否则作为绝对值直接相加
+        return value + multiplier;
     }
 }

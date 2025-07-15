@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
@@ -10,6 +12,8 @@ public abstract class ItemConfig : ScriptableObject
     public string Description;
     public int Price;
 
+
+    public abstract void Init();
     public abstract void Use();
 
     public virtual bool ValidateConfig()
@@ -29,7 +33,16 @@ public abstract class ItemConfig : ScriptableObject
     }
     
 }
-
+ [Serializable]
+    public class ItemData<T> where T : Enum
+    {
+        [EnumPaging]
+        public T type;
+        [EnumToggleButtons]
+        public ValueType valueType;
+        [Range(-100, 100)]
+        public float value;
+    }
 public enum ItemType
 {
     Permanent,

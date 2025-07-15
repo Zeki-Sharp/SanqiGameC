@@ -1,4 +1,5 @@
 
+using System;
 using System.Collections.Generic;
 using Sirenix.OdinInspector;
 using UnityEngine;
@@ -6,21 +7,25 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "NewTemmporaryItemConfig", menuName = "Tower Defense/Item/TemmporaryItemConfig")]
 public class TemmporaryItemConfig : ItemConfig
 {
-    public class TemmporaryData
+    public List<ItemData<BattleBuffType>> ItemDatas = new List<ItemData<BattleBuffType>>();
+
+    public override void Init()
     {
-        public BattleBuffType type;
-        public ValueType valueType;
-        [Range(-100, 100)]
-        public float value;
+        throw new NotImplementedException();
     }
-    public List<TemmporaryData> TemmporaryDatas = new List<TemmporaryData>();
+
     public override void Use()
     {
         if (!ValidateConfig()) return;
         
         // 实现临时增益逻辑
         // 例如：BattleManager.Instance.ApplyTemporaryBuff(BuffType, BuffValue);
-        // Debug.Log($"已触发临时战斗增益：{ItemName} - {BuffType} +{BuffValue}%");
+        foreach (var data in ItemDatas)
+        {
+            // BattleManager.Instance.ApplyTemporaryBuff(data.type, data.valueType, data.value);
+             Debug.Log($"已触发临时战斗增益：{ItemName} - {data.type} +{data. value}{(data.valueType == ValueType.Absolute ? "" : "%")}");
+        }
+       
     }
 }
 
@@ -39,21 +44,7 @@ public enum BattleBuffType
     CritialChance,  // 暴击概率
     StrangeRate     //出怪率
 }
-/// <summary>
-/// 塔属性类型枚举，用于标识可强化的塔属性
-/// 符合游戏对象升级系统设计规范的参数验证要求
-/// </summary>
-public enum TowerStatType
-{
-    None,           // 无效类型（用于初始化检测）
-    AttackPower,    // 攻击力
-    AttackSpeed,    // 攻击速度
-    Range,          // 攻击范围
-    Defense,        // 防御力
-    Health,         // 生命值
-    CriticalRate,   // 暴击率
-    CriticalDamage  // 暴击伤害
-}
+
 
 public enum ValueType
 {
