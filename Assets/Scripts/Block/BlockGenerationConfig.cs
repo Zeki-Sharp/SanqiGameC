@@ -154,6 +154,9 @@ public class BlockGenerationConfig : ScriptableObject
             Debug.LogError($"[BlockGenerationConfig] 无效的cellCount值：{cellCount}，无法生成坐标数组");
             return new Vector2Int[0];
         }
+        //旋转
+        int rotateTimes = Random.Range(0, 4);
+        Rotate(rotateTimes);
 
         // 创建坐标数组
         Vector2Int[] coords = new Vector2Int[cellCount];
