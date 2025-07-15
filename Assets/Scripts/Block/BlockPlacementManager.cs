@@ -306,7 +306,7 @@ public class BlockPlacementManager : MonoBehaviour
     /// <param name="config">塔组配置</param>
     /// <param name="towerDatas">每个塔的数据</param>
     /// <param name="parent">父物体（可选）</param>
-    public void PlaceTowerGroupAtPositions(List<Vector3Int> cells, BlockGenerationConfig config, List<TowerData> towerDatas, Transform parent = null)
+    public void PlaceTowerGroupAtPositions(List<Vector3Int> cells, BlockGenerationConfig config, List<TowerData> towerDatas, Transform parent = null,Tilemap tilemap = null)
     {
         if (gameMap == null || config == null || cells == null || towerDatas == null || cells.Count != towerDatas.Count)
         {
@@ -320,7 +320,7 @@ public class BlockPlacementManager : MonoBehaviour
         block.Init(config);
         block.ClearTower();
         // 依次生成塔
-        Tilemap tilemap = gameMap.GetTilemap();
+         tilemap = tilemap != null ? tilemap : gameMap.GetTilemap();
         for (int i = 0; i < cells.Count; i++)
         {
             Vector3Int cell = cells[i];
@@ -349,6 +349,7 @@ public class BlockPlacementManager : MonoBehaviour
                 }
             }
         }
+  
         // 注册占用格子
         foreach (var cell in cells)
         {

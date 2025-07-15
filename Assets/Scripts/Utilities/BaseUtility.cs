@@ -44,5 +44,18 @@ public class BaseUtility
         return null;
     }
     
-
+    /// <summary>
+    /// Vector2Int[] 转 List<Vector3Int>
+    /// </summary>
+    /// <param name="array"></param>
+    /// <returns></returns>
+    public static List<Vector3Int> Vector2IntArrayToVector3IntList(Vector2Int[] array)
+    {
+        List<Vector3Int> list = new List<Vector3Int>();
+        foreach (Vector2Int item in array)
+        {
+            list.Add(new Vector3Int(item.x, item.y, 0));
+        }
+        return list;
+    }
 }

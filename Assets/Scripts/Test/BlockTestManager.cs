@@ -61,7 +61,9 @@ public class BlockTestManager : MonoBehaviour
             towerDatas.Add(mapConfig.blockGenerationSettings.GetRandomTower());
             // Debug.Log($"方块初始化中，方块坐标: {vector2}，替换塔{towerDatas[towerDatas.Count-1].name}");
         }
-        createPrefab.CreateBlock(mapConfig.blockPrefab, towerDatas, config.GetCellCoords(config.CellCount), config);
+
+        List<Vector3Int> positions =   BaseUtility.Vector2IntArrayToVector3IntList(config.GetCellCoords(config.CellCount));
+        createPrefab.CreateBlock(mapConfig.blockPrefab, towerDatas,positions , config);
         // Debug.Log($"方块完成，形状: {config.name}，包含 {config.GetCellCount(out int count)} 个格子");
         
         

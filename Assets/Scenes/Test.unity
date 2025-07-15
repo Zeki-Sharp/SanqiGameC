@@ -229,14 +229,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7f960242d83c112479146764cbe1e0fc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mapWidth: 8
-  mapHeight: 8
+  mapWidth: 4
+  mapHeight: 4
   cellSize: 1
   tilemap: {fileID: 2005984884}
   groundTile: {fileID: 11400000, guid: acf57d632270e594b9a9a1afe67d5c1d, type: 2}
   prefabShowArea: {fileID: 1125535675}
   camera: {fileID: 2144671128}
   hasClick: 0
+  blockPlacementManager: {fileID: 318562944}
 --- !u!1 &214648790
 GameObject:
   m_ObjectHideFlags: 0
@@ -426,7 +427,7 @@ MonoBehaviour:
   m_UVRect:
     serializedVersion: 2
     x: 0
-    y: 0
+    y: 0.03
     width: 1
     height: 1
 --- !u!222 &218421372
@@ -2244,7 +2245,7 @@ Camera:
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 1.5
+  orthographic size: 2
   m_Depth: 0
   m_CullingMask:
     serializedVersion: 2
@@ -2269,7 +2270,7 @@ Transform:
   m_GameObject: {fileID: 2144671125}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -20.2, y: 0.35, z: -10}
+  m_LocalPosition: {x: -20.287, y: -0.88, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

@@ -96,7 +96,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   sortingLayerName: Default
-  sortingOrder: 5
+  sortingOrder: 2000
 --- !u!114 &9081182979500157578
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -260,9 +260,13 @@ MonoBehaviour:
   towerData: {fileID: 11400000, guid: 2c56d48c1b17cd04e8bfca12c88f6655, type: 2}
   currentHealth: 0
   level: 0
+  position: {x: 0, y: 0}
   spriteRenderer: {fileID: 0}
   text: {fileID: 0}
   bulletPrefab: {fileID: 3447451743312656527, guid: 2fb7abf005420a1429b21a013ddbccb1, type: 3}
+  TowerLayerMask:
+    serializedVersion: 2
+    m_Bits: 0
 --- !u!70 &2274610060129136706
 CapsuleCollider2D:
   m_ObjectHideFlags: 0

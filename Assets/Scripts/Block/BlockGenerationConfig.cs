@@ -141,16 +141,31 @@ public class BlockGenerationConfig : ScriptableObject
 
     public Vector2Int[] GetCellCoords(int cellCount)
     {
-        // 修复：不再随机旋转，直接根据当前blockGrid生成坐标
+        // 验证blockGrid数组长度
+        if (blockGrid == null || blockGrid.Length != 16)
+        {
+            Debug.LogError($"[BlockGenerationConfig] blockGrid数组无效，长度应为16，当前长度：{blockGrid?.Length ?? 0}");
+            return new Vector2Int[0];
+        }
+
+        // 验证cellCount是否有效
+        if (cellCount <= 0)
+        {
+            Debug.LogError($"[BlockGenerationConfig] 无效的cellCount值：{cellCount}，无法生成坐标数组");
+            return new Vector2Int[0];
+        }
+
+        // 创建坐标数组
         Vector2Int[] coords = new Vector2Int[cellCount];
         int index = 0;
         for (int i = 0; i < 16; i++)
         {
             if (blockGrid[i])
             {
-                if (index >= cellCount)
+                // 增加越界保护
+                if (index >= coords.Length)
                 {
-                    Debug.LogWarning($"[BlockGenerationConfig] cellCount不匹配，index={index}, cellCount={cellCount}");
+                    Debug.LogWarning($"[BlockGenerationConfig] 坐标数组溢出，可能与cellCount不一致（blockGrid中true值比cellCount多）当前i={i}, index={index}, coords.Length={coords.Length}");
                     break;
                 }
                 int x = i % 4;
@@ -159,6 +174,13 @@ public class BlockGenerationConfig : ScriptableObject
                 index++;
             }
         }
+    
+        // 如果实际有效格子数小于coords数组长度，裁剪数组
+        if (index < coords.Length)
+        {
+            System.Array.Resize(ref coords, index);
+        }
+    
         return coords;
     }
     //旋转几次

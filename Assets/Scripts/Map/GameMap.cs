@@ -17,7 +17,7 @@ public class GameMap : MonoBehaviour
     // WorldToGridPosition/ GridToWorldPosition直接用Tilemap的cell坐标
 
     // 以cell坐标为key的占用字典
-    private HashSet<Vector3Int> occupiedCells = new HashSet<Vector3Int>();
+  [ShowInInspector]  private HashSet<Vector3Int> occupiedCells = new HashSet<Vector3Int>();
     private Dictionary<Vector3Int, Block> placedBlocks = new Dictionary<Vector3Int, Block>();
 
     [Header("Tilemap可视化")]
@@ -125,6 +125,7 @@ public class GameMap : MonoBehaviour
         // 创建中心塔
         GameObject centerTower = Instantiate(mapConfig.centerTower, towerArea);
         Vector3Int centerCell = BaseUtility.GetCenterCell(mapWidth, mapHeight); // 新增方法，返回cell坐标
+    Debug.Log($"中心塔已创建,位置 {centerCell}");
         PlaceBlock(centerCell, centerTower.GetComponent<Block>());
         Debug.Log($"中心塔已创建,位置 {centerCell}");
     }
@@ -179,11 +180,16 @@ public class GameMap : MonoBehaviour
         //     Debug.LogWarning($"无法在位置 ({position.x}, {position.y}) 放置方块");
         //     return false;
         // }
-
+        block.Config.GetCellCount(out var count);
+        var coordinates = block.Config.GetCellCoords(count);
+        Debug.Log($"方块坐标: {coordinates}");
+        Debug.Log($"坐标大小: {coordinates.Length}");
         // 标记格子为已占用
-        foreach (Vector2Int coord in block.Config.Coordinates)
+        foreach (Vector2Int coord in coordinates)
         {
-            Vector3Int cell = cellPos + new Vector3Int(coord.x, coord.y, 0);
+            Vector3Int cell = cellPos /*+ new Vector3Int(coord.x, coord.y, 0)*/;
+            Debug.Log($"坐标: {cellPos}");
+            Debug.Log($"坐标: {cell}");
             occupiedCells.Add(cell);
         }
 
@@ -217,7 +223,7 @@ public class GameMap : MonoBehaviour
         // 标记格子为已占用
         foreach (Vector2Int coord in block.Config.Coordinates)
         {
-            Vector3Int cell = cellPos + new Vector3Int(coord.x, coord.y, 0);
+            Vector3Int cell = cellPos /*+ new Vector3Int(coord.x, coord.y, 0)*/;
             occupiedCells.Add(cell);
         }
 
@@ -247,7 +253,7 @@ public class GameMap : MonoBehaviour
             // 取消标记格子占用
             foreach (Vector2Int coord in block.Config.Coordinates)
             {
-                Vector3Int cell = cellPos + new Vector3Int(coord.x, coord.y, 0);
+                Vector3Int cell = cellPos /*+ new Vector3Int(coord.x, coord.y, 0)*/;
                 occupiedCells.Remove(cell);
             }
         }
@@ -280,6 +286,7 @@ public class GameMap : MonoBehaviour
     /// <returns>是否被占用</returns>
     public bool IsCellOccupied(Vector3Int cellPos)
     {
+        Debug.Log($"检查cell位置 {cellPos} 是否被占用");
         return occupiedCells.Contains(cellPos);
     }
 

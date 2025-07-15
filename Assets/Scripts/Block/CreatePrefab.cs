@@ -24,7 +24,8 @@ public class CreatePrefab : MonoBehaviour
     [SerializeField] private Camera camera;
     
     [SerializeField] private bool hasClick;
-    
+    [SerializeField] private BlockPlacementManager blockPlacementManager;
+
     // 公共属性
     public int MapWidth => mapWidth;
     public int MapHeight => mapHeight;
@@ -119,29 +120,11 @@ public class CreatePrefab : MonoBehaviour
     public static BlockGenerationConfig lastPreviewConfig;
     public static List<TowerData> lastPreviewTowerDatas;
     public static Vector2Int lastPreviewAnchorOffset; // 记录原始左下角坐标
-    public static Vector2Int[] lastPreviewOriginalPositions; // 记录原始相对坐标
+    public static Vector3Int[] lastPreviewOriginalPositions; // 记录原始相对坐标
     public static Vector3Int[] lastPreviewAdjustedPositions; // 记录调整后的坐标
-    public void CreateBlock(GameObject blockPrefab, List<TowerData> towerDatas, Vector2Int[] positions, BlockGenerationConfig config)
-    { 
-        // 参数验证
-        if (positions == null || positions.Length == 0)
-        {
-            Debug.LogError("无法生成方块：坐标数组为空或长度为0");
-            return;
-        }
-
-        if (prefabShowArea == null)
-        {
-            Debug.LogError("预制体显示区域未赋值");
-            return;
-        }
-
-        if (tilemap == null)
-        {
-            Debug.LogError("Tilemap未赋值，无法生成方块");
-            return;
-        }
-        
+    
+    public void CreateBlock(GameObject blockPrefab, List<TowerData> towerDatas, List<Vector3Int> positions, BlockGenerationConfig config)
+    {
         // 根据原始坐标调整Tilemap大小
         // AdjustTilemapSize(positions);
         
@@ -149,10 +132,14 @@ public class CreatePrefab : MonoBehaviour
         Vector3Int tilemapCenter = CalculateTilemapCenter();
         
         // 替换positions数组为相对于Tilemap中心的新坐标
-        Vector2Int[] adjustedPositions2 = AdjustPositionsToTilemapCenter(positions, tilemapCenter);
+        Vector3Int[] adjustedPositions2 = AdjustPositionsToTilemapCenter(positions.ToArray(), tilemapCenter);
         Vector3Int[] adjustedPositions = new Vector3Int[adjustedPositions2.Length];
         for (int i = 0; i < adjustedPositions2.Length; i++) adjustedPositions[i] = new Vector3Int(adjustedPositions2[i].x, adjustedPositions2[i].y, 0);
-        
+        if (blockPlacementManager != null)
+        {
+             blockPlacementManager.PlaceTowerGroupAtPositions(positions, config, towerDatas,
+                        prefabShowArea.transform,tilemap);
+        }
         // 记录原始左下角
         int minX = int.MaxValue, minY = int.MaxValue;
         foreach (var pos in positions)
@@ -161,57 +148,102 @@ public class CreatePrefab : MonoBehaviour
             if (pos.y < minY) minY = pos.y;
         }
         lastPreviewAnchorOffset = new Vector2Int(minX, minY);
-        lastPreviewOriginalPositions = positions;
+        lastPreviewOriginalPositions = positions.ToArray();
         lastPreviewAdjustedPositions = adjustedPositions;
-        
-        // 记录父物体的初始位置
-        Vector3 initialParentPosition = transform.position;
-        
-        // 实例化方块
-        GameObject blockObj = Instantiate(blockPrefab, prefabShowArea.transform);
-        Block block = blockObj.GetComponent<Block>();
-       
-
-        if (block == null)
-        {
-            Debug.LogError($"方块预制体缺少Block组件，对象：{blockObj.name}");
-            Destroy(blockObj);
-            return;
-        }
-
-        // 使用调整后的坐标生成塔
-        if (towerDatas == null || towerDatas.Count == 0)
-        {
-            Debug.LogWarning("塔数据为空，仅生成基础方块");
-            Vector2Int[] adjusted2D = new Vector2Int[adjustedPositions.Length];
-            for (int i = 0; i < adjustedPositions.Length; i++) adjusted2D[i] = new Vector2Int(adjustedPositions[i].x, adjustedPositions[i].y);
-            block.GenerateTowers(adjusted2D, new TowerData[0], tilemap);
-        }
-        else
-        {
-            Vector2Int[] adjusted2D = new Vector2Int[adjustedPositions.Length];
-            for (int i = 0; i < adjustedPositions.Length; i++) adjusted2D[i] = new Vector2Int(adjustedPositions[i].x, adjustedPositions[i].y);
-            block.GenerateTowers(adjusted2D, towerDatas.ToArray(), tilemap);
-        } 
-        
-        // 对齐到Tilemap中心格子
-        AlignObjectToTile(block, tilemapCenter, initialParentPosition);
-        block.transform.parent.position = block.transform.parent.position + (Vector3)config.offset;
-        // 注册到地图
-        if (GameMap.instance == null)
-        {
-            Debug.LogError("GameMap单例未初始化");
-            return;
-        }
-        // 缓存当前showarea塔组配置
         lastPreviewConfig = config;
         lastPreviewTowerDatas = towerDatas != null ? new List<TowerData>(towerDatas) : null;
     }
+    // public void CreateBlock(GameObject blockPrefab, List<TowerData> towerDatas, Vector2Int[] positions, BlockGenerationConfig config)
+    // { 
+    //     // 参数验证
+    //     if (positions == null || positions.Length == 0)
+    //     {
+    //         Debug.LogError("无法生成方块：坐标数组为空或长度为0");
+    //         return;
+    //     }
+    //
+    //     if (prefabShowArea == null)
+    //     {
+    //         Debug.LogError("预制体显示区域未赋值");
+    //         return;
+    //     }
+    //
+    //     if (tilemap == null)
+    //     {
+    //         Debug.LogError("Tilemap未赋值，无法生成方块");
+    //         return;
+    //     }
+    //     
+    //     // 根据原始坐标调整Tilemap大小
+    //     // AdjustTilemapSize(positions);
+    //     
+    //     // 计算Tilemap实际中心位置
+    //     Vector3Int tilemapCenter = CalculateTilemapCenter();
+    //     
+    //     // 替换positions数组为相对于Tilemap中心的新坐标
+    //     Vector2Int[] adjustedPositions2 = AdjustPositionsToTilemapCenter(positions, tilemapCenter);
+    //     Vector3Int[] adjustedPositions = new Vector3Int[adjustedPositions2.Length];
+    //     for (int i = 0; i < adjustedPositions2.Length; i++) adjustedPositions[i] = new Vector3Int(adjustedPositions2[i].x, adjustedPositions2[i].y, 0);
+    //     
+    //     // 记录原始左下角
+    //     int minX = int.MaxValue, minY = int.MaxValue;
+    //     foreach (var pos in positions)
+    //     {
+    //         if (pos.x < minX) minX = pos.x;
+    //         if (pos.y < minY) minY = pos.y;
+    //     }
+    //     lastPreviewAnchorOffset = new Vector2Int(minX, minY);
+    //     lastPreviewOriginalPositions = positions;
+    //     lastPreviewAdjustedPositions = adjustedPositions;
+    //     
+    //     // 记录父物体的初始位置
+    //     Vector3 initialParentPosition = transform.position;
+    //     
+    //     // 实例化方块
+    //     GameObject blockObj = Instantiate(blockPrefab, prefabShowArea.transform);
+    //     Block block = blockObj.GetComponent<Block>();
+    //     
+    //     if (block == null)
+    //     {
+    //         Debug.LogError($"方块预制体缺少Block组件，对象：{blockObj.name}");
+    //         Destroy(blockObj);
+    //         return;
+    //     }
+    //
+    //     // 使用调整后的坐标生成塔
+    //     if (towerDatas == null || towerDatas.Count == 0)
+    //     {
+    //         Debug.LogWarning("塔数据为空，仅生成基础方块");
+    //         Vector2Int[] adjusted2D = new Vector2Int[adjustedPositions.Length];
+    //         for (int i = 0; i < adjustedPositions.Length; i++) adjusted2D[i] = new Vector2Int(adjustedPositions[i].x, adjustedPositions[i].y);
+    //         block.GenerateTowers(adjusted2D, new TowerData[0], tilemap);
+    //     }
+    //     else
+    //     {
+    //         Vector2Int[] adjusted2D = new Vector2Int[adjustedPositions.Length];
+    //         for (int i = 0; i < adjustedPositions.Length; i++) adjusted2D[i] = new Vector2Int(adjustedPositions[i].x, adjustedPositions[i].y);
+    //         block.GenerateTowers(adjusted2D, towerDatas.ToArray(), tilemap);
+    //     } 
+    //     
+    //     // 对齐到Tilemap中心格子
+    //     block.transform.parent.position = Vector3.zero;
+    //     AlignObjectToTile(block, tilemapCenter, initialParentPosition);
+    //     block.transform.parent.position = block.transform.parent.position + (Vector3)config.offset;
+    //     // 注册到地图
+    //     if (GameMap.instance == null)
+    //     {
+    //         Debug.LogError("GameMap单例未初始化");
+    //         return;
+    //     }
+    //     // 缓存当前showarea塔组配置
+    //     lastPreviewConfig = config;
+    //     lastPreviewTowerDatas = towerDatas != null ? new List<TowerData>(towerDatas) : null;
+    // }
     
     /// <summary>
     /// 将原始坐标转换为相对于Tilemap中心的新坐标
     /// </summary>
-    private Vector2Int[] AdjustPositionsToTilemapCenter(Vector2Int[] originalPositions, Vector3Int tilemapCenter)
+    private Vector3Int[] AdjustPositionsToTilemapCenter(Vector3Int[] originalPositions, Vector3Int tilemapCenter)
     {
         // 查找原始坐标范围
         int minX = int.MaxValue, maxX = int.MinValue;
@@ -230,10 +262,10 @@ public class CreatePrefab : MonoBehaviour
         int offsetY = tilemapCenter.y - ((maxY + minY) / 2);
         
         // 创建新的坐标数组
-        Vector2Int[] adjustedPositions = new Vector2Int[originalPositions.Length];
+        Vector3Int[] adjustedPositions = new Vector3Int[originalPositions.Length];
         for (int i = 0; i < originalPositions.Length; i++)
         {
-            adjustedPositions[i] = new Vector2Int(originalPositions[i].x + offsetX, originalPositions[i].y + offsetY);
+            adjustedPositions[i] = new Vector3Int(originalPositions[i].x + offsetX, originalPositions[i].y + offsetY);
         }
         
         Debug.Log($"坐标调整完成: 原始范围({minX},{minY})-({maxX},{maxY}), 新中心({tilemapCenter.x},{tilemapCenter.y})");
