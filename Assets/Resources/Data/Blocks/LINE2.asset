@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: LINE2
   m_EditorClassIdentifier: 
   shapeName: LINE2
-  blockGrid: 00000001000000010000000000000000
+  blockGrid: 01010000000000000000000000000000
   cellCount: 2
   coordinates:
-  - {x: 3, y: 0}
-  - {x: 3, y: 1}
+  - {x: 0, y: 0}
+  - {x: 1, y: 0}
   offset: {x: -0.222, y: -0.111}

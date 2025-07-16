@@ -116,11 +116,6 @@ public class Block : MonoBehaviour
     {
         if (towers.Count > 0)
         {
-            // if (!towers.ContainsKey(localCoord))
-            // {
-            //     Debug.LogError($"格子 ({localCoord.x}, {localCoord.y}) 不在当前方块范围内");
-            //     return null;
-            // }
 
             if (towers.TryGetValue(localCoord, out Tower tower) && tower != null)
             {
@@ -137,18 +132,10 @@ public class Block : MonoBehaviour
             return null;
         }
         GameObject go = Instantiate(towerPrefab, transform);
-        // 计算塔底部到pivot的偏移
-        Renderer renderer = go.GetComponentInChildren<Renderer>();
-        float yOffset = 0f;
-        if (renderer != null)
-        {
-            Bounds bounds = renderer.bounds;
-            // bounds.center.y - bounds.extents.y 是世界坐标下底部
-            float bottomWorld = bounds.center.y - bounds.extents.y;
-            float pivotWorld = go.transform.position.y;
-            yOffset = pivotWorld - bottomWorld;
-        }
-        go.transform.position = cellCenter + new Vector3(0, yOffset, 0);
+        
+        // 直接使用cellCenter，不添加Y轴偏移，与预览保持一致
+        go.transform.position = cellCenter;
+        
         Tower towerComponent = go.GetComponent<Tower>();
         if (towerComponent == null)
         {

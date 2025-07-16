@@ -56,14 +56,16 @@ public class BlockTestManager : MonoBehaviour
         Debug.Log("--- 测试方块进入待建造池 ---");
         BlockGenerationConfig config =  mapConfig.blockGenerationSettings.GetRandomShape();
         List<TowerData> towerDatas = new List<TowerData>();
+        
+        // 使用原始配置生成塔数据（CreateBlock内部会重新生成旋转后的坐标）
         foreach (var vector2 in config.GetCellCoords(config.CellCount))
         {
             towerDatas.Add(mapConfig.blockGenerationSettings.GetRandomTower());
             // Debug.Log($"方块初始化中，方块坐标: {vector2}，替换塔{towerDatas[towerDatas.Count-1].name}");
         }
 
-        List<Vector3Int> positions =   BaseUtility.Vector2IntArrayToVector3IntList(config.GetCellCoords(config.CellCount));
-        createPrefab.CreateBlock(mapConfig.blockPrefab, towerDatas,positions , config);
+        // 不再预先生成坐标列表，让CreateBlock内部使用旋转后的配置坐标
+        createPrefab.CreateBlock(mapConfig.blockPrefab, towerDatas, config);
         // Debug.Log($"方块完成，形状: {config.name}，包含 {config.GetCellCount(out int count)} 个格子");
         
         

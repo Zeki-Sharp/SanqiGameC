@@ -51,9 +51,10 @@ public class BlockPlacementUI : MonoBehaviour
     
     private void OnShapeButtonClicked(string shapeName)
     {
+
         if (placementManager == null) return;
         
-        placementManager.StartPlacement(shapeName);
+        //placementManager.StartPlacement(shapeName,towerDatas);
         UpdateStatusText($"开始放置 {shapeName} 方块，点击地图位置放置，右键取消");
     }
     

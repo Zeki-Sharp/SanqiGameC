@@ -13,6 +13,15 @@ public class BlockPlacementManager : MonoBehaviour
     [SerializeField] private GameObject blockPrefab; // 方块预制体
     [SerializeField] private string currentShapeName = "LINE2H"; // 当前选择的形状
     [SerializeField] private TowerData currentTowerData; // 当前选择的塔数据
+
+    // 新建塔组预览系统数据
+    [SerializeField] private BlockGenerationConfig currentBlockConfig;
+    [SerializeField] private List<TowerData> currentTowerDatas = new List<TowerData>();
+    [SerializeField] private List<GameObject> towerPreviewObjects = new List<GameObject>();
+    [SerializeField] private List<Vector3Int> currentCells = new List<Vector3Int>();
+
+
+
     
     [Header("放置状态")]
     [SerializeField] private bool isPlacing = false; // 是否正在放置模式
@@ -40,32 +49,38 @@ public class BlockPlacementManager : MonoBehaviour
         if (isPlacing)
         {
             HandlePlacementInput();
+            UpdatePreviewTowerGroupFollowMouse();
         }
     }
+
     
+
+
     /// <summary>
     /// 开始放置模式
     /// </summary>
     /// <param name="shapeName">方块形状名称</param>
     /// <param name="towerData">塔数据</param>
-    public void StartPlacement(string shapeName, TowerData towerData = null)
+    public void StartPlacement(BlockGenerationConfig config, List<TowerData> towerDatas)
     {
         if (gameMap == null)
         {
             Debug.LogError("GameMap未找到，无法开始放置");
             return;
         }
-        
-        currentShapeName = shapeName;
-        currentTowerData = towerData;
+
         isPlacing = true;
-        
-        // 创建预览方块
-        CreatePreviewBlock();
-        
-        Debug.Log($"开始放置模式，形状: {shapeName}");
+
+        currentBlockConfig = config;
+        currentTowerDatas = towerDatas;
+
+
+        foreach (var coord in config.Coordinates)
+        {
+            Debug.Log("当前配置坐标:"+coord);
+        }
     }
-    
+
     /// <summary>
     /// 停止放置模式
     /// </summary>
@@ -101,7 +116,7 @@ public class BlockPlacementManager : MonoBehaviour
         if (previewPosition != gridPos)
         {
             previewPosition = gridPos;
-            UpdatePreviewBlock();
+            //UpdatePreviewBlock();
         }
         
         // 鼠标左键点击放置方块
@@ -117,61 +132,88 @@ public class BlockPlacementManager : MonoBehaviour
         }
     }
     
+
+
     /// <summary>
-    /// 创建预览方块
+    /// 更新塔组预览对象跟随鼠标
     /// </summary>
-    private void CreatePreviewBlock()
+    private void UpdatePreviewTowerGroupFollowMouse()
     {
-        if (previewBlock != null)
+        if (!isPlacing || currentBlockConfig == null || currentTowerDatas == null) return;
+        if (currentTowerDatas.Count != currentBlockConfig.Coordinates.Length) return;
+
+        Debug.Log("更新塔组预览对象跟随鼠标");
+        GeneratePreviewTowers();
+
+        Vector3 mouseWorldPos = mainCamera.ScreenToWorldPoint(Input.mousePosition);
+        mouseWorldPos.z = 0;
+        Vector3Int baseGridPos = gameMap.WorldToGridPosition(mouseWorldPos);
+
+        UpdatePreviewTowerPositions(baseGridPos);
+    }
+
+    /// <summary>
+    /// 确保预览塔组生成
+    /// </summary>
+    private void GeneratePreviewTowers()
+    {
+        if (towerPreviewObjects.Count > 0) return;
+
+        for (int i = 0; i < currentBlockConfig.Coordinates.Length; i++)
         {
-            Destroy(previewBlock);
+            GameObject towerPrefab = Resources.Load<GameObject>("Prefab/Tower/Tower");
+            GameObject towerObj = Instantiate(towerPrefab, transform);
+            towerObj.name = $"PreviewTower_{i}";
+
+            SpriteRenderer sr = towerObj.GetComponentInChildren<SpriteRenderer>();
+            if (sr != null)
+            {
+                var c = sr.color;
+                c.a = 0.5f;
+                sr.color = c;
+                sr.sortingOrder = 1000;
+            }
+
+            towerPreviewObjects.Add(towerObj);
         }
-        
-        // 创建预览方块GameObject
-        previewBlock = new GameObject($"PreviewBlock_{currentShapeName}");
-        previewBlock.transform.SetParent(transform);
-        
-        // 添加Block组件
-        Block block = previewBlock.AddComponent<Block>();
-        block.Init(currentShapeName);
-        
-        // 设置预览材质（半透明）
-        Renderer renderer = previewBlock.GetComponent<Renderer>();
-        if (renderer != null)
+    }
+
+    /// <summary>
+    /// 更新预览塔组位置
+    /// </summary>
+    /// <param name="baseGridPos">基础网格位置</param>
+    private void UpdatePreviewTowerPositions(Vector3Int baseGridPos)
+    {
+        for (int i = 0; i < currentBlockConfig.Coordinates.Length; i++)
         {
-            Material previewMaterial = new Material(renderer.material);
-            previewMaterial.color = new Color(0, 1, 0, 0.5f); // 半透明绿色
-            renderer.material = previewMaterial;
+            Vector2Int offset = currentBlockConfig.Coordinates[i];
+            Vector3Int cellPos = baseGridPos + new Vector3Int(offset.x, offset.y, 0);
+            Vector3 worldPos = gameMap.GridToWorldPosition(cellPos);
+            towerPreviewObjects[i].transform.position = worldPos;
         }
-        
-        UpdatePreviewBlock();
+    }
+
+    /// <summary>
+    /// 获取塔组预览坐标的锚点（左下角 → 中心）
+    /// </summary>
+    private Vector3Int GetPreviewAnchorOffset()
+    {
+        if (CreatePrefab.lastPreviewAdjustedPositions == null || CreatePrefab.lastPreviewAdjustedPositions.Length == 0)
+            return Vector3Int.zero;
+
+        // 计算最小 x/y
+        int minX = int.MaxValue;
+        int minY = int.MaxValue;
+
+        foreach (var pos in CreatePrefab.lastPreviewAdjustedPositions)
+        {
+            if (pos.x < minX) minX = pos.x;
+            if (pos.y < minY) minY = pos.y;
+        }
+
+        return new Vector3Int(minX, minY, 0);
     }
     
-    /// <summary>
-    /// 更新预览方块位置和状态
-    /// </summary>
-    private void UpdatePreviewBlock()
-    {
-        if (previewBlock == null) return;
-        
-        Block block = previewBlock.GetComponent<Block>();
-        if (block == null) return;
-        
-        // 设置预览位置
-        Vector3 worldPos = gameMap.GridToWorldPosition(previewPosition);
-        previewBlock.transform.position = worldPos;
-        
-        // 检查是否可以放置
-        bool canPlace = gameMap.CanPlaceBlock(previewPosition, block.Config);
-        
-        // 更新预览颜色
-        Renderer renderer = previewBlock.GetComponent<Renderer>();
-        if (renderer != null)
-        {
-            Color previewColor = canPlace ? new Color(0, 1, 0, 0.5f) : new Color(1, 0, 0, 0.5f);
-            renderer.material.color = previewColor;
-        }
-    }
     
     /// <summary>
     /// 在指定位置放置方块
@@ -180,39 +222,52 @@ public class BlockPlacementManager : MonoBehaviour
     private void PlaceBlockAtPosition(Vector3Int position)
     {
         if (gameMap == null) return;
-        
-        // 创建实际的方块
-        GameObject blockObject = new GameObject($"Block_{currentShapeName}_{position.x}_{position.y}");
+
+        // 生成实际方块对象
+        GameObject blockObject = new GameObject($"Block_{position.x}_{position.y}");
         Block block = blockObject.AddComponent<Block>();
-        
-        // 初始化方块
-        block.Init(currentShapeName);
-        
+
+        // 初始化配置
+        block.Init(currentBlockConfig);
+
         // 检查是否可以放置
-        if (!gameMap.CanPlaceBlock(position, block.Config))
+        if (!gameMap.CanPlaceBlock(position, currentBlockConfig))
         {
             Debug.LogWarning($"无法在位置 ({position.x}, {position.y}) 放置方块");
             Destroy(blockObject);
             return;
         }
-        
+
         // 放置方块到地图
         if (gameMap.PlaceBlock(position, block))
         {
             Debug.Log($"方块成功放置到位置 ({position.x}, {position.y})");
-            
-            // 如果提供了塔数据，为每个格子生成塔
-            if (currentTowerData != null)
+
+            // 生成塔
+            Tilemap tilemap = gameMap.GetTilemap();
+            block.GenerateTowers(currentBlockConfig.Coordinates, currentTowerDatas.ToArray(), tilemap);
+
+            // 停止放置模式并清除预览
+            foreach (var obj in towerPreviewObjects)
             {
-                GenerateTowersForBlock(block, currentTowerData);
+                Destroy(obj);
             }
-            
-            // 停止放置模式
+            towerPreviewObjects.Clear();
+
+            // 只在这里刷新 ShowArea
+            if (CreatePrefab.instance != null)
+            {
+                CreatePrefab.instance.RefreshShowArea();
+                FindFirstObjectByType<Preview_Click>()?.ResetClickState(); // 重置建造状态
+                Debug.Log("成功建造 → 刷新 ShowArea");
+            }
+
+
             StopPlacement();
         }
         else
         {
-            Debug.LogError($"放置方块失败");
+            Debug.LogError("放置失败！");
             Destroy(blockObject);
         }
     }
@@ -347,6 +402,11 @@ public class BlockPlacementManager : MonoBehaviour
                 {
                     sr.color = new Color(1, 1, 1, 1);
                 }
+            }
+
+            foreach (var coord in config.Coordinates)
+            {
+                Debug.Log("当前配置坐标:"+coord);
             }
         }
   

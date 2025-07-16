@@ -113,17 +113,6 @@ public class BlockGenerationConfig : ScriptableObject
             }
         }
         
-        // 更新坐标缓存
-        // cellCount = GetCellCount(out int count);
-        // coordinates = GetCellCoords(count);
-        
-// #if UNITY_EDITOR
-//         if (!Application.isPlaying)
-//         {
-//             UnityEditor.EditorUtility.SetDirty(this);
-//             UnityEditor.AssetDatabase.SaveAssets();
-//         }
-// #endif
     }
 
     public int GetCellCount(out int count)
@@ -154,9 +143,6 @@ public class BlockGenerationConfig : ScriptableObject
             Debug.LogError($"[BlockGenerationConfig] 无效的cellCount值：{cellCount}，无法生成坐标数组");
             return new Vector2Int[0];
         }
-        //旋转
-        int rotateTimes = Random.Range(0, 4);
-        Rotate(rotateTimes);
 
         // 创建坐标数组
         Vector2Int[] coords = new Vector2Int[cellCount];
@@ -193,5 +179,53 @@ public class BlockGenerationConfig : ScriptableObject
         {
             Rotate();
         }
+    }
+    
+    /// <summary>
+    /// 获取随机旋转后的配置副本（不修改原配置）
+    /// </summary>
+    /// <returns>旋转后的配置副本</returns>
+    public BlockGenerationConfig GetRandomRotatedCopy()
+    {
+        // 创建配置副本
+        BlockGenerationConfig copy = ScriptableObject.CreateInstance<BlockGenerationConfig>();
+        
+        // 复制基础数据
+        copy.shapeName = this.shapeName;
+        copy.blockGrid = (bool[])this.blockGrid.Clone();
+        copy.offset = this.offset;
+        
+        // 随机旋转
+        int rotationTimes = Random.Range(0, 4);
+        copy.Rotate(rotationTimes);
+        copy.Save();
+        
+        Debug.Log($"创建随机旋转副本: {this.name} -> {copy.name}, 旋转次数: {rotationTimes}");
+        
+        return copy;
+    }
+    
+    /// <summary>
+    /// 获取指定旋转次数的配置副本（不修改原配置）
+    /// </summary>
+    /// <param name="rotationTimes">旋转次数</param>
+    /// <returns>旋转后的配置副本</returns>
+    public BlockGenerationConfig GetRotatedCopy(int rotationTimes)
+    {
+        // 创建配置副本
+        BlockGenerationConfig copy = ScriptableObject.CreateInstance<BlockGenerationConfig>();
+        
+        // 复制基础数据
+        copy.shapeName = this.shapeName;
+        copy.blockGrid = (bool[])this.blockGrid.Clone();
+        copy.offset = this.offset;
+        
+        // 指定旋转
+        copy.Rotate(rotationTimes);
+        copy.Save();
+        
+        Debug.Log($"创建旋转副本: {this.name} -> {copy.name}, 旋转次数: {rotationTimes}");
+        
+        return copy;
     }
 }
