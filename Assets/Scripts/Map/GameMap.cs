@@ -10,7 +10,7 @@ public class GameMap : MonoBehaviour
     [SerializeField] private int mapHeight = 15;
     [SerializeField] private float cellSize = 1f;
     [SerializeField] private MapConfig mapConfig;
-
+    [SerializeField] private DifficultyLevel difficultyLevel = DifficultyLevel.Easy;
     // 移除tilemapOrigin
     // 所有API、判定、放置、Gizmos等全部用Tilemap的cell坐标(Vector3Int/x,y,z)
     // occupiedCells、placedBlocks等用cell坐标为key
@@ -57,9 +57,13 @@ public class GameMap : MonoBehaviour
         Debug.Log($"世界坐标范围: Min = {worldMin}，Max = {worldMax}");
     }
 
-    public MapConfig GetMapData()
+    public MapConfig GetMapConfig()
     {
         return mapConfig;
+    }
+    public MapData GetMapData()
+    {
+        return mapConfig.GetMapData(difficultyLevel);
     }
 
 #if UNITY_EDITOR

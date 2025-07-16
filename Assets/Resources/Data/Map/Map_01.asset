@@ -15,8 +15,10 @@ MonoBehaviour:
   centerTower: {fileID: 7002921581114174909, guid: 3c575f98f3a079743b33b7a924a013a8, type: 3}
   blockPrefab: {fileID: 8190983881543204575, guid: 9cc02b47670998348940085eed0862ba, type: 3}
   blockGenerationSettings: {fileID: 11400000, guid: ca8e674e631e1f54bba8c3d5b2aa7e3f, type: 2}
+  itemGeneratorConfig: {fileID: 11400000, guid: 1ff44a53700398f499f052cfbb234722, type: 2}
   MapDatas:
   - id: 0
+    name: 
     description: 
     difficulty: 0
     max: 2
@@ -27,3 +29,10 @@ MonoBehaviour:
     towerPhysicAttackMultiplier: 1
     towerAttackIntervalMultiplier: 1
     towerDamageMultiplier: 1
+    maxEnemy: 2
+    enemyHealthMultiplier: 1
+    enemyAttackMultiplier: 1
+    startingMoney: 0
+    itemRefreshMoney: 0
+    blockDestroyMoney: 0
+    blockBuildMoney: 0

@@ -20,7 +20,7 @@ public class BlockTestManager : MonoBehaviour
         if (gameMap == null)
             gameMap = FindFirstObjectByType<GameMap>();
         if (mapConfig == null)
-            mapConfig = gameMap.GetMapData();
+            mapConfig = gameMap.GetMapConfig();
         if (runTestsOnStart)
         {
             RunAllTests();

@@ -11,4 +11,9 @@ public class MapConfig : ScriptableObject
     public ItemGeneratorConfig itemGeneratorConfig;
     [Header("初始设置")]
     public List<MapData> MapDatas = new List<MapData>();
+    
+    public MapData GetMapData(DifficultyLevel level)
+    {
+        return MapDatas.Find(x => x.difficulty == level);
+    }
 }
