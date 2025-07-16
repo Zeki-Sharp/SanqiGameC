@@ -191,9 +191,8 @@ public class GameMap : MonoBehaviour
         // 标记格子为已占用
         foreach (Vector2Int coord in coordinates)
         {
-            Vector3Int cell = cellPos /*+ new Vector3Int(coord.x, coord.y, 0)*/;
-            Debug.Log($"坐标: {cellPos}");
-            Debug.Log($"坐标: {cell}");
+            Vector3Int cell = cellPos + new Vector3Int(coord.x, coord.y, 0);  // 修复：使用正确的相对坐标
+            Debug.Log($"占用格子: {cell}");
             occupiedCells.Add(cell);
         }
 
@@ -227,7 +226,7 @@ public class GameMap : MonoBehaviour
         // 标记格子为已占用
         foreach (Vector2Int coord in block.Config.Coordinates)
         {
-            Vector3Int cell = cellPos /*+ new Vector3Int(coord.x, coord.y, 0)*/;
+            Vector3Int cell = cellPos + new Vector3Int(coord.x, coord.y, 0);  // 修复：使用正确的相对坐标
             occupiedCells.Add(cell);
         }
 
@@ -257,7 +256,7 @@ public class GameMap : MonoBehaviour
             // 取消标记格子占用
             foreach (Vector2Int coord in block.Config.Coordinates)
             {
-                Vector3Int cell = cellPos /*+ new Vector3Int(coord.x, coord.y, 0)*/;
+                Vector3Int cell = cellPos + new Vector3Int(coord.x, coord.y, 0);  // 修复：使用正确的相对坐标
                 occupiedCells.Remove(cell);
             }
         }

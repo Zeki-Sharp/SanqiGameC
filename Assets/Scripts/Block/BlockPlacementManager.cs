@@ -88,6 +88,16 @@ public class BlockPlacementManager : MonoBehaviour
     {
         isPlacing = false;
         
+        // 清理预览塔对象
+        foreach (var obj in towerPreviewObjects)
+        {
+            if (obj != null)
+            {
+                Destroy(obj);
+            }
+        }
+        towerPreviewObjects.Clear();
+        
         // 销毁预览方块
         if (previewBlock != null)
         {
@@ -245,6 +255,7 @@ public class BlockPlacementManager : MonoBehaviour
 
             // 生成塔
             Tilemap tilemap = gameMap.GetTilemap();
+            Debug.Log($"生成塔: 配置坐标数量={currentBlockConfig.Coordinates.Length}, 塔数据数量={currentTowerDatas.Count}");
             block.GenerateTowers(currentBlockConfig.Coordinates, currentTowerDatas.ToArray(), tilemap);
 
             // 停止放置模式并清除预览
