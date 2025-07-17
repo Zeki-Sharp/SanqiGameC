@@ -24,7 +24,30 @@ public class BaseUtility
         int centerY = Mathf.FloorToInt(height / 2f);
         return new Vector3Int(centerX, centerY, 0);
     }
+    
+    // public static Vector3Int GetCenterCell(Vector3 size)
+    // {
+    //     return new Vector3Int(Mathf.FloorToInt(size.x / 2f), Mathf.FloorToInt(size.y / 2f), 0);
+    // }
 
+    /// <summary>
+    /// 计算偏移量对应的格子坐标
+    /// </summary>
+    /// <param name="offset">偏移量（世界坐标）</param>
+    /// <returns>对应的格子坐标偏移量</returns>
+    public static Vector3Int GetCenterCell(Vector3 offset)
+    {
+        // 使用更精确的四舍五入计算
+        int x = Mathf.RoundToInt(offset.x);
+        int y = Mathf.RoundToInt(offset.y);
+        
+        // 添加更精确的格子对齐逻辑
+        // 如果偏移量接近整数（误差在0.1以内），视为对齐
+        if (Mathf.Abs(x - offset.x) < 0.1f) x = (int)offset.x;
+        if (Mathf.Abs(y - offset.y) < 0.1f) y = (int)offset.y;
+        
+        return new Vector3Int(x, y, 0);
+    }
 
     /// <summary>
     /// 点击屏幕坐标

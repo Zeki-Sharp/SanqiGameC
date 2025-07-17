@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using System.Collections.Generic;
 using Sirenix.OdinInspector;
@@ -10,12 +11,12 @@ public class Block : MonoBehaviour
     [SerializeField] private bool canBeOverridden = true;
     [SerializeField] private GameObject towerPrefab;
 
-    [Header("塔管理")] [ShowInInspector] private Dictionary<Vector2Int, Tower> towers = new Dictionary<Vector2Int, Tower>();
+    [Header("塔管理")] [ShowInInspector] private Dictionary<Vector3Int, Tower> towers = new Dictionary<Vector3Int, Tower>();
 
     // 公共属性（返回只读副本）
     public BlockGenerationConfig Config => config;
     public Vector2Int WorldPosition => worldPosition;
-    public IReadOnlyDictionary<Vector2Int, Tower> Towers => towers;
+    public IReadOnlyDictionary<Vector3Int, Tower> Towers => towers;
     public bool CanBeOverridden => canBeOverridden;
 
     /// <summary>
@@ -66,7 +67,7 @@ public class Block : MonoBehaviour
 
         towers.Clear();
 
-        foreach (Vector2Int coord in config.Coordinates)
+        foreach (Vector3Int coord in config.Coordinates)
         {
             towers[coord] = null;
             // 开发阶段调试日志，上线前可关闭
@@ -94,7 +95,7 @@ public class Block : MonoBehaviour
         }
     }
 
-    public void GenerateTowers(Vector2Int[] localCoord, TowerData[] towerData, Tilemap tilemap = null)
+    public void GenerateTowers(Vector3Int[] localCoord, TowerData[] towerData, Tilemap tilemap = null)
     {
         for (int i = 0; i < localCoord.Length; i++)
         {
@@ -112,7 +113,7 @@ public class Block : MonoBehaviour
     /// <summary>
     /// 在指定格子位置生成塔
     /// </summary>
-    public Tower GenerateTower(Vector2Int localCoord, TowerData towerData, Tilemap tilemap = null)
+    public Tower GenerateTower(Vector3Int localCoord, TowerData towerData, Tilemap tilemap = null)
     {
         if (towers.Count > 0)
         {
@@ -123,7 +124,7 @@ public class Block : MonoBehaviour
                 return towers[localCoord];
             }
         }
-
+        // Vector3Int towerCellPos = new Vector3Int( localCoord.x, localCoord.y, 0);
         Vector3Int towerCellPos = new Vector3Int(worldPosition.x + localCoord.x, worldPosition.y + localCoord.y, 0);
         Vector3 cellCenter = tilemap != null ? tilemap.GetCellCenterWorld(towerCellPos) : new Vector3(towerCellPos.x, towerCellPos.y, 0);
         if (towerPrefab == null)
@@ -153,34 +154,43 @@ public class Block : MonoBehaviour
     }
 
 
-    public bool IsCellEmpty(Vector2Int localCoord)
+    public bool IsCellEmpty(Vector3Int localCoord)
     {
         return towers.TryGetValue(localCoord, out var tower) && tower == null;
     }
 
-    public Tower GetTower(Vector2Int localCoord)
+    public Tower GetTower(Vector3Int localCoord)
     {
         towers.TryGetValue(localCoord, out var tower);
         return tower;
     }
 
-    public void RemoveTower(Vector2Int localCoord)
+    public void RemoveTower(Vector3Int localCoord)
     {
-        if (towers.TryGetValue(localCoord, out var tower) && tower != null)
+        try
         {
-#if UNITY_EDITOR
-            Debug.Log($"移除格子 ({localCoord.x}, {localCoord.y}) 的塔");
-#endif
-            towers.Remove(localCoord);
-            Destroy(tower.gameObject);
-            if (towers.Count == 0)
+            if (towers.TryGetValue(localCoord, out var tower))
             {
-                Destroy(gameObject);
+#if UNITY_EDITOR
+                Debug.Log($"移除格子 ({localCoord.x}, {localCoord.y}) 的塔");
+#endif
+                GameMap.instance.RemoveBlock(localCoord);
+                towers.Remove(localCoord);
+                Destroy(tower.gameObject);
+
+                if (towers.Count == 0)
+                {
+                    Destroy(gameObject);
+                }
             }
+        }
+        catch (Exception ex)
+        {
+            Debug.LogError($"移除格子 ({localCoord.x}, {localCoord.y}) 的塔时发生异常: {ex.Message}");
         }
     }
 
-    public void  SetTower(Vector2Int localCoord, Tower tower)
+    public void  SetTower(Vector3Int localCoord, Tower tower)
     {
         towers[localCoord] = tower;
     }

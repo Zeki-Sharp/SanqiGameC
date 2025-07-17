@@ -17,8 +17,8 @@ public class GameMap : MonoBehaviour
     // WorldToGridPosition/ GridToWorldPosition直接用Tilemap的cell坐标
 
     // 以cell坐标为key的占用字典
-  [ShowInInspector]  private HashSet<Vector3Int> occupiedCells = new HashSet<Vector3Int>();
-    private Dictionary<Vector3Int, Block> placedBlocks = new Dictionary<Vector3Int, Block>();
+  [ShowInInspector]  private OccupiedCellSet occupiedCells = new OccupiedCellSet();
+  [ShowInInspector]  private Dictionary<Vector3Int, Block> placedBlocks = new Dictionary<Vector3Int, Block>();
 
     [Header("Tilemap可视化")]
     public Tilemap tilemap; // 拖拽赋值
@@ -154,12 +154,13 @@ public class GameMap : MonoBehaviour
             {
                 return false;
             }
-
+            // Debug.Log($"  检查格子 ({cell.x},{cell.y}) 是否可放置 {!occupiedCells.Contains(cell)}");
             // 检查格子是否已被占用
             if (occupiedCells.Contains(cell))
             {
                 return false;
             }
+            
         }
 
         return true;
@@ -179,11 +180,11 @@ public class GameMap : MonoBehaviour
             return false;
         }
 
-        // if (!CanPlaceBlock(position, block.Config))
-        // {
-        //     Debug.LogWarning($"无法在位置 ({position.x}, {position.y}) 放置方块");
-        //     return false;
-        // }
+        if (!CanPlaceBlock(cellPos, block.Config))
+        {
+            Debug.LogWarning($"无法在位置 ({cellPos.x}, {cellPos.y}) 放置方块");
+            return false;
+        }
         block.Config.GetCellCount(out var count);
         var coordinates = block.Config.GetCellCoords(count);
         Debug.Log($"方块坐标: {coordinates}");
@@ -193,7 +194,7 @@ public class GameMap : MonoBehaviour
         {
             Vector3Int cell = cellPos + new Vector3Int(coord.x, coord.y, 0);  // 修复：使用正确的相对坐标
             Debug.Log($"占用格子: {cell}");
-            occupiedCells.Add(cell);
+            occupiedCells.Add(new OccupiedCell(cell,!block.CanBeOverridden));
         }
 
         // 设置方块位置并添加到地图
@@ -203,6 +204,7 @@ public class GameMap : MonoBehaviour
         Debug.Log($"方块成功放置到cell位置 {cellPos}");
         return true;
     }
+  
     /// <summary>
     /// 放置方块到地图上
     /// </summary>
@@ -227,7 +229,7 @@ public class GameMap : MonoBehaviour
         foreach (Vector2Int coord in block.Config.Coordinates)
         {
             Vector3Int cell = cellPos + new Vector3Int(coord.x, coord.y, 0);  // 修复：使用正确的相对坐标
-            occupiedCells.Add(cell);
+            occupiedCells.Add(new OccupiedCell(cell,!block.CanBeOverridden));
         }
 
         // 设置方块位置并添加到地图
@@ -251,7 +253,7 @@ public class GameMap : MonoBehaviour
         }
 
         Block block = placedBlocks[cellPos];
-        if (block.Config != null)
+        if (block.Config != null && block.Config.Coordinates != null)
         {
             // 取消标记格子占用
             foreach (Vector2Int coord in block.Config.Coordinates)
@@ -262,7 +264,7 @@ public class GameMap : MonoBehaviour
         }
 
         // 销毁方块GameObject
-        if (block.gameObject != null)
+        if (block.gameObject != null && block.gameObject.scene.IsValid())
         {
             Destroy(block.gameObject);
         }
@@ -271,6 +273,7 @@ public class GameMap : MonoBehaviour
         Debug.Log($"方块从cell位置 {cellPos} 移除");
         return true;
     }
+
 
     /// <summary>
     /// 获取指定位置的方块
@@ -357,5 +360,63 @@ public class GameMap : MonoBehaviour
     public Tilemap GetTilemap()
     {
         return tilemap;
+    }
+}
+
+[System.Serializable]
+public class OccupiedCell
+{
+    public Vector3Int Position;
+    public bool IsOccupied;
+
+    public OccupiedCell()
+    {
+    }
+
+    public OccupiedCell(Vector3Int position, bool isOccupied)
+    {
+        Position = position;
+        IsOccupied = isOccupied;
+    }
+
+    public override bool Equals(object obj)
+    {
+        if (obj is OccupiedCell other)
+        {
+            return Position.Equals(other.Position);
+        }
+        return false;
+    }
+
+    public override int GetHashCode()
+    {
+        return Position.GetHashCode();
+    }
+}
+
+public class OccupiedCellSet : HashSet<OccupiedCell>
+{
+    public bool Contains(Vector3Int position)
+    {
+        foreach (var cell in this)
+        {
+            if (cell.Position == position)
+            {
+                return cell.IsOccupied;
+            }
+        }
+        return false;
+    }
+
+    public bool Remove(Vector3Int position)
+    {
+        foreach (var cell in this)
+        {
+            if (cell.Position == position)
+            {
+                return base.Remove(cell);
+            }
+        }
+        return false;
     }
 }

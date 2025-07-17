@@ -66,9 +66,9 @@ public class BlockGenerationConfig : ScriptableObject
     [HideInInspector]
     public int cellCount;
     [HideInInspector]
-    public Vector2Int[] coordinates;
+    public Vector3Int[] coordinates;
 
-    public Vector2Int[] Coordinates => coordinates;
+    public Vector3Int[] Coordinates => coordinates;
     public int CellCount => cellCount;
     
     public Vector2 offset;
@@ -128,24 +128,24 @@ public class BlockGenerationConfig : ScriptableObject
         return count;
     }
 
-    public Vector2Int[] GetCellCoords(int cellCount)
+    public Vector3Int[] GetCellCoords(int cellCount)
     {
         // 验证blockGrid数组长度
         if (blockGrid == null || blockGrid.Length != 16)
         {
             Debug.LogError($"[BlockGenerationConfig] blockGrid数组无效，长度应为16，当前长度：{blockGrid?.Length ?? 0}");
-            return new Vector2Int[0];
+            return Array.Empty<Vector3Int>();
         }
 
         // 验证cellCount是否有效
         if (cellCount <= 0)
         {
             Debug.LogError($"[BlockGenerationConfig] 无效的cellCount值：{cellCount}，无法生成坐标数组");
-            return new Vector2Int[0];
+            return Array.Empty<Vector3Int>();
         }
 
         // 创建坐标数组
-        Vector2Int[] coords = new Vector2Int[cellCount];
+        Vector3Int[] coords = new Vector3Int[cellCount];
         int index = 0;
         for (int i = 0; i < 16; i++)
         {
@@ -159,7 +159,7 @@ public class BlockGenerationConfig : ScriptableObject
                 }
                 int x = i % 4;
                 int y = i / 4;
-                coords[index] = new Vector2Int(x, y);
+                coords[index] = new Vector3Int(x, y);
                 index++;
             }
         }

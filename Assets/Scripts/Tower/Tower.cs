@@ -9,7 +9,7 @@ public class Tower : MonoBehaviour
 
     [Header("状态")] [SerializeField] private float currentHealth;
     [SerializeField] private int level;
-    [SerializeField] private Vector2Int position;
+    [SerializeField] private Vector3Int position;
 
     [Header("绑定")] [SerializeField] private SpriteRenderer spriteRenderer;
     [SerializeField] private TextMeshPro text;
@@ -21,7 +21,7 @@ public class Tower : MonoBehaviour
     // 公共属性
     public TowerData TowerData => towerData;
     public float CurrentHealth => currentHealth;
-    public Vector2Int Position => position;
+    public Vector3Int Position => position;
 
     private DamageTaker damageTaker;
 
@@ -48,7 +48,7 @@ public class Tower : MonoBehaviour
         renderer.sortingOrder = order;
     }
 
-    public void Initialize(TowerData data, Vector2Int pos)
+    public void Initialize(TowerData data, Vector3Int pos)
     {
         spriteRenderer = GetComponentInChildren<SpriteRenderer>();
 
@@ -78,7 +78,7 @@ public class Tower : MonoBehaviour
         {
             foreach (var tower in towers)
             {
-                if (tower == null) continue;
+                if (tower == null && tower.CompareTag("PreviewTower") && !tower.CompareTag("Tower")) continue;
 
                 Tower towerComponent = tower.GetComponent<Tower>();
                 if (towerComponent == null) continue;
@@ -87,6 +87,7 @@ public class Tower : MonoBehaviour
                     if (towerComponent.TowerData != null &&
                         towerComponent.TowerData.TowerName == data.TowerName)
                     {
+                        // Debug.Log($"删除旧塔: {tower.name} 位置: {tower}");
                         DeleteOldTower(tower.gameObject);
                         shouldUpdate = true;
                         Debug.Log("应该更新");
@@ -113,8 +114,24 @@ public class Tower : MonoBehaviour
     private void DeleteOldTower(GameObject oldTower)
     {
         Tower tower = oldTower.GetComponent<Tower>();
-        oldTower.transform.parent.GetComponent<Block>().RemoveTower(tower.position);
+        if (tower == null)
+        {
+            Debug.LogWarning($"尝试删除旧塔，但未找到 Tower 组件: ");
+            return;
+        }
+
+        Debug.Log($"删除旧塔: {tower.name} 位置: {tower.position}");
+
+        Block block = oldTower.transform.parent?.GetComponent<Block>();
+        if (block == null)
+        {
+            Debug.LogWarning($"未能找到父对象上的 Block 组件:");
+            return;
+        }
+
+        block.RemoveTower(tower.position);
     }
+
 
     // private void ReplaceTower(TowerData data)
     // {

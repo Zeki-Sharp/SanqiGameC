@@ -431,16 +431,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   previewShowName: Preview_Show
-  previewArea: {fileID: 218421369}
   hasClick: 0
   gameMap: {fileID: 0}
   blockPlacementManager: {fileID: 0}
-  previewBlockObj: {fileID: 0}
-  previewBlock: {fileID: 0}
   previewTowerDatas: []
   previewConfig: {fileID: 0}
-  previewRelativeShape: []
-  previewTowers: []
 --- !u!1 &218421369
 GameObject:
   m_ObjectHideFlags: 0
@@ -613,6 +608,10 @@ MonoBehaviour:
   blockPrefab: {fileID: 0}
   currentShapeName: LINE2H
   currentTowerData: {fileID: 0}
+  currentBlockConfig: {fileID: 0}
+  currentTowerDatas: []
+  towerPreviewObjects: []
+  currentCells: []
   isPlacing: 0
   previewBlock: {fileID: 0}
   previewPosition: {x: 0, y: 0, z: 0}

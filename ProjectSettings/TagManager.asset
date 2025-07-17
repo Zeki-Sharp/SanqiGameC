@@ -9,6 +9,7 @@ TagManager:
   - Tower
   - Bullet
   - centerTower
+  - PreviewTower
   layers:
   - Default
   - TransparentFX
