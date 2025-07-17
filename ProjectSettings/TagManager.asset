@@ -10,6 +10,7 @@ TagManager:
   - Bullet
   - centerTower
   - PreviewTower
+  - Block
   layers:
   - Default
   - TransparentFX

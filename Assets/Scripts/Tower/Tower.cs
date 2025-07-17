@@ -78,7 +78,7 @@ public class Tower : MonoBehaviour
         {
             foreach (var tower in towers)
             {
-                if (tower == null && tower.CompareTag("PreviewTower") && !tower.CompareTag("Tower")) continue;
+                if (tower == null || !tower.CompareTag("Tower")) continue;
 
                 Tower towerComponent = tower.GetComponent<Tower>();
                 if (towerComponent == null) continue;
