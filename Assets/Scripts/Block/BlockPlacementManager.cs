@@ -89,7 +89,7 @@ public class BlockPlacementManager : MonoBehaviour
     public void StopPlacement()
     {
         isPlacing = false;
-
+        FindFirstObjectByType<Preview_Click>()?.ResetClickState(); // 重置建造状态
         // 清理预览塔对象
         foreach (var obj in towerPreviewObjects)
         {
@@ -204,7 +204,8 @@ public class BlockPlacementManager : MonoBehaviour
             GameObject towerPrefab = Resources.Load<GameObject>("Prefab/Tower/Tower");
             GameObject towerObj = Instantiate(towerPrefab, transform);
             towerObj.name = $"PreviewTower_{i}";
-
+            towerObj.tag = "PreviewTower";
+            towerObj.GetComponent<Tower>().Initialize(currentTowerDatas[i], currentBlockConfig.Coordinates[i]);
             SpriteRenderer sr = towerObj.GetComponentInChildren<SpriteRenderer>();
             if (sr != null)
             {
@@ -428,7 +429,7 @@ public class BlockPlacementManager : MonoBehaviour
                 if (collider.CompareTag("PreviewTower")) continue;
                 if (collider.TryGetComponent<Tower>(out var tower))
                 {
-                    if (towerObject.GetComponent<Tower>() != null || !tower.CompareTag("Tower")) continue;
+                    if (towerObject.GetComponent<Tower>() == null || !tower.CompareTag("Tower")) continue;
                     if (collider.transform.position == towerObject.transform.position)
                     {
                         if (tower.TowerData != null &&
@@ -473,6 +474,7 @@ public class BlockPlacementManager : MonoBehaviour
         Block block = blockObj.AddComponent<Block>();
         block.Init(config);
         block.ClearTower();
+        block.tag = "Block";
         // 依次生成塔
         tilemap = tilemap != null ? tilemap : gameMap.GetTilemap();
         for (int i = 0; i < cells.Count; i++)
@@ -484,6 +486,7 @@ public class BlockPlacementManager : MonoBehaviour
             // 设置塔位置
             Vector3 worldPos = tilemap.GetCellCenterWorld(cell);
             towerObj.transform.position = worldPos;
+            towerObj.tag = "Tower";
             // 恢复正常颜色
             SpriteRenderer[] renderers = towerObj.GetComponentsInChildren<SpriteRenderer>(true);
             Tower towerComponent = towerObj.GetComponent<Tower>();
@@ -493,7 +496,7 @@ public class BlockPlacementManager : MonoBehaviour
             int finalOrder = BaseOrder + verticalOffset;
             towerComponent.Initialize(data, new Vector3Int(cell.x, cell.y));
             towerComponent.SetOrder(finalOrder);
-
+            
             block.SetTower(new Vector3Int(cell.x, cell.y), towerComponent);
             if (renderers != null && renderers.Length > 0)
             {
