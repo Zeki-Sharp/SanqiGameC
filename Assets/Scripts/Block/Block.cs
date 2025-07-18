@@ -1,13 +1,14 @@
 using System;
 using UnityEngine;
 using System.Collections.Generic;
+using System.Linq;
 using Sirenix.OdinInspector;
 using UnityEngine.Tilemaps;
 
 public class Block : MonoBehaviour
 {
     [Header("方块配置")] [SerializeField] private BlockGenerationConfig config;
-    [SerializeField] private Vector2Int worldPosition; // 方块在世界中的位置
+    [SerializeField] private Vector3Int worldPosition; // 方块在世界中的位置
     [SerializeField] private bool canBeOverridden = true;
     [SerializeField] private GameObject towerPrefab;
 
@@ -15,7 +16,7 @@ public class Block : MonoBehaviour
 
     // 公共属性（返回只读副本）
     public BlockGenerationConfig Config => config;
-    public Vector2Int WorldPosition => worldPosition;
+    public Vector3Int WorldPosition => worldPosition;
     public IReadOnlyDictionary<Vector3Int, Tower> Towers => towers;
     public bool CanBeOverridden => canBeOverridden;
 
@@ -82,7 +83,7 @@ public class Block : MonoBehaviour
     /// </summary>
     public void SetWorldPosition(Vector3Int cellPos, Tilemap tilemap = null)
     {
-        worldPosition = new Vector2Int(cellPos.x, cellPos.y);
+        worldPosition = new Vector3Int(cellPos.x, cellPos.y);
         float baseScale = 1.5f;
         if (tilemap != null)
         {
@@ -95,7 +96,7 @@ public class Block : MonoBehaviour
         }
     }
 
-    public void GenerateTowers(Vector3Int[] localCoord, TowerData[] towerData, Tilemap tilemap = null)
+    public void GenerateTowers(Vector3Int[] localCoord, TowerData[] towerData, Tilemap tilemap = null,bool hasCheck = false)
     {
         for (int i = 0; i < localCoord.Length; i++)
         {
@@ -105,7 +106,7 @@ public class Block : MonoBehaviour
                 break;
             }
 
-            Tower tower = GenerateTower(localCoord[i], towerData[i], tilemap);
+            Tower tower = GenerateTower(localCoord[i], towerData[i], tilemap,hasCheck);
             towers[localCoord[i]] = tower;
         }
     }
@@ -113,7 +114,7 @@ public class Block : MonoBehaviour
     /// <summary>
     /// 在指定格子位置生成塔
     /// </summary>
-    public Tower GenerateTower(Vector3Int localCoord, TowerData towerData, Tilemap tilemap = null)
+    public Tower GenerateTower(Vector3Int localCoord, TowerData towerData, Tilemap tilemap = null,bool hasCheck = false)
     {
         if (towers.Count > 0)
         {
@@ -147,7 +148,7 @@ public class Block : MonoBehaviour
         const int VerticalOffsetMultiplier = 10;
         int verticalOffset = Mathf.RoundToInt(-cellCenter.y * VerticalOffsetMultiplier);
         int finalOrder = BaseOrder + verticalOffset;
-        towerComponent.Initialize(towerData,localCoord);
+        towerComponent.Initialize(towerData,localCoord,hasCheck);
         towerComponent.SetOrder(finalOrder);
         towers[localCoord] = towerComponent;
         return towerComponent;
@@ -164,31 +165,77 @@ public class Block : MonoBehaviour
         towers.TryGetValue(localCoord, out var tower);
         return tower;
     }
-
-    public void RemoveTower(Vector3Int localCoord)
+    public Vector3Int GetTowerLocalCoord(Tower tower)
     {
-        try
-        {
-            if (towers.TryGetValue(localCoord, out var tower))
-            {
-#if UNITY_EDITOR
-                Debug.Log($"移除格子 ({localCoord.x}, {localCoord.y}) 的塔");
-#endif
-                GameMap.instance.RemoveBlock(localCoord);
-                towers.Remove(localCoord);
-                Destroy(tower.gameObject);
+        return towers.FirstOrDefault(kvp => kvp.Value == tower).Key;
+    }
 
-                if (towers.Count == 0)
+ public void RemoveTower(Vector3Int localCoord)
+{
+        // 检查 towers 字典是否已初始化
+        if (towers == null)
+        {
+            Debug.LogError("Towers 字典未初始化");
+            return;
+        }
+
+        // 检查 GameMap.instance 是否有效
+        if (GameMap.instance == null)
+        {
+            string errorMessage = $"GameMap.instance 未初始化，无法移除格子 ({localCoord.x}, {localCoord.y}) 的塔";
+            Debug.LogError(errorMessage, this);
+            // 可选：开发环境下触发断点
+#if UNITY_EDITOR
+            UnityEngine.Debug.Break();
+#else
+            // 或者抛出异常用于崩溃报告
+            throw new System.Exception(errorMessage);
+#endif
+            return;
+        }
+
+        if (towers.TryGetValue(localCoord, out var tower))
+        {
+            // 检查 tower 是否有效
+            if (tower == null)
+            {
+                Debug.LogWarning($"格子 ({localCoord.x}, {localCoord.y}) 的塔引用为空");
+                towers.Remove(localCoord);
+                return;
+            }
+
+#if UNITY_EDITOR
+            Debug.Log($"移除格子 ({localCoord.x}, {localCoord.y}) 的塔");
+#endif
+            // 移除塔的引用
+            towers.Remove(localCoord);
+
+            // 销毁塔的游戏对象
+            if (tower.gameObject != null)
+            {
+                Destroy(tower.gameObject);
+            }
+            else
+            {
+                Debug.LogWarning($"塔的游戏对象为空，无法销毁");
+            }
+
+            // 如果没有塔了，销毁当前游戏对象
+            if (towers.Count == 0)
+            {
+                if (gameObject != null)
                 {
-                    Destroy(gameObject);
+                    // 移除地块
+                    GameMap.instance.RemoveBlock(localCoord);
+                }
+                else
+                {
+                    Debug.LogWarning("游戏对象为空，无法销毁");
                 }
             }
         }
-        catch (Exception ex)
-        {
-            Debug.LogError($"移除格子 ({localCoord.x}, {localCoord.y}) 的塔时发生异常: {ex.Message}");
-        }
-    }
+}
+
 
     public void  SetTower(Vector3Int localCoord, Tower tower)
     {

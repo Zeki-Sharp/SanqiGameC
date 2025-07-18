@@ -6,7 +6,7 @@ public class BlockTestManager : MonoBehaviour
 {
     [Header("测试配置")]
     [SerializeField] private GameMap gameMap;
-    [SerializeField] private CreatePrefab createPrefab;
+    [SerializeField] private PreviewAreaController previewAreaController;
     [SerializeField] private bool runTestsOnStart = true;
     [SerializeField] private string prefabShowName = "PrefabArea";
     [SerializeField] private MapConfig mapConfig;
@@ -65,7 +65,7 @@ public class BlockTestManager : MonoBehaviour
         }
 
         // 不再预先生成坐标列表，让CreateBlock内部使用旋转后的配置坐标
-        createPrefab.CreateBlock(mapConfig.blockPrefab, towerDatas, config);
+        previewAreaController.CreateShowAreaBlock(mapConfig.blockPrefab, towerDatas, config);
         // Debug.Log($"方块完成，形状: {config.name}，包含 {config.GetCellCount(out int count)} 个格子");
         
         

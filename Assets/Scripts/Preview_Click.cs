@@ -29,8 +29,8 @@ public class Preview_Click : MonoBehaviour
             GameObject obj = BaseUtility.GetFirstPickGameObject(Input.mousePosition);
             if (obj != null && obj.name == previewShowName)
             {
-                previewConfig = CreatePrefab.lastPreviewConfig;
-                previewTowerDatas = CreatePrefab.lastPreviewTowerDatas;
+                previewConfig = PreviewAreaController.lastPreviewConfig;
+                previewTowerDatas = PreviewAreaController.lastPreviewTowerDatas;
 
                 if (previewConfig != null && previewTowerDatas != null)
                 {

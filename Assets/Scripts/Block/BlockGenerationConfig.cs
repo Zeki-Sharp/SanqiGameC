@@ -83,12 +83,17 @@ public class BlockGenerationConfig : ScriptableObject
         {
             for (int x = 0; x < 4; x++)
             {
-                Debug.Log(BlockGrid[y, x]);
+                // Debug.Log(BlockGrid[y, x]);
             }
         }
 #endif
         
     }
+    // [Button("获取格子")]
+    // public void GetCell()
+    // {
+    //     TowerBuildUtility.GetTowerArea(BlockGrid);
+    // }
     [Button("旋转90°"), PropertySpace(10)]
     public void Rotate()
     {
@@ -173,13 +178,13 @@ public class BlockGenerationConfig : ScriptableObject
         return coords;
     }
     //旋转几次
-    public void Rotate(int times)
-    {
-        for (int i = 0; i < times; i++)
-        {
-            Rotate();
-        }
-    }
+    // public void Rotate(int times)
+    // {
+    //     for (int i = 0; i < times; i++)
+    //     {
+    //         Rotate();
+    //     }
+    // }
     
     /// <summary>
     /// 获取随机旋转后的配置副本（不修改原配置）
@@ -197,10 +202,11 @@ public class BlockGenerationConfig : ScriptableObject
         
         // 随机旋转
         int rotationTimes = Random.Range(0, 4);
-        copy.Rotate(rotationTimes);
+        //todo: 旋转
+        // copy.Rotate(rotationTimes);
         copy.Save();
         
-        Debug.Log($"创建随机旋转副本: {this.name} -> {copy.name}, 旋转次数: {rotationTimes}");
+        // Debug.Log($"创建随机旋转副本: {this.name} -> {copy.name}, 旋转次数: {rotationTimes}");
         
         return copy;
     }
@@ -220,8 +226,8 @@ public class BlockGenerationConfig : ScriptableObject
         copy.blockGrid = (bool[])this.blockGrid.Clone();
         copy.offset = this.offset;
         
-        // 指定旋转
-        copy.Rotate(rotationTimes);
+        // todo:指定旋转
+        // copy.Rotate(rotationTimes);
         copy.Save();
         
         Debug.Log($"创建旋转副本: {this.name} -> {copy.name}, 旋转次数: {rotationTimes}");

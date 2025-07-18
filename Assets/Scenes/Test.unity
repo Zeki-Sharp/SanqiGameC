@@ -479,10 +479,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gameMap: {fileID: 56472098}
-  createPrefab: {fileID: 81773909}
+  previewAreaController: {fileID: 81773909}
   runTestsOnStart: 1
   prefabShowName: PrefabArea
-  mapConfig: {fileID: 0}
+  mapConfig: {fileID: 11400000, guid: b138276068ce4ff4f8fce4bd703f7f06, type: 2}
 --- !u!4 &278181989
 Transform:
   m_ObjectHideFlags: 0
@@ -575,7 +575,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 74cac16d4ab92944b922d4de11f0acd1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  blockGenerationSettings: {fileID: 0}
+  blockGenerationSettings: {fileID: 11400000, guid: ca8e674e631e1f54bba8c3d5b2aa7e3f, type: 2}
 --- !u!1 &518106009
 GameObject:
   m_ObjectHideFlags: 0
@@ -2157,7 +2157,6 @@ GameObject:
   m_Component:
   - component: {fileID: 2144671129}
   - component: {fileID: 2144671128}
-  - component: {fileID: 2144671127}
   - component: {fileID: 2144671126}
   m_Layer: 0
   m_Name: Camera
@@ -2183,7 +2182,7 @@ MonoBehaviour:
   m_RequiresOpaqueTextureOption: 2
   m_CameraType: 0
   m_Cameras: []
-  m_RendererIndex: -1
+  m_RendererIndex: 0
   m_VolumeLayerMask:
     serializedVersion: 2
     m_Bits: 1
@@ -2210,14 +2209,6 @@ MonoBehaviour:
     m_MipBias: 0
     m_VarianceClampScale: 0.9
     m_ContrastAdaptiveSharpening: 0
---- !u!81 &2144671127
-AudioListener:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2144671125}
-  m_Enabled: 1
 --- !u!20 &2144671128
 Camera:
   m_ObjectHideFlags: 0

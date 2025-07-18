@@ -13,6 +13,7 @@ public class Tower : MonoBehaviour
 
     [Header("绑定")] [SerializeField] private SpriteRenderer spriteRenderer;
     [SerializeField] private TextMeshPro text;
+    [SerializeField] private Block block;
 
     [Header("攻击相关")] [SerializeField] private GameObject bulletPrefab;
 
@@ -48,88 +49,167 @@ public class Tower : MonoBehaviour
         renderer.sortingOrder = order;
     }
 
-    public void Initialize(TowerData data, Vector3Int pos)
+   public enum TowerCheckResult
+{
+    None,
+    ShouldUpdate,
+    ShouldDelete
+}
+
+public void Initialize(TowerData data, Vector3Int pos, bool hasCheck = false)
+{
+    try
     {
-        spriteRenderer = GetComponentInChildren<SpriteRenderer>();
+        // 检查关键组件是否存在
+        if (spriteRenderer == null)
+        {
+            spriteRenderer = GetComponentInChildren<SpriteRenderer>();
+            if (spriteRenderer == null)
+            {
+                Debug.LogError("SpriteRenderer 未找到，初始化失败");
+                return;
+            }
+        }
+
+        if (text == null)
+        {
+            text = GetComponentInChildren<TextMeshPro>();
+            if (text == null)
+            {
+                Debug.LogError("TextMeshPro 未找到，初始化失败");
+                return;
+            }
+        }
+
+        if (data == null)
+        {
+            Debug.LogError("传入的 TowerData 为 null，初始化失败");
+            return;
+        }
 
         towerData = data;
         position = pos;
         currentHealth = data.GetHealth(level);
 
-        // 优化的Sprite赋值
+        // 优化的 Sprite 赋值
         if (data.TowerSprite != null)
         {
             spriteRenderer.sprite = data.TowerSprite;
         }
-
-        // 优化的字符串拼接
-        var sb = new StringBuilder();
-        sb.Append("塔名：").Append(data.TowerName).Append(" \n 等级：").Append(level / data.MaxLevel);
-        text.text = sb.ToString();
-
-        // 优化的碰撞检测
-        Vector3 cellCenter = GameMap.instance.GridToWorldPosition(new Vector3Int(pos.x, pos.y, 0));
-        Collider2D[] towers = Physics2D.OverlapPointAll(cellCenter, TowerLayerMask);
-
-        // 单一出口优化
-        bool shouldUpdate = false;
-
-        if (towers.Length > 0)
+        else
         {
-            foreach (var tower in towers)
-            {
-                if (tower == null || !tower.CompareTag("Tower")) continue;
+            Debug.LogWarning($"塔 {data.TowerName} 的 Sprite 为空");
+        }
+        block = GetComponentInParent<Block>();
+        // 优化的字符串拼接
+        text.text = $"塔名：{data.TowerName} \n 等级：{level / (float)data.MaxLevel}";
 
-                Tower towerComponent = tower.GetComponent<Tower>();
-                if (towerComponent == null) continue;
-                if (towerComponent.transform.position == transform.position)
+        if (hasCheck)
+        {
+            // 检查 GameMap.instance 是否有效
+            if (GameMap.instance == null)
+            {
+                Debug.LogError("GameMap.instance 未初始化，跳过碰撞检测");
+                return;
+            }
+
+            // 优化的碰撞检测
+            Vector3 cellCenter = GameMap.instance.GridToWorldPosition(new Vector3Int(pos.x, pos.y, 0));
+            Collider2D[] towers = Physics2D.OverlapPointAll(cellCenter, TowerLayerMask);
+
+            TowerCheckResult checkResult = TowerCheckResult.None;
+            GameObject firstTower = null;
+
+            if (towers.Length > 0)
+            {
+                foreach (var tower in towers)
                 {
-                    if (towerComponent.TowerData != null &&
-                        towerComponent.TowerData.TowerName == data.TowerName)
+                    if (tower == null || !tower.CompareTag("Tower") || !this.CompareTag("PreviewTower") || tower.gameObject == this.gameObject) continue;
+
+                    Tower towerComponent = tower.GetComponent<Tower>();
+                    if (towerComponent == null) continue;
+
+                    if ((towerComponent.position + towerComponent.block.WorldPosition) == (this.position+block.WorldPosition))
                     {
-                        // Debug.Log($"删除旧塔: {tower.name} 位置: {tower}");
-                        DeleteOldTower(tower.gameObject);
-                        shouldUpdate = true;
-                        Debug.Log("应该更新");
-                    }
-                    else
-                    {
-                        DeleteOldTower(tower.gameObject);
-                        Debug.Log("应该删除");
+                        if (towerComponent.TowerData != null  &&
+                            towerComponent.TowerData.TowerName == data.TowerName)
+                        {
+                            Debug.Log($"[Tower] 塔 {data.TowerName} 检测到重复塔，准备更新");
+                            DeleteOldTower(tower.gameObject);
+                            checkResult = TowerCheckResult.ShouldUpdate;
+                            firstTower = tower.gameObject;
+                            break;
+                        }
+                        else
+                        {
+                            Debug.Log($"[Tower] 塔 {data.TowerName} 检测到不同类型的塔，准备删除");
+                            DeleteOldTower(tower.gameObject);
+                            checkResult = TowerCheckResult.ShouldDelete;
+                            firstTower = tower.gameObject;
+                            break;
+                        }
                     }
                 }
             }
-        }
 
-        if (shouldUpdate)
-        {
-            UpdateTower();
+            switch (checkResult)
+            {
+                case TowerCheckResult.ShouldUpdate:
+                    Debug.Log($"[Tower] 塔 {data.TowerName} 正在更新");
+                    UpdateTower();
+                    break;
+                case TowerCheckResult.ShouldDelete:
+                    Debug.Log($"[Tower] 塔 {data.TowerName} 正在被删除");
+                    // DeleteOldTower(firstTower); // 已在 DeleteOldTower 中处理
+                    break;
+            }
+            this.tag = "Tower";
         }
+    }
+    catch (System.Exception ex)
+    {
+        Debug.LogError($"[Tower] 塔 {data?.TowerName ?? "Unknown"} 初始化时发生异常: {ex.Message}\n{ex.StackTrace}");
+    }
 
 #if UNITY_EDITOR
-        Debug.Log($"塔初始化完成: {data.TowerName}");
+    Debug.Log($"[Tower] 塔初始化完成: {data?.TowerName ?? "Unknown"}");
 #endif
-    }
+}
+
 
     private void DeleteOldTower(GameObject oldTower)
     {
+        if (oldTower == null) return;
+
         Tower tower = oldTower.GetComponent<Tower>();
         if (tower == null)
         {
-            Debug.LogWarning($"尝试删除旧塔，但未找到 Tower 组件: ");
+            Debug.LogWarning("尝试删除的对象没有 Tower 组件");
             return;
         }
 
-        Debug.Log($"删除旧塔: {tower.name} 位置: {tower.position}");
+        Transform parent = oldTower.transform.parent;
+        if (parent == null)
+        {
+            Debug.LogWarning("尝试删除的 Tower 没有父对象（Block）");
+            return;
+        }
 
-        Block block = oldTower.transform.parent?.GetComponent<Block>();
+        Block block = parent.GetComponent<Block>();
         if (block == null)
         {
-            Debug.LogWarning($"未能找到父对象上的 Block 组件:");
+            Debug.LogWarning("Tower 的父对象没有 Block 组件");
             return;
         }
 
-        block.RemoveTower(tower.position);
+        try
+        {
+            block.RemoveTower(tower.Position);
+        }
+        catch (System.Exception ex)
+        {
+            Debug.LogError($"移除格子 {tower.Position} 的塔时发生异常: {ex.Message}");
+        }
     }
 
 

@@ -145,7 +145,7 @@ public class BlockPlacementManager : MonoBehaviour
         if (!isPlacing || currentBlockConfig == null || currentTowerDatas == null) return;
         if (currentTowerDatas.Count != currentBlockConfig.Coordinates.Length) return;
 
-        Debug.Log("更新塔组预览对象跟随鼠标");
+        // Debug.Log("更新塔组预览对象跟随鼠标");
         GeneratePreviewTowers();
 
         Vector3 mouseWorldPos = mainCamera.ScreenToWorldPoint(Input.mousePosition);
@@ -245,14 +245,14 @@ public class BlockPlacementManager : MonoBehaviour
     /// </summary>
     private Vector3Int GetPreviewAnchorOffset()
     {
-        if (CreatePrefab.lastPreviewAdjustedPositions == null || CreatePrefab.lastPreviewAdjustedPositions.Length == 0)
+        if (PreviewAreaController.lastPreviewAdjustedPositions == null || PreviewAreaController.lastPreviewAdjustedPositions.Length == 0)
             return Vector3Int.zero;
 
         // 计算最小 x/y
         int minX = int.MaxValue;
         int minY = int.MaxValue;
 
-        foreach (var pos in CreatePrefab.lastPreviewAdjustedPositions)
+        foreach (var pos in PreviewAreaController.lastPreviewAdjustedPositions)
         {
             if (pos.x < minX) minX = pos.x;
             if (pos.y < minY) minY = pos.y;
@@ -272,7 +272,7 @@ public class BlockPlacementManager : MonoBehaviour
         // 生成实际方块对象
         GameObject blockObject = new GameObject($"Block_{position.x}_{position.y}");
         Block block = blockObject.AddComponent<Block>();
-
+        block.tag = "Block";
         // 初始化配置
         block.Init(currentBlockConfig);
 
@@ -287,12 +287,12 @@ public class BlockPlacementManager : MonoBehaviour
         // 放置方块到地图
         if (gameMap.PlaceBlock(position, block))
         {
-            Debug.Log($"方块成功放置到位置 ({position.x}, {position.y})");
+            // Debug.Log($"方块成功放置到位置 ({position.x}, {position.y})");
 
             // 生成塔
             Tilemap tilemap = gameMap.GetTilemap();
-            Debug.Log($"生成塔: 配置坐标数量={currentBlockConfig.Coordinates.Length}, 塔数据数量={currentTowerDatas.Count}");
-            block.GenerateTowers(currentBlockConfig.Coordinates, currentTowerDatas.ToArray(), tilemap);
+            // Debug.Log($"生成塔: 配置坐标数量={currentBlockConfig.Coordinates.Length}, 塔数据数量={currentTowerDatas.Count}");
+            block.GenerateTowers(currentBlockConfig.Coordinates, currentTowerDatas.ToArray(), tilemap ,true);
 
             // 停止放置模式并清除预览
             foreach (var obj in towerPreviewObjects)
@@ -303,9 +303,9 @@ public class BlockPlacementManager : MonoBehaviour
             towerPreviewObjects.Clear();
 
             // 只在这里刷新 ShowArea
-            if (CreatePrefab.instance != null)
+            if (PreviewAreaController.instance != null)
             {
-                CreatePrefab.instance.RefreshShowArea();
+                PreviewAreaController.instance.RefreshShowArea();
                 FindFirstObjectByType<Preview_Click>()?.ResetClickState(); // 重置建造状态
                 Debug.Log("成功建造 → 刷新 ShowArea");
             }
@@ -456,7 +456,7 @@ public class BlockPlacementManager : MonoBehaviour
     /// <param name="towerDatas">每个塔的数据</param>
     /// <param name="parent">父物体（可选）</param>
     public void PlaceTowerGroupAtPositions(List<Vector3Int> cells, BlockGenerationConfig config,
-        List<TowerData> towerDatas, Transform parent = null, Tilemap tilemap = null)
+        List<TowerData> towerDatas, Transform parent = null, Tilemap tilemap = null,bool hasCheck = false)
     {
         if (gameMap == null || config == null || cells == null || towerDatas == null || cells.Count != towerDatas.Count)
         {
@@ -488,7 +488,7 @@ public class BlockPlacementManager : MonoBehaviour
             // 设置塔位置
             Vector3 worldPos = tilemap.GetCellCenterWorld(cell);
             towerObj.transform.position = worldPos;
-            towerObj.tag = "Tower";
+            towerObj.tag = "PreviewTower";
             // 恢复正常颜色
             SpriteRenderer[] renderers = towerObj.GetComponentsInChildren<SpriteRenderer>(true);
             Tower towerComponent = towerObj.GetComponent<Tower>();
@@ -496,7 +496,8 @@ public class BlockPlacementManager : MonoBehaviour
             const int VerticalOffsetMultiplier = 10;
             int verticalOffset = Mathf.RoundToInt(-worldPos.y * VerticalOffsetMultiplier);
             int finalOrder = BaseOrder + verticalOffset;
-            towerComponent.Initialize(data, new Vector3Int(cell.x, cell.y));
+            // Debug.Log($"执行了{i}");
+            towerComponent.Initialize(data, new Vector3Int(cell.x, cell.y), hasCheck);
             towerComponent.SetOrder(finalOrder);
 
             block.SetTower(new Vector3Int(cell.x, cell.y), towerComponent);

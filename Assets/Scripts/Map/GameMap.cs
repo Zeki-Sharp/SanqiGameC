@@ -54,7 +54,7 @@ public class GameMap : MonoBehaviour
         BoundsInt bounds = tilemap.cellBounds;
         Vector3 worldMin = tilemap.CellToWorld(bounds.min);
         Vector3 worldMax = tilemap.CellToWorld(bounds.max);
-        Debug.Log($"世界坐标范围: Min = {worldMin}，Max = {worldMax}");
+        // Debug.Log($"世界坐标范围: Min = {worldMin}，Max = {worldMax}");
     }
 
     public MapConfig GetMapConfig()
@@ -129,9 +129,9 @@ public class GameMap : MonoBehaviour
         // 创建中心塔
         GameObject centerTower = Instantiate(mapConfig.centerTower, towerArea);
         Vector3Int centerCell = BaseUtility.GetCenterCell(mapWidth, mapHeight); // 新增方法，返回cell坐标
-    Debug.Log($"中心塔已创建,位置 {centerCell}");
+    // Debug.Log($"中心塔已创建,位置 {centerCell}");
         PlaceBlock(centerCell, centerTower.GetComponent<Block>());
-        Debug.Log($"中心塔已创建,位置 {centerCell}");
+        // Debug.Log($"中心塔已创建,位置 {centerCell}");
     }
 
     /// <summary>
@@ -187,13 +187,13 @@ public class GameMap : MonoBehaviour
         }
         block.Config.GetCellCount(out var count);
         var coordinates = block.Config.GetCellCoords(count);
-        Debug.Log($"方块坐标: {coordinates}");
-        Debug.Log($"坐标大小: {coordinates.Length}");
+        // Debug.Log($"方块坐标: {coordinates}");
+        // Debug.Log($"坐标大小: {coordinates.Length}");
         // 标记格子为已占用
         foreach (Vector2Int coord in coordinates)
         {
             Vector3Int cell = cellPos + new Vector3Int(coord.x, coord.y, 0);  // 修复：使用正确的相对坐标
-            Debug.Log($"占用格子: {cell}");
+            // Debug.Log($"占用格子: {cell}");
             occupiedCells.Add(new OccupiedCell(cell,!block.CanBeOverridden));
         }
 
@@ -201,7 +201,7 @@ public class GameMap : MonoBehaviour
         block.SetWorldPosition(cellPos, tilemap);
         placedBlocks[cellPos] = block;
 
-        Debug.Log($"方块成功放置到cell位置 {cellPos}");
+        // Debug.Log($"方块成功放置到cell位置 {cellPos}");
         return true;
     }
   

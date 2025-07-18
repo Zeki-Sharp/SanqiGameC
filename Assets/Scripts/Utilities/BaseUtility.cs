@@ -98,4 +98,6 @@ public class BaseUtility
         // 否则作为绝对值直接相加
         return value + multiplier;
     }
+
+  
 }

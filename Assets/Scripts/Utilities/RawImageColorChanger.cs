@@ -32,7 +32,7 @@ public class RawImageColorController : MonoBehaviour, IPointerClickHandler
     // 实现IPointerClickHandler接口
     public void OnPointerClick(PointerEventData eventData)
     {
-        Debug.Log($"RawImage被点击: {gameObject.name}，触发动画过渡");
+        // Debug.Log($"RawImage被点击: {gameObject.name}，触发动画过渡");
         StartColorTransition(highlightColor);
     }
 
@@ -66,7 +66,7 @@ public class RawImageColorController : MonoBehaviour, IPointerClickHandler
         rawImage.color = targetColor;
         currentTransition = null;
         ResetToNormalColorAfter(0.05f);
-        Debug.Log($"颜色过渡完成: {gameObject.name}，最终颜色: {targetColor}");
+        // Debug.Log($"颜色过渡完成: {gameObject.name}，最终颜色: {targetColor}");
     }
 
     // 可选：添加点击后恢复原色的逻辑
