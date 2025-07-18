@@ -9,7 +9,7 @@ public class Tower : MonoBehaviour
 
     [Header("状态")] [SerializeField] private float currentHealth;
     [SerializeField] private int level;
-    [SerializeField] private Vector3Int position;
+    [SerializeField] private Vector3Int cellPosition; // 塔在Tilemap中的cell坐标位置
 
     [Header("绑定")] [SerializeField] private SpriteRenderer spriteRenderer;
     [SerializeField] private TextMeshPro text;
@@ -22,7 +22,7 @@ public class Tower : MonoBehaviour
     // 公共属性
     public TowerData TowerData => towerData;
     public float CurrentHealth => currentHealth;
-    public Vector3Int Position => position;
+    public Vector3Int CellPosition => cellPosition;
 
     private DamageTaker damageTaker;
 
@@ -88,7 +88,7 @@ public void Initialize(TowerData data, Vector3Int pos, bool hasCheck = false)
         }
 
         towerData = data;
-        position = pos;
+        cellPosition = pos;
         currentHealth = data.GetHealth(level);
 
         // 优化的 Sprite 赋值
@@ -114,7 +114,7 @@ public void Initialize(TowerData data, Vector3Int pos, bool hasCheck = false)
             }
 
             // 优化的碰撞检测
-            Vector3 cellCenter = GameMap.instance.GridToWorldPosition(new Vector3Int(pos.x, pos.y, 0));
+            Vector3 cellCenter = TileMapUtility.CellToWorldPosition(GameMap.instance.GetTilemap(), new Vector3Int(pos.x, pos.y, 0));
             Collider2D[] towers = Physics2D.OverlapPointAll(cellCenter, TowerLayerMask);
 
             TowerCheckResult checkResult = TowerCheckResult.None;
@@ -129,12 +129,11 @@ public void Initialize(TowerData data, Vector3Int pos, bool hasCheck = false)
                     Tower towerComponent = tower.GetComponent<Tower>();
                     if (towerComponent == null) continue;
 
-                    if ((towerComponent.position + towerComponent.block.WorldPosition) == (this.position+block.WorldPosition))
+                    if ((towerComponent.cellPosition + towerComponent.block.CellPosition) == (this.cellPosition+block.CellPosition))
                     {
                         if (towerComponent.TowerData != null  &&
                             towerComponent.TowerData.TowerName == data.TowerName)
                         {
-                            Debug.Log($"[Tower] 塔 {data.TowerName} 检测到重复塔，准备更新");
                             DeleteOldTower(tower.gameObject);
                             checkResult = TowerCheckResult.ShouldUpdate;
                             firstTower = tower.gameObject;
@@ -142,7 +141,6 @@ public void Initialize(TowerData data, Vector3Int pos, bool hasCheck = false)
                         }
                         else
                         {
-                            Debug.Log($"[Tower] 塔 {data.TowerName} 检测到不同类型的塔，准备删除");
                             DeleteOldTower(tower.gameObject);
                             checkResult = TowerCheckResult.ShouldDelete;
                             firstTower = tower.gameObject;
@@ -155,11 +153,9 @@ public void Initialize(TowerData data, Vector3Int pos, bool hasCheck = false)
             switch (checkResult)
             {
                 case TowerCheckResult.ShouldUpdate:
-                    Debug.Log($"[Tower] 塔 {data.TowerName} 正在更新");
                     UpdateTower();
                     break;
                 case TowerCheckResult.ShouldDelete:
-                    Debug.Log($"[Tower] 塔 {data.TowerName} 正在被删除");
                     // DeleteOldTower(firstTower); // 已在 DeleteOldTower 中处理
                     break;
             }
@@ -171,9 +167,7 @@ public void Initialize(TowerData data, Vector3Int pos, bool hasCheck = false)
         Debug.LogError($"[Tower] 塔 {data?.TowerName ?? "Unknown"} 初始化时发生异常: {ex.Message}\n{ex.StackTrace}");
     }
 
-#if UNITY_EDITOR
-    Debug.Log($"[Tower] 塔初始化完成: {data?.TowerName ?? "Unknown"}");
-#endif
+
 }
 
 
@@ -204,11 +198,11 @@ public void Initialize(TowerData data, Vector3Int pos, bool hasCheck = false)
 
         try
         {
-            block.RemoveTower(tower.Position);
+            block.RemoveTower(tower.CellPosition);
         }
         catch (System.Exception ex)
         {
-            Debug.LogError($"移除格子 {tower.Position} 的塔时发生异常: {ex.Message}");
+            Debug.LogError($"移除格子 {tower.CellPosition} 的塔时发生异常: {ex.Message}");
         }
     }
 

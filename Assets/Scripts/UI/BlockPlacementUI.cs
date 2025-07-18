@@ -70,9 +70,9 @@ public class BlockPlacementUI : MonoBehaviour
     {
         if (placementManager == null) return;
         
-        placementManager.TestGenerateBlock("LINE2H", new Vector2Int(2, 2));
-        placementManager.TestGenerateBlock("L3", new Vector2Int(5, 2));
-        placementManager.TestGenerateBlock("SQUARE2", new Vector2Int(8, 2));
+        placementManager.TestGenerateBlock("LINE2H", new Vector3Int(2, 2, 0));
+        placementManager.TestGenerateBlock("L3", new Vector3Int(5, 2, 0));
+        placementManager.TestGenerateBlock("SQUARE2", new Vector3Int(8, 2, 0));
         
         UpdateStatusText("测试方块生成完成");
     }

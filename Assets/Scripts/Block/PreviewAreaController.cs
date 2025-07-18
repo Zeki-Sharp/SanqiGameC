@@ -11,7 +11,7 @@ public class PreviewAreaController : MonoBehaviour
     [SerializeField] private float cellSize = 1f;
     
     [Header("地图状态")]
-    [SerializeField] private Dictionary<Vector2Int, Block> placedBlocks = new Dictionary<Vector2Int, Block>();
+    [SerializeField] private Dictionary<Vector3Int, Block> placedBlocks = new Dictionary<Vector3Int, Block>();
 
     
     [Header("Tilemap可视化")]
@@ -24,7 +24,6 @@ public class PreviewAreaController : MonoBehaviour
     [SerializeField] private Camera camera;
     
     [SerializeField] private bool hasClick;
-    [SerializeField] private BlockPlacementManager blockPlacementManager;
 
     // 公共属性
     public int MapWidth => mapWidth;
@@ -94,12 +93,23 @@ public class PreviewAreaController : MonoBehaviour
     /// <param name="config">生成配置</param>
     public static BlockGenerationConfig lastPreviewConfig;
     public static List<TowerData> lastPreviewTowerDatas;
-    public static Vector2Int lastPreviewAnchorOffset; // 记录原始左下角坐标
+    public static Vector3Int lastPreviewAnchorOffset; // 记录原始左下角坐标
     public static Vector3Int[] lastPreviewOriginalPositions; // 记录原始相对坐标
     public static Vector3Int[] lastPreviewAdjustedPositions; // 记录调整后的坐标
     
     public void CreateShowAreaBlock(GameObject blockPrefab, List<TowerData> towerDatas, BlockGenerationConfig config)
     {
+        // 清空ShowArea下所有子物体，确保首次生成前无残留
+        if (prefabShowArea != null)
+        {
+            for (int i = prefabShowArea.transform.childCount - 1; i >= 0; i--)
+            {
+                GameObject.Destroy(prefabShowArea.transform.GetChild(i).gameObject);
+            }
+        }
+        // 确保父物体和Tilemap激活
+        if (prefabShowArea != null) prefabShowArea.SetActive(true);
+        if (tilemap != null) tilemap.gameObject.SetActive(true);
         // 获取随机旋转后的配置副本（不修改原配置）
         BlockGenerationConfig rotatedConfig = config.GetRandomRotatedCopy();
         // Debug.Log($"使用旋转配置: {rotatedConfig.name}");
@@ -131,11 +141,16 @@ public class PreviewAreaController : MonoBehaviour
             //           $"转换后坐标: ({adjustedPositions[i].x},{adjustedPositions[i].y})");
         }
         
-        if (blockPlacementManager != null)
-        {
-             blockPlacementManager.PlaceTowerGroupAtPositions(adjustedPositions.ToList(), rotatedConfig, towerDatas,
-                        prefabShowArea.transform,tilemap);
-        }
+        // TODO: 事件解耦——后续通过EventBus派发“预览区域请求建造”事件，由BlockPlacementManager响应
+        // blockPlacementManager.PlaceTowerGroupAtPositions(adjustedPositions.ToList(), rotatedConfig, towerDatas,
+        //            prefabShowArea.transform,tilemap);
+        EventBus.Instance.Publish(new BuildPreviewEventArgs(
+            adjustedPositions.ToList(),
+            rotatedConfig,
+            towerDatas,
+            prefabShowArea.transform,
+            tilemap
+        ));
         
         // 记录旋转后的左下角
         int minX = int.MaxValue, minY = int.MaxValue;
@@ -144,7 +159,7 @@ public class PreviewAreaController : MonoBehaviour
             if (pos.x < minX) minX = pos.x;
             if (pos.y < minY) minY = pos.y;
         }
-        lastPreviewAnchorOffset = new Vector2Int(minX, minY);
+        lastPreviewAnchorOffset = new Vector3Int(minX, minY, 0);
         lastPreviewOriginalPositions = rotatedPositions.ToArray(); // 使用旋转后的坐标
         lastPreviewAdjustedPositions = adjustedPositions;
         lastPreviewConfig = rotatedConfig; // 使用旋转后的配置
@@ -164,7 +179,7 @@ public class PreviewAreaController : MonoBehaviour
         }
 
         // 获取目标格子的世界中心坐标
-        Vector3 targetTileWorldPos = tilemap.GetCellCenterWorld(targetTilePosition);
+        Vector3 targetTileWorldPos = TileMapUtility.CellToWorldPosition(tilemap, targetTilePosition);
 
         // 计算物体本地坐标系中心到pivot的偏移量
         Vector3 pivotOffset = CalculatePivotOffset(block);

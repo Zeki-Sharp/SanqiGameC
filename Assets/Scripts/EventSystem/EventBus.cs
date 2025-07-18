@@ -35,8 +35,6 @@ public class EventBus : MonoBehaviour
         
         _instance = this;
         DontDestroyOnLoad(gameObject);
-        
-        Debug.Log("EventBus初始化成功");
     }
 
     /// <summary>
@@ -60,8 +58,6 @@ public class EventBus : MonoBehaviour
         }
         
         _eventSubscribers[eventType].Add(handler);
-        
-        Debug.Log($"新增事件订阅: {eventType.Name}");
     }
 
     /// <summary>
@@ -80,33 +76,27 @@ public class EventBus : MonoBehaviour
         }
         
         _eventSubscribers[eventType].Remove(handler);
-        
-        Debug.Log($"移除事件订阅: {eventType.Name}");
     }
 
     /// <summary>
     /// 发布事件
     /// </summary>
     /// <typeparam name="T">事件类型</typeparam>
-    /// <param name="sender">事件发送者</param>
     /// <param name="eventArgs">事件参数</param>
-    public void Publish<T>(object sender, T eventArgs) where T : EventArgs
+    public void Publish<T>(T eventArgs) where T : EventArgs
     {
         Type eventType = typeof(T);
         
         if (!_eventSubscribers.ContainsKey(eventType) || _eventSubscribers[eventType].Count == 0)
         {
-            Debug.Log($"发布未订阅的事件: {eventType.Name}");
             return;
         }
-        
-        Debug.Log($"发布事件: {eventType.Name}");
         
         foreach (var handler in _eventSubscribers[eventType])
         {
             try
             {
-                handler.DynamicInvoke(sender, eventArgs);
+                handler.DynamicInvoke(eventArgs);
             }
             catch (Exception e)
             {

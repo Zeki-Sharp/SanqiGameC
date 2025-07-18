@@ -14,7 +14,7 @@ public class GameMap : MonoBehaviour
     // 移除tilemapOrigin
     // 所有API、判定、放置、Gizmos等全部用Tilemap的cell坐标(Vector3Int/x,y,z)
     // occupiedCells、placedBlocks等用cell坐标为key
-    // WorldToGridPosition/ GridToWorldPosition直接用Tilemap的cell坐标
+    // WorldToCellPosition/ CellToWorldPosition现在通过TileMapUtility进行转换
 
     // 以cell坐标为key的占用字典
   [ShowInInspector]  private OccupiedCellSet occupiedCells = new OccupiedCellSet();
@@ -49,11 +49,8 @@ public class GameMap : MonoBehaviour
             return;
 
         InitializeMap();
-        Debug.Log(tilemap.cellSize);
 
-        BoundsInt bounds = tilemap.cellBounds;
-        Vector3 worldMin = tilemap.CellToWorld(bounds.min);
-        Vector3 worldMax = tilemap.CellToWorld(bounds.max);
+        var (worldMin, worldMax) = TileMapUtility.GetTilemapWorldBounds(tilemap);
         // Debug.Log($"世界坐标范围: Min = {worldMin}，Max = {worldMax}");
     }
 
@@ -124,21 +121,17 @@ public class GameMap : MonoBehaviour
             }
         }
 
-        Debug.Log($"地图初始化完成: {mapWidth}x{mapHeight}, 格子大小: {cellSize}");
-
         // 创建中心塔
         GameObject centerTower = Instantiate(mapConfig.centerTower, towerArea);
         Vector3Int centerCell = BaseUtility.GetCenterCell(mapWidth, mapHeight); // 新增方法，返回cell坐标
-    // Debug.Log($"中心塔已创建,位置 {centerCell}");
         PlaceBlock(centerCell, centerTower.GetComponent<Block>());
-        // Debug.Log($"中心塔已创建,位置 {centerCell}");
     }
 
     /// <summary>
     /// 检查指定位置是否可以放置方块
     /// </summary>
-    /// <param name="position">方块左下角的世界坐标</param>
-    /// <param name="shape">方块形状</param>
+    /// <param name="cellPos">方块左下角的cell坐标</param>
+    /// <param name="config">方块生成配置</param>
     /// <returns>是否可以放置</returns>
     public bool CanPlaceBlock(Vector3Int cellPos, BlockGenerationConfig config)
     {
@@ -169,7 +162,7 @@ public class GameMap : MonoBehaviour
     /// <summary>
     /// 放置方块到地图上
     /// </summary>
-    /// <param name="position">方块左下角的世界坐标</param>
+    /// <param name="cellPos">方块左下角的cell坐标</param>
     /// <param name="block">要放置的方块</param>
     /// <returns>是否放置成功</returns>
     public bool PlaceBlock(Vector3Int cellPos, Block block)
@@ -198,7 +191,7 @@ public class GameMap : MonoBehaviour
         }
 
         // 设置方块位置并添加到地图
-        block.SetWorldPosition(cellPos, tilemap);
+        block.SetCellPosition(cellPos, tilemap);
         placedBlocks[cellPos] = block;
 
         // Debug.Log($"方块成功放置到cell位置 {cellPos}");
@@ -208,8 +201,9 @@ public class GameMap : MonoBehaviour
     /// <summary>
     /// 放置方块到地图上
     /// </summary>
-    /// <param name="position">方块左下角的世界坐标</param>
+    /// <param name="cellPos">方块左下角的cell坐标</param>
     /// <param name="block">要放置的方块</param>
+    /// <param name="tilemap">Tilemap引用</param>
     /// <returns>是否放置成功</returns>
     public bool PlaceBlock(Vector3Int cellPos, Block block,Tilemap tilemap)
     {
@@ -233,16 +227,15 @@ public class GameMap : MonoBehaviour
         }
 
         // 设置方块位置并添加到地图
-        block.SetWorldPosition(cellPos, tilemap);
+        block.SetCellPosition(cellPos, tilemap);
         placedBlocks[cellPos] = block;
 
-        Debug.Log($"方块成功放置到cell位置 {cellPos}");
         return true;
     }
     /// <summary>
     /// 移除方块
     /// </summary>
-    /// <param name="position">方块左下角的世界坐标</param>
+    /// <param name="cellPos">方块左下角的cell坐标</param>
     /// <returns>是否移除成功</returns>
     public bool RemoveBlock(Vector3Int cellPos)
     {
@@ -270,7 +263,6 @@ public class GameMap : MonoBehaviour
         }
 
         placedBlocks.Remove(cellPos);
-        Debug.Log($"方块从cell位置 {cellPos} 移除");
         return true;
     }
 
@@ -278,7 +270,7 @@ public class GameMap : MonoBehaviour
     /// <summary>
     /// 获取指定位置的方块
     /// </summary>
-    /// <param name="position">世界坐标</param>
+    /// <param name="cellPos">cell坐标</param>
     /// <returns>方块实例，如果没有则返回null</returns>
     public Block GetBlockAt(Vector3Int cellPos)
     {
@@ -288,11 +280,10 @@ public class GameMap : MonoBehaviour
     /// <summary>
     /// 检查指定位置是否被占用
     /// </summary>
-    /// <param name="position">世界坐标</param>
+    /// <param name="cellPos">cell坐标</param>
     /// <returns>是否被占用</returns>
     public bool IsCellOccupied(Vector3Int cellPos)
     {
-        Debug.Log($"检查cell位置 {cellPos} 是否被占用");
         return occupiedCells.Contains(cellPos);
     }
 
@@ -301,19 +292,19 @@ public class GameMap : MonoBehaviour
     /// </summary>
     /// <param name="worldPosition">世界坐标</param>
     /// <returns>地图格子坐标</returns>
-    public Vector3Int WorldToGridPosition(Vector3 worldPosition)
+    public Vector3Int WorldToCellPosition(Vector3 worldPosition)
     {
-        return tilemap.WorldToCell(worldPosition);
+        return TileMapUtility.WorldToCellPosition(tilemap, worldPosition);
     }
 
     /// <summary>
     /// 将地图格子坐标转换为世界坐标
     /// </summary>
-    /// <param name="gridPosition">地图格子坐标</param>
+    /// <param name="cellPos">cell坐标</param>
     /// <returns>世界坐标</returns>
-    public Vector3 GridToWorldPosition(Vector3Int cellPos)
+    public Vector3 CellToWorldPosition(Vector3Int cellPos)
     {
-        return tilemap.GetCellCenterWorld(cellPos);
+        return TileMapUtility.CellToWorldPosition(tilemap, cellPos);
     }
 
     /// <summary>
@@ -341,7 +332,6 @@ public class GameMap : MonoBehaviour
 
         // 重新初始化
         InitializeMap();
-        Debug.Log("地图已清空");
     }
 
     /// <summary>
@@ -366,16 +356,16 @@ public class GameMap : MonoBehaviour
 [System.Serializable]
 public class OccupiedCell
 {
-    public Vector3Int Position;
+    public Vector3Int CellPosition;
     public bool IsOccupied;
 
     public OccupiedCell()
     {
     }
 
-    public OccupiedCell(Vector3Int position, bool isOccupied)
+    public OccupiedCell(Vector3Int cellPosition, bool isOccupied)
     {
-        Position = position;
+        CellPosition = cellPosition;
         IsOccupied = isOccupied;
     }
 
@@ -383,14 +373,14 @@ public class OccupiedCell
     {
         if (obj is OccupiedCell other)
         {
-            return Position.Equals(other.Position);
+            return CellPosition.Equals(other.CellPosition);
         }
         return false;
     }
 
     public override int GetHashCode()
     {
-        return Position.GetHashCode();
+        return CellPosition.GetHashCode();
     }
 }
 
@@ -400,7 +390,7 @@ public class OccupiedCellSet : HashSet<OccupiedCell>
     {
         foreach (var cell in this)
         {
-            if (cell.Position == position)
+            if (cell.CellPosition == position)
             {
                 return cell.IsOccupied;
             }
@@ -412,7 +402,7 @@ public class OccupiedCellSet : HashSet<OccupiedCell>
     {
         foreach (var cell in this)
         {
-            if (cell.Position == position)
+            if (cell.CellPosition == position)
             {
                 return base.Remove(cell);
             }

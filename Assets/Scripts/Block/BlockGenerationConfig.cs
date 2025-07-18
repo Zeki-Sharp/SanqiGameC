@@ -71,7 +71,7 @@ public class BlockGenerationConfig : ScriptableObject
     public Vector3Int[] Coordinates => coordinates;
     public int CellCount => cellCount;
     
-    public Vector2 offset;
+    public Vector3Int offset;
 
     private void OnValidate()
     {
@@ -164,7 +164,7 @@ public class BlockGenerationConfig : ScriptableObject
                 }
                 int x = i % 4;
                 int y = i / 4;
-                coords[index] = new Vector3Int(x, y);
+                coords[index] = new Vector3Int(x, y, 0);
                 index++;
             }
         }

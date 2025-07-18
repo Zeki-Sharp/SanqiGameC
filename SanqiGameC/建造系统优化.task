@@ -1,0 +1,44 @@
+# 建造系统优化清单（2025.01更新）
+
+## 最高优先级（性能与架构基础）
+- [ ] **对象池系统实现**：预览对象、塔、方块等频繁生成/销毁的对象采用对象池优化，避免GC压力。
+- [ ] **资源加载优化**：统一资源加载、缓存、释放逻辑，消除Resources.Load路径硬编码，避免重复加载塔预制体、配置等资源。
+- [ ] **性能监控与热点识别**：添加性能监控点，识别并优化频繁调用的方法（如坐标转换、碰撞检测等）。
+- [ ] **内存泄漏检查**：检查EventBus、BlockPlacementManager等组件的内存泄漏问题。
+- [ ] **魔法数字消除**：将硬编码的数字（如4x4网格、颜色值等）提取为常量。
+
+## 高优先级（结构、工具与规范）
+- [ ] **编辑器工具完善与功能补全**：完善BlockConfigManagerWindow、补全BlockGenerationConfigEditor等功能，支持批量创建、批量修改、可视化预览。
+- [ ] **ScriptableObject配置优化与验证机制**：BlockGenerationConfig、TowerData、MapConfig等配置结构统一命名、注释、分层，补全注释和分组，补充统一的运行时验证机制。
+- [ ] **工具类重构**：TileMapUtility、BaseUtility、TowerBuildUtility等工具类方法去重、合并，明确各自职责。
+- [ ] **代码重复消除**：消除BlockPlacementManager、BlockPreviewSystem等脚本中的重复逻辑。
+- [ ] **注释代码清理、未使用字段清理**：清理BlockTestManager、BlockGeneration等脚本中的大量注释代码和未使用字段。
+
+## 中优先级（代码质量与维护）
+- [ ] **单例模式优化**：GameMap、EventBus等单例实现可进一步优化线程安全性。
+- [ ] **可视化调试工具**：提供可视化调试入口，便于快速验证建造、预览、放置等流程。
+- [ ] **命名规范统一**：统一命名规范、注释风格，所有核心方法、数据结构补全注释。
+- [ ] **错误处理统一**：统一各脚本的错误处理方式，避免不一致的异常处理。
+- [ ] **异常处理完善**：完善Tower.Initialize、Block.RemoveTower等关键方法的异常处理机制。
+
+## 已完成（保持维护）
+- [x] **BlockShape老旧代码清理**：彻底删除BlockShape相关代码，统一使用BlockGenerationConfig体系。
+- [x] **调试日志清理**：清理大量调试日志，特别是BlockPlacementManager、GameMap、Tower等脚本中的Debug.Log。
+- [x] **BlockPlacementManager拆分**：已拆分为输入处理（BlockPlacementInputHandler）、预览逻辑（BlockPreviewSystem）、建造落地（BlockPlacementManager）。
+- [x] **PreviewAreaController职责边界**：明确只负责预览区域生成与刷新，避免与主建造流程耦合。
+- [x] **GameMap职责分离**：只负责地图数据与格子占用判定，避免与UI、建造逻辑混杂。
+- [x] **Block/Tower职责明确**：只负责自身数据与表现，避免直接操作全局建造流程。
+- [x] **事件系统重构**：建造相关所有交互通过EventBus派发，减少直接引用。
+- [x] **事件参数规范化**：规范事件参数结构，避免EventBus传递不明对象。
+- [x] **测试代码分离**：BlockTestManager、相关测试脚本与主逻辑彻底分离。
+- [x] **坐标体系统一**：所有核心逻辑、配置、事件参数统一使用Tilemap cell坐标（Vector3Int），所有转换集中封装。
+
+---
+
+> **优先级说明**：
+> - 最高优先级：性能与架构基础，直接影响游戏运行效率
+> - 高优先级：结构、工具、扩展与规范，影响开发效率
+> - 中优先级：代码质量与维护，影响长期维护性
+> - 已完成：保持维护，避免回退
+> 
+> **建议执行顺序**：最高优先级 → 高优先级 → 中优先级 → 已完成 

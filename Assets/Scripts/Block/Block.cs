@@ -8,7 +8,7 @@ using UnityEngine.Tilemaps;
 public class Block : MonoBehaviour
 {
     [Header("方块配置")] [SerializeField] private BlockGenerationConfig config;
-    [SerializeField] private Vector3Int worldPosition; // 方块在世界中的位置
+    [SerializeField] private Vector3Int cellPosition; // 方块在Tilemap中的cell坐标位置
     [SerializeField] private bool canBeOverridden = true;
     [SerializeField] private GameObject towerPrefab;
 
@@ -16,7 +16,7 @@ public class Block : MonoBehaviour
 
     // 公共属性（返回只读副本）
     public BlockGenerationConfig Config => config;
-    public Vector3Int WorldPosition => worldPosition;
+    public Vector3Int CellPosition => cellPosition;
     public IReadOnlyDictionary<Vector3Int, Tower> Towers => towers;
     public bool CanBeOverridden => canBeOverridden;
 
@@ -79,15 +79,17 @@ public class Block : MonoBehaviour
     }
 
     /// <summary>
-    /// 设置方块的世界坐标并根据地图大小调整尺寸
+    /// 设置方块的cell坐标并根据地图大小调整尺寸
     /// </summary>
-    public void SetWorldPosition(Vector3Int cellPos, Tilemap tilemap = null)
+    /// <param name="cellPos">方块在Tilemap中的cell坐标</param>
+    /// <param name="tilemap">Tilemap引用，用于计算世界坐标</param>
+    public void SetCellPosition(Vector3Int cellPos, Tilemap tilemap = null)
     {
-        worldPosition = new Vector3Int(cellPos.x, cellPos.y);
+        cellPosition = new Vector3Int(cellPos.x, cellPos.y);
         float baseScale = 1.5f;
         if (tilemap != null)
         {
-            Vector3 cellCenter = tilemap.GetCellCenterWorld(cellPos);
+            Vector3 cellCenter = TileMapUtility.CellToWorldPosition(tilemap, cellPos);
             transform.position = cellCenter;
         }
         else
@@ -126,8 +128,8 @@ public class Block : MonoBehaviour
             }
         }
         // Vector3Int towerCellPos = new Vector3Int( localCoord.x, localCoord.y, 0);
-        Vector3Int towerCellPos = new Vector3Int(worldPosition.x + localCoord.x, worldPosition.y + localCoord.y, 0);
-        Vector3 cellCenter = tilemap != null ? tilemap.GetCellCenterWorld(towerCellPos) : new Vector3(towerCellPos.x, towerCellPos.y, 0);
+        Vector3Int towerCellPos = new Vector3Int(cellPosition.x + localCoord.x, cellPosition.y + localCoord.y, 0);
+        Vector3 cellCenter = tilemap != null ? TileMapUtility.CellToWorldPosition(tilemap, towerCellPos) : new Vector3(towerCellPos.x, towerCellPos.y, 0);
         if (towerPrefab == null)
         {
             Debug.LogError("Tower prefab is null when trying to instantiate.");
@@ -204,9 +206,7 @@ public class Block : MonoBehaviour
                 return;
             }
 
-#if UNITY_EDITOR
-            Debug.Log($"移除格子 ({localCoord.x}, {localCoord.y}) 的塔");
-#endif
+
             // 移除塔的引用
             towers.Remove(localCoord);
 

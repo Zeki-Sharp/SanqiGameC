@@ -44,8 +44,6 @@ public class EnemySpawner : MonoBehaviour
         for (currentWaveIndex = 0; currentWaveIndex < waves.Count; currentWaveIndex++)
         {
             Wave wave = waves[currentWaveIndex];
-            if (debugSpawnInfo)
-                Debug.Log($"准备生成第{currentWaveIndex + 1}波，延迟{wave.delayBeforeWave}s");
             if (wave.delayBeforeWave > 0)
                 yield return new WaitForSeconds(wave.delayBeforeWave);
             foreach (var enemyInfo in wave.enemies)
@@ -57,8 +55,6 @@ public class EnemySpawner : MonoBehaviour
                 }
             }
         }
-        if (debugSpawnInfo)
-            Debug.Log("所有波次生成完毕");
     }
 
     /// <summary>
@@ -74,10 +70,6 @@ public class EnemySpawner : MonoBehaviour
         Vector3 spawnPosition = CalculateSpawnPositionInAreas();
         GameObject enemyObject = Instantiate(enemyPrefab, spawnPosition, Quaternion.identity);
         currentEnemyCount++;
-        if (debugSpawnInfo)
-        {
-            Debug.Log($"生成敌人: {enemyObject.name} 在位置 {spawnPosition} (当前敌人数: {currentEnemyCount})");
-        }
     }
 
     /// <summary>
@@ -112,7 +104,6 @@ public class EnemySpawner : MonoBehaviour
             Destroy(enemy);
         }
         currentEnemyCount = 0;
-        Debug.Log("已清除所有敌人");
     }
 
     private void OnDrawGizmos()

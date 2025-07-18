@@ -10,15 +10,8 @@ public class BaseUtility
     /// </summary>
     /// <param name="width">矩形宽度</param>
     /// <param name="height">矩形高度</param>
-    /// <returns>中心点坐标</returns>
-    public static Vector2Int GetCenter(int width, int height)
-    {
-        int centerX = Mathf.FloorToInt(width / 2f);
-        int centerY = Mathf.FloorToInt(height / 2f);
-        return new Vector2Int(centerX, centerY);
-    }
-
-    public static Vector3Int GetCenterCell(int width, int height)
+    /// <returns>中心点cell坐标</returns>
+        public static Vector3Int GetCenterCell(int width, int height)
     {
         int centerX = Mathf.FloorToInt(width / 2f);
         int centerY = Mathf.FloorToInt(height / 2f);
@@ -31,11 +24,11 @@ public class BaseUtility
     // }
 
     /// <summary>
-    /// 计算偏移量对应的格子坐标
+    /// 将世界坐标偏移量转换为cell坐标
     /// </summary>
-    /// <param name="offset">偏移量（世界坐标）</param>
-    /// <returns>对应的格子坐标偏移量</returns>
-    public static Vector3Int GetCenterCell(Vector3 offset)
+    /// <param name="offset">世界坐标偏移量</param>
+    /// <returns>对应的cell坐标</returns>
+    public static Vector3Int WorldOffsetToCell(Vector3 offset)
     {
         // 使用更精确的四舍五入计算
         int x = Mathf.RoundToInt(offset.x);

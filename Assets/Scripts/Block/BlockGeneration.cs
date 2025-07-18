@@ -19,15 +19,6 @@ public class BlockGeneration : MonoBehaviour
     }
     public void SetBlocks()
     {
-     //   BlockShape blockShape = blockGenerationSettings.GetRandomShape();
-     //   GameObject tower  = new GameObject();
-     // for (int i = 0; i < blockShape.Coordinates.Length; i++)
-     // {
-     //     Vector2Int coord = blockShape.Coordinates[i];
-     //     GameObject towerPrefab = blockGenerationSettings.GetRandomTower();
-     //     
-     // }
-     //  
-       
+        // 已迁移到BlockGenerationConfig体系
     }
 }

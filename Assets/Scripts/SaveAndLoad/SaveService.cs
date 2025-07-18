@@ -81,8 +81,7 @@ public class SaveService
         string passwordFilePath = Path.Combine(
             _basePath, 
             $"Save_Data(游戏存在时，请勿删除)(Do not delete the game when it exists).sav");
-        Debug.Log("游戏保存路径：" + _basePath);
-        Debug.Log("密码文件路径：" + passwordFilePath);
+
         if (!File.Exists(passwordFilePath))
         {
             PlayerPrefs.DeleteKey("Password");
