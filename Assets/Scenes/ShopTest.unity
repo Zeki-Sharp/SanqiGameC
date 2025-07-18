@@ -313,7 +313,7 @@ MonoBehaviour:
   prefabShowArea: {fileID: 1125535675}
   camera: {fileID: 2144671128}
   hasClick: 0
-  blockPlacementManager: {fileID: 0}
+  blockPlacementManager: {fileID: 318562944}
 --- !u!1 &214648790
 GameObject:
   m_ObjectHideFlags: 0
@@ -432,8 +432,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   previewShowName: Preview_Show
   hasClick: 0
-  gameMap: {fileID: 0}
-  blockPlacementManager: {fileID: 0}
+  gameMap: {fileID: 56472098}
+  blockPlacementManager: {fileID: 318562944}
   previewTowerDatas: []
   previewConfig: {fileID: 0}
 --- !u!1 &218421369
@@ -471,8 +471,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 254.74, y: 231.6}
-  m_SizeDelta: {x: 256, y: 256}
+  m_AnchoredPosition: {x: 221.23999, y: 247.1}
+  m_SizeDelta: {x: 328, y: 287}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &218421371
 MonoBehaviour:
@@ -554,10 +554,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gameMap: {fileID: 56472098}
-  createPrefab: {fileID: 81773909}
+  previewAreaController: {fileID: 81773909}
   runTestsOnStart: 1
   prefabShowName: PrefabArea
-  mapConfig: {fileID: 0}
+  mapConfig: {fileID: 11400000, guid: b138276068ce4ff4f8fce4bd703f7f06, type: 2}
 --- !u!4 &278181989
 Transform:
   m_ObjectHideFlags: 0
@@ -615,6 +615,14 @@ MonoBehaviour:
   isPlacing: 0
   previewBlock: {fileID: 0}
   previewPosition: {x: 0, y: 0, z: 0}
+  normalColor: {r: 1, g: 1, b: 1, a: 1}
+  previewColor: {r: 1, g: 1, b: 1, a: 0.5}
+  canPlaceColor: {r: 0, g: 1, b: 0, a: 1}
+  cannotPlaceColor: {r: 1, g: 0, b: 0, a: 1}
+  canReplaceColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+  TowerLayerMask:
+    serializedVersion: 2
+    m_Bits: 0
 --- !u!4 &318562945
 Transform:
   m_ObjectHideFlags: 0
@@ -642,7 +650,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 74cac16d4ab92944b922d4de11f0acd1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  blockGenerationSettings: {fileID: 0}
+  blockGenerationSettings: {fileID: 11400000, guid: ca8e674e631e1f54bba8c3d5b2aa7e3f, type: 2}
 --- !u!1 &350446004
 GameObject:
   m_ObjectHideFlags: 0
@@ -890,8 +898,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -705.26, y: 126.68097}
-  m_SizeDelta: {x: 256, y: 367.5879}
+  m_AnchoredPosition: {x: -741.26, y: 126.68097}
+  m_SizeDelta: {x: 328, y: 367.5879}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &391243367
 MonoBehaviour:
@@ -993,8 +1001,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -705.26, y: -124.9209}
-  m_SizeDelta: {x: -1664, y: 64.621}
+  m_AnchoredPosition: {x: -741.26, y: -124.9209}
+  m_SizeDelta: {x: -1592, y: 64.62097}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &423455551
 MonoBehaviour:
@@ -1162,8 +1170,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -705.26, y: -472.6}
-  m_SizeDelta: {x: 256, y: 48.659}
+  m_AnchoredPosition: {x: -741.26, y: -471.30212}
+  m_SizeDelta: {x: 328, y: 48.659}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &823385932
 MonoBehaviour:
@@ -1960,6 +1968,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1117478613}
   - component: {fileID: 1117478612}
+  - component: {fileID: 1117478614}
   m_Layer: 0
   m_Name: ShopSystem
   m_TagString: Untagged
@@ -1994,6 +2003,22 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1117478614
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1117478611}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 091c37e83bc3d5a4d812f373c7fe5806, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  map: {fileID: 56472098}
+  itemGenerator: {fileID: 11400000, guid: 1ff44a53700398f499f052cfbb234722, type: 2}
+  itemPrefab: {fileID: 5043634435161845799, guid: a15f24fb40fb0b747a0e191510abdd48, type: 3}
+  itemArea: {fileID: 391243365}
 --- !u!1 &1125535675
 GameObject:
   m_ObjectHideFlags: 0
@@ -3492,7 +3517,6 @@ GameObject:
   m_Component:
   - component: {fileID: 2144671129}
   - component: {fileID: 2144671128}
-  - component: {fileID: 2144671127}
   - component: {fileID: 2144671126}
   m_Layer: 0
   m_Name: Camera
@@ -3545,14 +3569,6 @@ MonoBehaviour:
     m_MipBias: 0
     m_VarianceClampScale: 0.9
     m_ContrastAdaptiveSharpening: 0
---- !u!81 &2144671127
-AudioListener:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2144671125}
-  m_Enabled: 1
 --- !u!20 &2144671128
 Camera:
   m_ObjectHideFlags: 0

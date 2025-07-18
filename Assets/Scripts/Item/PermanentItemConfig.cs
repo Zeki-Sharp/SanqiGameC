@@ -10,7 +10,6 @@ public class PermanentItemConfig : ItemConfig
     public List<ItemData<TowerStatType>> ItemDatas = new List<ItemData<TowerStatType>>();
     public override void Init()
     {
-        throw new NotImplementedException();
     }
 
     public override void Use()

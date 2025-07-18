@@ -39,10 +39,23 @@ public class ItemManage : MonoBehaviour
     {
         itemGenerator = map.GetMapConfig().itemGeneratorConfig;
         itemLimitCount = map.GetMapData().itemLimitCount;
+        ShowItem();
     }
 
     // Update is called once per frame
     void Update()
     {
+    }
+
+    public void ShowItem()
+    {
+        for (int i = itemArea.transform.childCount - 1; i >= 0; i--)
+        {
+            Destroy(itemArea.transform.GetChild(i).gameObject);
+        }
+        for (int i = 0; i < itemLimitCount; i++)
+        {
+            GenerateItem();
+        }
     }
 }

@@ -21,6 +21,7 @@ MonoBehaviour:
     name: 
     description: 
     difficulty: 0
+    itemLimitCount: 2
     max: 2
     towerHealthMultiplier: 1
     towerAttackMultiplier: 1

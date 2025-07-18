@@ -11,7 +11,6 @@ public class TemmporaryItemConfig : ItemConfig
 
     public override void Init()
     {
-        throw new NotImplementedException();
     }
 
     public override void Use()
