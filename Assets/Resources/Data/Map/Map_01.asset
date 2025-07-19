@@ -33,7 +33,7 @@ MonoBehaviour:
     maxEnemy: 2
     enemyHealthMultiplier: 1
     enemyAttackMultiplier: 1
-    startingMoney: 0
-    itemRefreshMoney: 0
-    blockDestroyMoney: 0
-    blockBuildMoney: 0
+    startingMoney: 100
+    itemRefreshMoney: 2
+    blockDestroyMoney: 7
+    blockBuildMoney: 2

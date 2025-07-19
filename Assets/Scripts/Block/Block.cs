@@ -141,6 +141,10 @@ public class Block : MonoBehaviour
         go.transform.position = cellCenter;
         
         Tower towerComponent = go.GetComponent<Tower>();
+        if(hasCheck)
+        {
+            towerComponent.tag = "Tower";
+        }
         if (towerComponent == null)
         {
             Debug.LogError("Tower prefab does not have a Tower component.");

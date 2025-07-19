@@ -124,7 +124,7 @@ public void Initialize(TowerData data, Vector3Int pos, bool hasCheck = false)
             {
                 foreach (var tower in towers)
                 {
-                    if (tower == null || !tower.CompareTag("Tower") || !this.CompareTag("PreviewTower") || tower.gameObject == this.gameObject) continue;
+                    if (tower == null ||/*|| !tower.CompareTag("Tower") || !this.CompareTag("PreviewTower") ||*/ tower.gameObject == this.gameObject) continue;
 
                     Tower towerComponent = tower.GetComponent<Tower>();
                     if (towerComponent == null) continue;

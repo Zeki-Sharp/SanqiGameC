@@ -15,7 +15,7 @@ public class Item : MonoBehaviour
     {
         if (itemConfig == null )
         {
-            ItemSprite = GetComponentInChildren<Image>();
+            ItemSprite = transform.Find("ItemSprite").GetComponent<Image>();
         }
         if (ItemName == null)
         {
@@ -36,7 +36,7 @@ public class Item : MonoBehaviour
         {
             ItemName.text = itemConfig.ItemName;
             ItemDescription.text = itemConfig.Description;
-            ItemPrice.text = itemConfig.Price.ToString();
+            ItemPrice.text = $"售价：{itemConfig.Price.ToString()}";
             ItemSprite.sprite = itemConfig.ItemSprite;
             this.itemConfig = itemConfig;
         }
