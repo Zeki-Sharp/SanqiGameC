@@ -20,4 +20,4 @@ MonoBehaviour:
     physicAttack: 100
     attackRange: 100
     attackInterval: 100
-    attackSpeed: 100
+    attackSpeed: 10

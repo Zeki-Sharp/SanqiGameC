@@ -7,33 +7,40 @@ using UnityEditor;
 
 /// <summary>
 /// 敌人生成器 - 多波次多类型敌人生成，支持多个手动框选区域
+/// 配置完全由RoundConfig管理，不再支持Inspector面板配置
 /// </summary>
 public class EnemySpawner : MonoBehaviour
 {
     [Header("生成设置")]
-    public List<Wave> waves = new List<Wave>();
-    public float unitSpawnDelay = 1f;
-
+    [SerializeField] private float unitSpawnDelay = 1f;
+    
     [Header("生成区域 (可多选)")]
     public List<SpawnArea> spawnAreas = new List<SpawnArea>();
 
     [Header("调试")]
-    public bool autoStart = true;
     public bool showSpawnAreas = true;
     public bool debugSpawnInfo = true;
 
+    // 私有字段，不再在Inspector中显示
+    private List<Wave> waves = new List<Wave>();
     private int currentWaveIndex = 0;
     private int currentEnemyCount = 0;
     private Coroutine spawnRoutine;
 
     private void Start()
     {
-        if (autoStart)
-            StartWaves();
+        // 不再自动开始，完全由RoundManager控制
+        Debug.Log("EnemySpawner初始化完成，等待RoundManager调用");
     }
 
     public void StartWaves()
     {
+        if (waves == null || waves.Count == 0)
+        {
+            Debug.LogWarning("EnemySpawner: 没有配置waves，无法开始生成");
+            return;
+        }
+        
         if (spawnRoutine != null)
             StopCoroutine(spawnRoutine);
         spawnRoutine = StartCoroutine(SpawnWavesCoroutine());
@@ -41,11 +48,19 @@ public class EnemySpawner : MonoBehaviour
 
     private IEnumerator SpawnWavesCoroutine()
     {
+        Debug.Log($"EnemySpawner: 开始生成 {waves.Count} 个Wave");
+        
         for (currentWaveIndex = 0; currentWaveIndex < waves.Count; currentWaveIndex++)
         {
             Wave wave = waves[currentWaveIndex];
             if (wave.delayBeforeWave > 0)
+            {
+                Debug.Log($"EnemySpawner: Wave {currentWaveIndex + 1} 延迟 {wave.delayBeforeWave} 秒");
                 yield return new WaitForSeconds(wave.delayBeforeWave);
+            }
+            
+            Debug.Log($"EnemySpawner: 开始生成Wave {currentWaveIndex + 1}，包含 {wave.enemies.Count} 种敌人");
+            
             foreach (var enemyInfo in wave.enemies)
             {
                 for (int i = 0; i < enemyInfo.count; i++)
@@ -55,6 +70,8 @@ public class EnemySpawner : MonoBehaviour
                 }
             }
         }
+        
+        Debug.Log("EnemySpawner: 所有Wave生成完成");
     }
 
     /// <summary>
@@ -64,12 +81,17 @@ public class EnemySpawner : MonoBehaviour
     {
         if (enemyPrefab == null)
         {
-            Debug.LogError("未设置敌人Prefab！");
+            Debug.LogError("EnemySpawner: 未设置敌人Prefab！");
             return;
         }
         Vector3 spawnPosition = CalculateSpawnPositionInAreas();
         GameObject enemyObject = Instantiate(enemyPrefab, spawnPosition, Quaternion.identity);
         currentEnemyCount++;
+        
+        if (debugSpawnInfo)
+        {
+            Debug.Log($"EnemySpawner: 生成敌人 {enemyPrefab.name} 在位置 {spawnPosition}，当前敌人总数: {currentEnemyCount}");
+        }
     }
 
     /// <summary>
@@ -79,7 +101,7 @@ public class EnemySpawner : MonoBehaviour
     {
         if (spawnAreas == null || spawnAreas.Count == 0)
         {
-            Debug.LogWarning("未设置生成区域，使用(0,0,0)");
+            Debug.LogWarning("EnemySpawner: 未设置生成区域，使用(0,0,0)");
             return Vector3.zero;
         }
         int areaIndex = Random.Range(0, spawnAreas.Count);
@@ -87,12 +109,6 @@ public class EnemySpawner : MonoBehaviour
         float x = Random.Range(area.min.x, area.max.x);
         float y = Random.Range(area.min.y, area.max.y);
         return new Vector3(x, y, 0f);
-    }
-
-    [ContextMenu("开始波次生成")]
-    public void StartWavesManual()
-    {
-        StartWaves();
     }
 
     [ContextMenu("清除所有敌人")]
@@ -104,6 +120,34 @@ public class EnemySpawner : MonoBehaviour
             Destroy(enemy);
         }
         currentEnemyCount = 0;
+        Debug.Log($"EnemySpawner: 清除所有敌人，共清除 {enemies.Length} 个敌人");
+    }
+    
+    /// <summary>
+    /// 设置Wave配置（由RoundManager调用）
+    /// </summary>
+    /// <param name="newWaves">新的Wave列表</param>
+    public void SetWaves(List<Wave> newWaves)
+    {
+        waves = newWaves;
+        Debug.Log($"EnemySpawner: 设置Wave配置，共 {waves?.Count ?? 0} 个Wave");
+    }
+    
+    /// <summary>
+    /// 获取当前敌人数量
+    /// </summary>
+    public int GetCurrentEnemyCount()
+    {
+        return currentEnemyCount;
+    }
+    
+    /// <summary>
+    /// 检查是否所有敌人都被消灭
+    /// </summary>
+    public bool AreAllEnemiesDefeated()
+    {
+        GameObject[] enemies = GameObject.FindGameObjectsWithTag("Enemy");
+        return enemies.Length == 0;
     }
 
     private void OnDrawGizmos()

@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 0}
+  m_Name: Round Test
+  m_EditorClassIdentifier: Assembly-CSharp::RoundConfig
+  roundNumber: 0
+  waves:
+  - delayBeforeWave: 1
+    enemies:
+    - enemyPrefab: {fileID: 9133360019857942620, guid: f31b65574579733499fe1d9b7001b360, type: 3}
+      count: 3
+    - enemyPrefab: {fileID: 3081488358046641282, guid: 5f99a0d2ca6c81942abe717868b11cb3, type: 3}
+      count: 3
+  - delayBeforeWave: 1
+    enemies:
+    - enemyPrefab: {fileID: 9133360019857942620, guid: f31b65574579733499fe1d9b7001b360, type: 3}
+      count: 3
+    - enemyPrefab: {fileID: 3081488358046641282, guid: 5f99a0d2ca6c81942abe717868b11cb3, type: 3}
+      count: 3
+  rewardMoney: 100
+  rewardExperience: 20

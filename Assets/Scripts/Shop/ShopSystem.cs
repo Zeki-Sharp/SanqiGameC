@@ -16,6 +16,12 @@ public class ShopSystem : MonoBehaviour
 
     public void Awake()
     {
+        // 注册到GameManager
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.RegisterSystem(this);
+        }
+        
         EventBus.Instance.Subscribe<MoneyChangedEventArgs>(OnMoneyChanged);
     }
 

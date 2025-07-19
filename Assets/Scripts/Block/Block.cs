@@ -86,7 +86,6 @@ public class Block : MonoBehaviour
     public void SetCellPosition(Vector3Int cellPos, Tilemap tilemap = null)
     {
         cellPosition = new Vector3Int(cellPos.x, cellPos.y);
-        float baseScale = 1.5f;
         if (tilemap != null)
         {
             Vector3 cellCenter = CoordinateUtility.CellToWorldPosition(tilemap, cellPos);

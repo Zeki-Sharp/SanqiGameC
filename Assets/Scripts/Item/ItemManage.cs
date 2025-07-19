@@ -24,6 +24,12 @@ public class ItemManage : MonoBehaviour
     }
     void Awake()
     {
+        // 注册到GameManager
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.RegisterSystem(this);
+        }
+        
         if (itemPrefab == null)
         {
             itemPrefab = Resources.Load<GameObject>("Prefab/Item/Item");
