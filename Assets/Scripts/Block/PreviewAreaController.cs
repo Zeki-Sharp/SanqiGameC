@@ -129,10 +129,10 @@ public class PreviewAreaController : MonoBehaviour
         }
         
         // 计算Tilemap实际中心位置
-        Vector3Int tilemapCenter = TileMapUtility.CalculateTilemapCenter(tilemap);
+        Vector3Int tilemapCenter = CoordinateUtility.CalculateTilemapCenter(tilemap);
         
         // 使用旋转后的坐标进行位置调整
-        Vector3Int[] adjustedPositions2 = TileMapUtility.AdjustPositionsToTilemapCenter(rotatedPositions.ToArray(), tilemapCenter);
+        Vector3Int[] adjustedPositions2 = CoordinateUtility.AdjustPositionsToTilemapCenter(rotatedPositions.ToArray(), tilemapCenter);
         Vector3Int[] adjustedPositions = new Vector3Int[adjustedPositions2.Length];
         for (int i = 0; i < adjustedPositions2.Length; i++)
         {
@@ -179,7 +179,7 @@ public class PreviewAreaController : MonoBehaviour
         }
 
         // 获取目标格子的世界中心坐标
-        Vector3 targetTileWorldPos = TileMapUtility.CellToWorldPosition(tilemap, targetTilePosition);
+        Vector3 targetTileWorldPos = CoordinateUtility.CellToWorldPosition(tilemap, targetTilePosition);
 
         // 计算物体本地坐标系中心到pivot的偏移量
         Vector3 pivotOffset = CalculatePivotOffset(block);

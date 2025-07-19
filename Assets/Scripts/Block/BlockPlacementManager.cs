@@ -14,8 +14,7 @@ public class BlockPlacementManager : MonoBehaviour
     // 新建塔组预览系统数据
     [SerializeField] private BlockGenerationConfig currentBlockConfig;
     [SerializeField] private List<TowerData> currentTowerDatas = new List<TowerData>();
-    [SerializeField] private List<GameObject> towerPreviewObjects = new List<GameObject>();
-    [SerializeField] private List<Vector3Int> currentCells = new List<Vector3Int>();
+
 
     [Header("放置状态")] [SerializeField] private bool isPlacing = false; // 是否正在放置模式
     [SerializeField] private GameObject previewBlock; // 预览方块
@@ -41,7 +40,7 @@ public class BlockPlacementManager : MonoBehaviour
 
     private void Awake()
     {
-        // 事件订阅必须在Awake中完成，确保在BlockTestManager.Start()执行前就准备好
+       
         EventBus.Instance.Subscribe<BuildPreviewEventArgs>(OnBuildPreviewRequested);
     }
 
@@ -122,17 +121,6 @@ public class BlockPlacementManager : MonoBehaviour
             previewSystem.ClearPreview();
         FindFirstObjectByType<Preview_Click>()?.ResetClickState(); // 重置建造状态
 
-        // 清理预览塔对象
-        // foreach (var obj in towerPreviewObjects)
-        // {
-        //     if (obj != null)
-        //     {
-        //         Destroy(obj);
-        //     }
-        // }
-
-        // towerPreviewObjects.Clear();
-
         // 销毁预览方块
         if (previewBlock != null)
         {
@@ -140,109 +128,6 @@ public class BlockPlacementManager : MonoBehaviour
             previewBlock = null;
         }
     }
-
-    /// <summary>
-    /// 更新塔组预览对象跟随鼠标
-    /// </summary>
-    // private void UpdatePreviewTowerGroupFollowMouse()
-    // {
-    //     if (!isPlacing || currentBlockConfig == null || currentTowerDatas == null) return;
-    //     if (currentTowerDatas.Count != currentBlockConfig.Coordinates.Length) return;
-
-    //     // Debug.Log("更新塔组预览对象跟随鼠标");
-    //     GeneratePreviewTowers();
-
-    //     Vector3 mouseWorldPos = mainCamera.ScreenToWorldPoint(Input.mousePosition);
-    //     mouseWorldPos.z = 0;
-    //     Vector3Int baseGridPos = gameMap.WorldToGridPosition(mouseWorldPos);
-
-    //     UpdatePreviewTowerPositions(baseGridPos);
-    // }
-
-    /// <summary>
-    /// 改变预览塔的颜色
-    /// </summary>
-    /// <param name="color">目标颜色</param>
-    /// <param name="single">单个对象</param>
-    // public void ChangePreviewTowersColor(Color color, GameObject single = null)
-    // {
-    //     if (single != null)
-    //     {
-    //         SpriteRenderer sr = single.GetComponentInChildren<SpriteRenderer>();
-    //         if (sr != null)
-    //         {
-    //             sr.color = color;
-    //         }
-    //         return;
-    //     }
-
-    //     foreach (var obj in towerPreviewObjects)
-    //     {
-    //         if (obj != null)
-    //         {
-    //             SpriteRenderer sr = obj.GetComponentInChildren<SpriteRenderer>();
-    //             if (sr != null)
-    //             {
-    //                 sr.color = color;
-    //             }
-    //         }
-    //     }
-    // }
-
-    /// <summary>
-    /// 确保预览塔组生成
-    /// </summary>
-    // private void GeneratePreviewTowers()
-    // {
-    //     if (towerPreviewObjects.Count > 0 || towerPrefabCache == null) return;
-
-    //     for (int i = 0; i < currentBlockConfig.Coordinates.Length; i++)
-    //     {
-    //         GameObject towerObj = Instantiate(towerPrefabCache, transform);
-    //         towerObj.name = $"PreviewTower_{i}";
-    //         towerObj.tag = "PreviewTower";
-    //         Tower towerComponent = towerObj.GetComponent<Tower>();
-    //         if (towerComponent != null)
-    //         {
-    //             towerComponent.Initialize(currentTowerDatas[i], currentBlockConfig.Coordinates[i]);
-    //         }
-
-    //         SpriteRenderer sr = towerObj.GetComponentInChildren<SpriteRenderer>();
-    //         if (sr != null)
-    //         {
-    //             sr.color = previewColor;
-    //             sr.sortingOrder = 1000;
-    //         }
-
-    //         towerPreviewObjects.Add(towerObj);
-    //     }
-    // }
-
-    /// <summary>
-    /// 更新预览塔组位置
-    /// </summary>
-    /// <param name="baseGridPos">基础cell位置</param>
-    // private void UpdatePreviewTowerPositions(Vector3Int baseGridPos)
-    // {
-    //     if (gameMap.CanPlaceBlock(baseGridPos, currentBlockConfig))
-    //     {
-    //         ChangePreviewTowersColor(canPlaceColor);
-    //     }
-    //     else
-    //     {
-    //         ChangePreviewTowersColor(cannotPlaceColor);
-    //     }
-
-    //     for (int i = 0; i < currentBlockConfig.Coordinates.Length; i++)
-    //     {
-    //         Vector3Int offset = currentBlockConfig.Coordinates[i];
-    //         Vector3Int cellPos = baseGridPos + new Vector3Int(offset.x, offset.y, 0);
-    //         Vector3 worldPos = gameMap.GridToWorldPosition(cellPos);
-    //         towerPreviewObjects[i].transform.position = worldPos;
-
-    //         CheckPreviewTowerGroupBuildingStatus(worldPos, towerPreviewObjects[i]);
-    //     }
-    // }
 
     /// <summary>
     /// 获取塔组预览坐标的锚点（左下角 → 中心）
@@ -298,13 +183,7 @@ public class BlockPlacementManager : MonoBehaviour
             // Debug.Log($"生成塔: 配置坐标数量={currentBlockConfig.Coordinates.Length}, 塔数据数量={currentTowerDatas.Count}");
             block.GenerateTowers(currentBlockConfig.Coordinates, currentTowerDatas.ToArray(), tilemap ,true);
 
-            // 停止放置模式并清除预览
-            // foreach (var obj in towerPreviewObjects)
-            // {
-            //     Destroy(obj);
-            // }
-
-            // towerPreviewObjects.Clear();
+            // 停止放置模式并清除预览（已由BlockPreviewSystem处理）
 
             // 只在这里刷新 ShowArea
             if (PreviewAreaController.instance != null)
@@ -404,48 +283,7 @@ public class BlockPlacementManager : MonoBehaviour
         return testData;
     }
 
-    [SerializeField] private LayerMask TowerLayerMask = 1 << 8;
-
-    /// <summary>
-    /// 检测预览塔组建造时的情况，并用颜色来表示
-    /// </summary>
-    /// <returns></returns>
-    private void CheckPreviewTowerGroupBuildingStatus(Vector3 cellCenter, GameObject towerObject)
-    {
-        Collider2D[] towers = Physics2D.OverlapPointAll(cellCenter, TowerLayerMask);
-        bool shouldUpdate = false;
-
-        if (towers.Length > 0)
-        {
-            foreach (var collider in towers)
-            {
-                if (collider == null) continue;
-                if (collider.CompareTag("PreviewTower")) continue;
-                if (collider.TryGetComponent<Tower>(out var tower))
-                {
-                    if (towerObject.GetComponent<Tower>() == null || !tower.CompareTag("Tower")) continue;
-                    if (collider.transform.position == towerObject.transform.position)
-                    {
-                        if (tower.TowerData != null &&
-                            tower.TowerData.TowerName ==
-                            towerObject.GetComponent<Tower>().TowerData.TowerName)
-                        {
-                            shouldUpdate = true;
-                        }
-
-                        if (shouldUpdate)
-                        {
-                            previewSystem.SetPreviewColor(canReplaceColor);
-                        }
-                        else
-                        {
-                            previewSystem.SetPreviewColor(canPlaceColor);
-                        }
-                    }
-                }
-            }
-        }
-    }
+    // 已移除CheckPreviewTowerGroupBuildingStatus方法，功能已集成到BlockPreviewSystem中
 
     /// <summary>
     /// 通用塔组建造方法：在指定格子组建造塔组
@@ -471,46 +309,25 @@ public class BlockPlacementManager : MonoBehaviour
         block.Init(config);
         block.ClearTower();
         block.tag = "Block";
-        // 依次生成塔
         tilemap = tilemap != null ? tilemap : (gameMap != null ? gameMap.GetTilemap() : null);
         for (int i = 0; i < cells.Count; i++)
         {
             Vector3Int cell = cells[i];
             TowerData data = towerDatas[i];
             GameObject towerPrefab = towerPrefabCache ?? Resources.Load<GameObject>("Prefab/Tower/Tower");
-            if (towerPrefab == null)
-            {
-                Debug.LogError("塔预制体未找到");
-                continue;
-            }
-
-            GameObject towerObj = Instantiate(towerPrefab, blockObj.transform);
-            towerObj.SetActive(true); // 强制激活
-            // 设置塔位置
-            Vector3 worldPos = tilemap != null ? tilemap.GetCellCenterWorld(cell) : new Vector3(cell.x, cell.y, 0);
-            towerObj.transform.position = worldPos;
-            towerObj.tag = parent != null ? "PreviewTower" : "Tower";
-            // 恢复正常颜色
-            SpriteRenderer[] renderers = towerObj.GetComponentsInChildren<SpriteRenderer>(true);
-            Tower towerComponent = towerObj.GetComponent<Tower>();
-            const int BaseOrder = 1000;
-            const int VerticalOffsetMultiplier = 10;
-            int verticalOffset = Mathf.RoundToInt(-worldPos.y * VerticalOffsetMultiplier);
-            int finalOrder = BaseOrder + verticalOffset;
-            towerComponent.Initialize(data, new Vector3Int(cell.x, cell.y), hasCheck);
-            towerComponent.SetOrder(finalOrder);
-
-            block.SetTower(new Vector3Int(cell.x, cell.y), towerComponent);
-            if (renderers != null && renderers.Length > 0)
-            {
-                foreach (var sr in renderers)
-                {
-                    sr.color = normalColor;
-                    // 主动刷新SpriteRenderer，防止首次渲染丢失
-                    sr.enabled = false;
-                    sr.enabled = true;
-                }
-            }
+            // 判断是否为showarea（父物体名包含showarea）
+            bool isShowArea = parent != null && parent.name.ToLower().Contains("showarea");
+            var tower = TowerBuildUtility.GenerateTower(
+                blockObj.transform,
+                towerPrefab,
+                cell,
+                tilemap,
+                data,
+                parent != null && !isShowArea, // 只有真正的预览才用预览色
+                isShowArea ? normalColor : (parent != null ? previewColor : normalColor),
+                hasCheck
+            );
+            block.SetTower(new Vector3Int(cell.x, cell.y), tower);
         }
     }
 
@@ -530,7 +347,7 @@ public class BlockPlacementManager : MonoBehaviour
     {
         if (isPlacing && previewSystem != null && currentBlockConfig != null)
         {
-            Vector3Int gridPos = TileMapUtility.WorldToCellPosition(gameMap.GetTilemap(), mouseWorldPos);
+            Vector3Int gridPos = CoordinateUtility.WorldToCellPosition(gameMap.GetTilemap(), mouseWorldPos);
             previewSystem.UpdatePreview(gridPos);
         }
     }

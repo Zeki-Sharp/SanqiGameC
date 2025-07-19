@@ -89,7 +89,7 @@ public class Block : MonoBehaviour
         float baseScale = 1.5f;
         if (tilemap != null)
         {
-            Vector3 cellCenter = TileMapUtility.CellToWorldPosition(tilemap, cellPos);
+            Vector3 cellCenter = CoordinateUtility.CellToWorldPosition(tilemap, cellPos);
             transform.position = cellCenter;
         }
         else
@@ -120,15 +120,14 @@ public class Block : MonoBehaviour
     {
         if (towers.Count > 0)
         {
-
             if (towers.TryGetValue(localCoord, out Tower tower) && tower != null)
             {
                 Debug.LogWarning($"格子 ({localCoord.x}, {localCoord.y}) 已经有塔了");
                 return towers[localCoord];
             }
         }
-        // Vector3Int towerCellPos = new Vector3Int( localCoord.x, localCoord.y, 0);
         Vector3Int towerCellPos = new Vector3Int(cellPosition.x + localCoord.x, cellPosition.y + localCoord.y, 0);
+<<<<<<< HEAD
         Vector3 cellCenter = tilemap != null ? TileMapUtility.CellToWorldPosition(tilemap, towerCellPos) : new Vector3(towerCellPos.x, towerCellPos.y, 0);
         if (towerPrefab == null)
         {
@@ -156,6 +155,18 @@ public class Block : MonoBehaviour
         int finalOrder = BaseOrder + verticalOffset;
         towerComponent.Initialize(towerData,localCoord,hasCheck);
         towerComponent.SetOrder(finalOrder);
+=======
+        Tower towerComponent = TowerBuildUtility.GenerateTower(
+            this.transform,
+            towerPrefab,
+            towerCellPos,
+            tilemap,
+            towerData,
+            false,
+            Color.white,
+            hasCheck
+        );
+>>>>>>> e32114d (建筑系统优化)
         towers[localCoord] = towerComponent;
         return towerComponent;
     }

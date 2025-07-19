@@ -26,7 +26,7 @@ public class Preview_Click : MonoBehaviour
     {
         if (Input.GetMouseButtonDown(0) && !hasClick)
         {
-            GameObject obj = BaseUtility.GetFirstPickGameObject(Input.mousePosition);
+            GameObject obj = UIInteractionUtility.GetFirstPickGameObject(Input.mousePosition);
             if (obj != null && obj.name == previewShowName)
             {
                 previewConfig = PreviewAreaController.lastPreviewConfig;

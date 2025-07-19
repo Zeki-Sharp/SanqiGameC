@@ -114,7 +114,7 @@ public void Initialize(TowerData data, Vector3Int pos, bool hasCheck = false)
             }
 
             // 优化的碰撞检测
-            Vector3 cellCenter = TileMapUtility.CellToWorldPosition(GameMap.instance.GetTilemap(), new Vector3Int(pos.x, pos.y, 0));
+            Vector3 cellCenter = CoordinateUtility.CellToWorldPosition(GameMap.instance.GetTilemap(), new Vector3Int(pos.x, pos.y, 0));
             Collider2D[] towers = Physics2D.OverlapPointAll(cellCenter, TowerLayerMask);
 
             TowerCheckResult checkResult = TowerCheckResult.None;

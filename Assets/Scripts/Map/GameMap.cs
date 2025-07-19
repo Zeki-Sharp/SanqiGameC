@@ -50,7 +50,7 @@ public class GameMap : MonoBehaviour
 
         InitializeMap();
 
-        var (worldMin, worldMax) = TileMapUtility.GetTilemapWorldBounds(tilemap);
+        var (worldMin, worldMax) = MapUtility.GetTilemapWorldBounds(tilemap);
         // Debug.Log($"世界坐标范围: Min = {worldMin}，Max = {worldMax}");
     }
 
@@ -123,7 +123,7 @@ public class GameMap : MonoBehaviour
 
         // 创建中心塔
         GameObject centerTower = Instantiate(mapConfig.centerTower, towerArea);
-        Vector3Int centerCell = BaseUtility.GetCenterCell(mapWidth, mapHeight); // 新增方法，返回cell坐标
+        Vector3Int centerCell = CoordinateUtility.GetCenterCell(mapWidth, mapHeight); // 新增方法，返回cell坐标
         PlaceBlock(centerCell, centerTower.GetComponent<Block>());
     }
 
@@ -294,7 +294,7 @@ public class GameMap : MonoBehaviour
     /// <returns>地图格子坐标</returns>
     public Vector3Int WorldToCellPosition(Vector3 worldPosition)
     {
-        return TileMapUtility.WorldToCellPosition(tilemap, worldPosition);
+        return CoordinateUtility.WorldToCellPosition(tilemap, worldPosition);
     }
 
     /// <summary>
@@ -304,7 +304,7 @@ public class GameMap : MonoBehaviour
     /// <returns>世界坐标</returns>
     public Vector3 CellToWorldPosition(Vector3Int cellPos)
     {
-        return TileMapUtility.CellToWorldPosition(tilemap, cellPos);
+        return CoordinateUtility.CellToWorldPosition(tilemap, cellPos);
     }
 
     /// <summary>

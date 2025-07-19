@@ -1,33 +1,62 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Tilemaps;
 
-public class TowerBuildUtility  : MonoBehaviour
+public static class TowerBuildUtility
 {
-    // TODO:计算塔所用到的坐标，获得塔区域的坐标中心，并旋转
-    public static bool[,] GetTowerArea(bool[,] BlockGrid)
+    /// <summary>
+    /// 统一的塔生成方法，支持预览和实际建造
+    /// </summary>
+    /// <param name="parent">父物体</param>
+    /// <param name="towerPrefab">塔预制体</param>
+    /// <param name="cell">目标cell坐标</param>
+    /// <param name="tilemap">Tilemap引用</param>
+    /// <param name="towerData">塔数据</param>
+    /// <param name="isPreview">是否为预览塔</param>
+    /// <param name="color">塔渲染颜色</param>
+    /// <param name="hasCheck">是否需要碰撞检测</param>
+    /// <returns>生成的Tower组件</returns>
+    public static Tower GenerateTower(
+        Transform parent,
+        GameObject towerPrefab,
+        Vector3Int cell,
+        Tilemap tilemap,
+        TowerData towerData,
+        bool isPreview = false,
+        Color? color = null,
+        bool hasCheck = false)
     {
-        int maxX = 0;
-        int maxY = 0;
-        for (int i = 0; i < BlockGrid.GetLength(0); i++)
+        if (towerPrefab == null)
         {
-            for (int j = 0; j < BlockGrid.GetLength(1); j++)
+            Debug.LogError("塔预制体未找到");
+            return null;
+        }
+        GameObject towerObj = Object.Instantiate(towerPrefab, parent);
+        towerObj.SetActive(true);
+        towerObj.tag = isPreview ? "PreviewTower" : "Tower";
+        Vector3 worldPos = tilemap != null ? tilemap.GetCellCenterWorld(cell) : new Vector3(cell.x, cell.y, 0);
+        towerObj.transform.position = worldPos;
+        Tower towerComponent = towerObj.GetComponent<Tower>();
+        if (towerComponent != null)
+        {
+            towerComponent.Initialize(towerData, cell, hasCheck);
+            const int BaseOrder = 1000;
+            const int VerticalOffsetMultiplier = 10;
+            int verticalOffset = Mathf.RoundToInt(-worldPos.y * VerticalOffsetMultiplier);
+            int finalOrder = BaseOrder + verticalOffset;
+            towerComponent.SetOrder(finalOrder);
+        }
+        // 设置颜色
+        SpriteRenderer[] renderers = towerObj.GetComponentsInChildren<SpriteRenderer>(true);
+        if (renderers != null && renderers.Length > 0)
+        {
+            foreach (var sr in renderers)
             {
-                if (BlockGrid[i, j])
-                {
-                    maxX = Mathf.Max(maxX, i);
-                    maxY = Mathf.Max(maxY, j);
-                }
+                sr.color = color ?? Color.white;
+                sr.enabled = false;
+                sr.enabled = true;
             }
         }
-        bool[,] towerArea = new bool[maxX+1, maxY+1];
-        for (int i = 0; i <= maxX; i++)
-        {
-            for (int j = 0; j <= maxY; j++)
-            {
-                towerArea[i, j] = BlockGrid[i, j];
-            }
-        }
-        Debug.Log($"[TowerBuildUtility] 塔区域大小：{maxX+1}x{maxY+1}");
-        return towerArea;
+        return towerComponent;
     }
-}
+} 

@@ -77,16 +77,6 @@ public class BlockGenerationConfig : ScriptableObject
     {
         shapeName = name;
         Save(); // 新增：每次编辑器变更后自动同步
-#if UNITY_EDITOR
-        // 调试信息只在编辑器下启用
-        for (int y = 0; y < 4; y++)
-        {
-            for (int x = 0; x < 4; x++)
-            {
-                // Debug.Log(BlockGrid[y, x]);
-            }
-        }
-#endif
         
     }
     // [Button("获取格子")]

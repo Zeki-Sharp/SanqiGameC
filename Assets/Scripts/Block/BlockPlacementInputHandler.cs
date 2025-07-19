@@ -35,7 +35,7 @@ public class BlockPlacementInputHandler : MonoBehaviour
         // 获取鼠标世界坐标
         Vector3 mouseWorldPos = mainCamera.ScreenToWorldPoint(Input.mousePosition);
         mouseWorldPos.z = 0;
-        Vector3Int gridPos = TileMapUtility.WorldToCellPosition(gameMap.GetTilemap(), mouseWorldPos);
+        Vector3Int gridPos = CoordinateUtility.WorldToCellPosition(gameMap.GetTilemap(), mouseWorldPos);
 
         // 预览位置变化事件
         if (lastPreviewGridPos != gridPos)

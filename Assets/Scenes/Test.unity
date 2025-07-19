@@ -268,10 +268,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   towerPrefab: {fileID: 0}
-  previewColor: {r: 1, g: 1, b: 1, a: 0.5}
-  canPlaceColor: {r: 0, g: 1, b: 0, a: 1}
-  cannotPlaceColor: {r: 1, g: 0, b: 0, a: 1}
-  canReplaceColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+  previewColor: {r: 1, g: 1, b: 1, a: 1}
+  canPlaceColor: {r: 0, g: 1, b: 0, a: 0.8}
+  cannotPlaceColor: {r: 1, g: 0, b: 0, a: 0.8}
+  canReplaceColor: {r: 0.015686274, g: 0.099176735, b: 1, a: 0.8627451}
+  canUpgradeColor: {r: 1, g: 0.98664254, b: 0, a: 0.8}
+  TowerLayerMask:
+    serializedVersion: 2
+    m_Bits: 64
 --- !u!4 &112422811
 Transform:
   m_ObjectHideFlags: 0
@@ -583,8 +587,6 @@ MonoBehaviour:
   currentTowerData: {fileID: 0}
   currentBlockConfig: {fileID: 0}
   currentTowerDatas: []
-  towerPreviewObjects: []
-  currentCells: []
   isPlacing: 0
   previewBlock: {fileID: 0}
   previewPosition: {x: 0, y: 0, z: 0}
@@ -595,9 +597,6 @@ MonoBehaviour:
   canReplaceColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
   inputHandler: {fileID: 993966097}
   previewSystem: {fileID: 112422810}
-  TowerLayerMask:
-    serializedVersion: 2
-    m_Bits: 64
 --- !u!4 &318562945
 Transform:
   m_ObjectHideFlags: 0
