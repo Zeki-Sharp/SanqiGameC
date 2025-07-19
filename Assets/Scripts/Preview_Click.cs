@@ -26,20 +26,29 @@ public class Preview_Click : MonoBehaviour
     {
         if (Input.GetMouseButtonDown(0) && !hasClick)
         {
-            GameObject obj = UIInteractionUtility.GetFirstPickGameObject(Input.mousePosition);
-            if (obj != null && obj.name == previewShowName)
+            if (GameManager.Instance.ShopSystem.CanAfford(GameMap.instance.GetMapData().BlockBuildMoney))
             {
-                previewConfig = PreviewAreaController.lastPreviewConfig;
-                previewTowerDatas = PreviewAreaController.lastPreviewTowerDatas;
-
-                if (previewConfig != null && previewTowerDatas != null)
-                {
-                    blockPlacementManager.StartPlacement(previewConfig, previewTowerDatas);
-                    
-                    hasClick = true;
-                    Debug.Log("触发建造：调用 StartPlacement");
-                }
+                   GameObject obj = UIInteractionUtility.GetFirstPickGameObject(Input.mousePosition);
+                            if (obj != null && obj.name == previewShowName)
+                            {
+                                previewConfig = PreviewAreaController.lastPreviewConfig;
+                                previewTowerDatas = PreviewAreaController.lastPreviewTowerDatas;
+                
+                                if (previewConfig != null && previewTowerDatas != null)
+                                {
+                                    blockPlacementManager.StartPlacement(previewConfig, previewTowerDatas);
+                                    GameManager.Instance.ShopSystem.SpendMoney(GameMap.instance.GetMapData().BlockBuildMoney);
+                                    
+                                    hasClick = true;
+                                    Debug.Log("触发建造：调用 StartPlacement");
+                                }
+                            }
             }
+            else
+            {
+                Debug.LogError("建造失败：没有足够的钱");
+            }
+         
         }
     }
 

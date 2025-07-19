@@ -178,8 +178,8 @@ public class GameMap : MonoBehaviour
             Debug.LogWarning($"无法在位置 ({cellPos.x}, {cellPos.y}) 放置方块");
             return false;
         }
-        block.Config.GetCellCount(out var count);
-        var coordinates = block.Config.GetCellCoords(count);
+
+        var coordinates = block.Config.GetCellCoords();
         // Debug.Log($"方块坐标: {coordinates}");
         // Debug.Log($"坐标大小: {coordinates.Length}");
         // 标记格子为已占用

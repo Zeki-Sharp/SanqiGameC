@@ -51,7 +51,7 @@ public class BlockTestManager : MonoBehaviour
         List<TowerData> towerDatas = new List<TowerData>();
         
         // 使用原始配置生成塔数据（CreateBlock内部会重新生成旋转后的坐标）
-        foreach (var vector2 in config.GetCellCoords(config.CellCount))
+        foreach (var vector2 in config.GetCellCoords())
         {
             towerDatas.Add(mapConfig.blockGenerationSettings.GetRandomTower());
             // Debug.Log($"方块初始化中，方块坐标: {vector2}，替换塔{towerDatas[towerDatas.Count-1].name}");

@@ -127,35 +127,7 @@ public class Block : MonoBehaviour
             }
         }
         Vector3Int towerCellPos = new Vector3Int(cellPosition.x + localCoord.x, cellPosition.y + localCoord.y, 0);
-<<<<<<< HEAD
-        Vector3 cellCenter = tilemap != null ? TileMapUtility.CellToWorldPosition(tilemap, towerCellPos) : new Vector3(towerCellPos.x, towerCellPos.y, 0);
-        if (towerPrefab == null)
-        {
-            Debug.LogError("Tower prefab is null when trying to instantiate.");
-            return null;
-        }
-        GameObject go = Instantiate(towerPrefab, transform);
-        
-        // 直接使用cellCenter，不添加Y轴偏移，与预览保持一致
-        go.transform.position = cellCenter;
-        
-        Tower towerComponent = go.GetComponent<Tower>();
-        if(hasCheck)
-        {
-            towerComponent.tag = "Tower";
-        }
-        if (towerComponent == null)
-        {
-            Debug.LogError("Tower prefab does not have a Tower component.");
-            return null;
-        }
-        const int BaseOrder = 1000;
-        const int VerticalOffsetMultiplier = 10;
-        int verticalOffset = Mathf.RoundToInt(-cellCenter.y * VerticalOffsetMultiplier);
-        int finalOrder = BaseOrder + verticalOffset;
-        towerComponent.Initialize(towerData,localCoord,hasCheck);
-        towerComponent.SetOrder(finalOrder);
-=======
+
         Tower towerComponent = TowerBuildUtility.GenerateTower(
             this.transform,
             towerPrefab,
@@ -166,7 +138,6 @@ public class Block : MonoBehaviour
             Color.white,
             hasCheck
         );
->>>>>>> e32114d (建筑系统优化)
         towers[localCoord] = towerComponent;
         return towerComponent;
     }

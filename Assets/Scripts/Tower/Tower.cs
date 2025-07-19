@@ -58,8 +58,8 @@ public class Tower : MonoBehaviour
 
 public void Initialize(TowerData data, Vector3Int pos, bool hasCheck = false)
 {
-    try
-    {
+    // try
+    // {
         // 检查关键组件是否存在
         if (spriteRenderer == null)
         {
@@ -127,8 +127,8 @@ public void Initialize(TowerData data, Vector3Int pos, bool hasCheck = false)
                     if (tower == null ||/*|| !tower.CompareTag("Tower") || !this.CompareTag("PreviewTower") ||*/ tower.gameObject == this.gameObject) continue;
 
                     Tower towerComponent = tower.GetComponent<Tower>();
-                    if (towerComponent == null) continue;
-
+                    if (towerComponent == null || towerComponent.block == null) continue;
+ 
                     if ((towerComponent.cellPosition + towerComponent.block.CellPosition) == (this.cellPosition+block.CellPosition))
                     {
                         if (towerComponent.TowerData != null  &&
@@ -161,11 +161,11 @@ public void Initialize(TowerData data, Vector3Int pos, bool hasCheck = false)
             }
             this.tag = "Tower";
         }
-    }
-    catch (System.Exception ex)
-    {
-        Debug.LogError($"[Tower] 塔 {data?.TowerName ?? "Unknown"} 初始化时发生异常: {ex.Message}\n{ex.StackTrace}");
-    }
+    // }
+    // catch (System.Exception ex)
+    // {
+    //     Debug.LogError($"[Tower] 塔 {data?.TowerName ?? "Unknown"} 初始化时发生异常: {ex.Message}\n{ex.StackTrace}");
+    // }
 
 
 }

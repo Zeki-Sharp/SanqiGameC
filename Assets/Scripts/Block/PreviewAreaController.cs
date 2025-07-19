@@ -115,7 +115,7 @@ public class PreviewAreaController : MonoBehaviour
         // Debug.Log($"使用旋转配置: {rotatedConfig.name}");
 
         // 使用旋转后的配置坐标重新生成位置列表
-        Vector3Int[] rotatedCoords = rotatedConfig.GetCellCoords(rotatedConfig.CellCount);
+        Vector3Int[] rotatedCoords = rotatedConfig.GetCellCoords();
         List<Vector3Int> rotatedPositions = new List<Vector3Int>();
         foreach (var coord in rotatedCoords)
         {

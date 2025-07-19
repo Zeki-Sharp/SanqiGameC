@@ -5,43 +5,63 @@ using UnityEngine;
 
 public class ShopSystem : MonoBehaviour
 {
-   private int money;
-   [ShowInInspector]public int Money
-   {
-       get { return money; }
-   }
-   [SerializeField] private TextMeshProUGUI moneyText;
-   [SerializeField] private GameMap gameMap;
-   public void Awake()
-   {
-       // moneyText = GetComponent<TextMeshProUGUI>();
-   }
-   public void Initialize(MapConfig mapConfig,DifficultyLevel level)
-   {
-       MapData mapData = mapConfig.GetMapData(level);
-         money = mapData.StartingMoney;
-   }
+    private int money;
+    [ShowInInspector] public int Money
+    {
+        get { return money; }
+    }
+    [SerializeField] private TextMeshProUGUI moneyText;
+    [SerializeField] private GameMap gameMap;
+    
 
-   private void Start()
-   {
-       gameMap = FindFirstObjectByType<GameMap>();
-       money = gameMap.GetMapData().StartingMoney;
-       moneyText.text = money.ToString();
-   }
+    public void Awake()
+    {
+        EventBus.Instance.Subscribe<MoneyChangedEventArgs>(OnMoneyChanged);
+    }
 
-   public bool CanAfford(int amount)
-   {
-       return money >= amount;
-   }
-   
-   public void SpendMoney(int amount)
-   {
-       money -= amount;
-   }
+    public void Initialize(MapConfig mapConfig, DifficultyLevel level)
+    {
+        MapData mapData = mapConfig.GetMapData(level);
+        money = mapData.StartingMoney;
+        EventBus.Instance.Publish(new MoneyChangedEventArgs { NewAmount = money });
+    }
 
-   public void AddMoney(int amount)
-   {
-       money += amount;
-   }
-   
+    private void Start()
+    {
+        gameMap = FindFirstObjectByType<GameMap>();
+        money = gameMap.GetMapData().StartingMoney;
+        EventBus.Instance.Publish(new MoneyChangedEventArgs { NewAmount = money });
+    }
+
+    public bool CanAfford(int amount)
+    {
+        return money >= amount;
+    }
+
+    public void SpendMoney(int amount)
+    {
+        money -= amount;
+        EventBus.Instance.Publish(new MoneyChangedEventArgs { NewAmount = money });
+    }
+
+    public void AddMoney(int amount)
+    {
+        money += amount;
+        EventBus.Instance.Publish(new MoneyChangedEventArgs { NewAmount = money });
+    }
+
+    private void OnMoneyChanged(MoneyChangedEventArgs e)
+    {
+        moneyText.text = e.NewAmount.ToString();
+    }
+
+    private void OnDestroy()
+    {
+        EventBus.Instance.Unsubscribe<MoneyChangedEventArgs>(OnMoneyChanged);
+    }
+}
+
+public class MoneyChangedEventArgs : EventArgs
+{
+    public int NewAmount;
 }

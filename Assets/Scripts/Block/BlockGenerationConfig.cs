@@ -56,8 +56,8 @@ public class BlockGenerationConfig : ScriptableObject
     [Button("保存")]
     public void Save()
     {
-        cellCount = GetCellCount(out int count);
-        coordinates = GetCellCoords(count);
+        // cellCount = GetCellCount();
+        coordinates = GetCellCoords();
 #if UNITY_EDITOR
         UnityEditor.EditorUtility.SetDirty(this);
         UnityEditor.AssetDatabase.SaveAssets();
@@ -110,9 +110,9 @@ public class BlockGenerationConfig : ScriptableObject
         
     }
 
-    public int GetCellCount(out int count)
+    public int GetCellCount()
     {
-        count = 0;
+        int count = 0;
         for (int i = 0; i < 16; i++)
         {
             if (blockGrid[i])
@@ -123,7 +123,7 @@ public class BlockGenerationConfig : ScriptableObject
         return count;
     }
 
-    public Vector3Int[] GetCellCoords(int cellCount)
+    public Vector3Int[] GetCellCoords()
     {
         // 验证blockGrid数组长度
         if (blockGrid == null || blockGrid.Length != 16)
@@ -135,8 +135,9 @@ public class BlockGenerationConfig : ScriptableObject
         // 验证cellCount是否有效
         if (cellCount <= 0)
         {
-            Debug.LogError($"[BlockGenerationConfig] 无效的cellCount值：{cellCount}，无法生成坐标数组");
-            return Array.Empty<Vector3Int>();
+            cellCount= GetCellCount();
+            // Debug.LogError($"[BlockGenerationConfig] 无效的cellCount值：{cellCount}，无法生成坐标数组");
+            // return Array.Empty<Vector3Int>();
         }
 
         // 创建坐标数组
