@@ -422,6 +422,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2122699128005866123, guid: 38d9c1d55b3a471409466f7929aa31ff, type: 3}
+      propertyPath: target
+      value: 
+      objectReference: {fileID: 410750875}
+    - target: {fileID: 2122699128005866123, guid: 38d9c1d55b3a471409466f7929aa31ff, type: 3}
+      propertyPath: ActionName
+      value: RefreshWithMoney
+      objectReference: {fileID: 0}
     - target: {fileID: 2729290644959896989, guid: 38d9c1d55b3a471409466f7929aa31ff, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
@@ -1002,6 +1010,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ShopSystem: {fileID: 1172087236}
+  ItemManage: {fileID: 1172087235}
 --- !u!4 &912695600
 Transform:
   m_ObjectHideFlags: 0

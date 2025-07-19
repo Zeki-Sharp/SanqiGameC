@@ -11,6 +11,7 @@ public class GameManager : MonoBehaviour
         }
     }
     public ShopSystem ShopSystem;
+    public ItemManage ItemManage;
     
     void Awake()
     {
@@ -22,6 +23,8 @@ public class GameManager : MonoBehaviour
         {
             Destroy(gameObject);
         }
+        ShopSystem = FindFirstObjectByType<ShopSystem>();
+        ItemManage = FindFirstObjectByType<ItemManage>();
     }
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()

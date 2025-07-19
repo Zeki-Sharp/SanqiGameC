@@ -1,6 +1,7 @@
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 public class HoverTextChanger  : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
@@ -9,6 +10,9 @@ public class HoverTextChanger  : MonoBehaviour, IPointerEnterHandler, IPointerEx
     [SerializeField] private string content;
     [SerializeField] private bool showTitle = true;
 
+    [SerializeField] private Button button;
+    [SerializeField] private string ActionName;
+    [SerializeField] private MonoBehaviour target;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -19,6 +23,14 @@ public class HoverTextChanger  : MonoBehaviour, IPointerEnterHandler, IPointerEx
         if (buttonText != null)
         {
            buttonText.text = showTitle ? title : content;
+        }
+        button = GetComponent<Button>();
+        if (button != null)
+        {
+            button.onClick.AddListener(() =>
+            {
+                target.SendMessage(ActionName);
+            });
         }
     }
     

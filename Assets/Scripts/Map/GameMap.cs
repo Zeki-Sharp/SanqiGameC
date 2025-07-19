@@ -5,11 +5,11 @@ using UnityEngine.Tilemaps;
 
 public class GameMap : MonoBehaviour
 {
-    [Header("地图配置")]
-    [SerializeField] private int mapWidth = 20;
+    [Header("地图配置")] [SerializeField] private int mapWidth = 20;
     [SerializeField] private int mapHeight = 15;
     [SerializeField] private float cellSize = 1f;
     [SerializeField] private MapConfig mapConfig;
+
     [SerializeField] private DifficultyLevel difficultyLevel = DifficultyLevel.Easy;
     // 移除tilemapOrigin
     // 所有API、判定、放置、Gizmos等全部用Tilemap的cell坐标(Vector3Int/x,y,z)
@@ -17,16 +17,15 @@ public class GameMap : MonoBehaviour
     // WorldToCellPosition/ CellToWorldPosition现在通过TileMapUtility进行转换
 
     // 以cell坐标为key的占用字典
-  [ShowInInspector]  private OccupiedCellSet occupiedCells = new OccupiedCellSet();
-  [ShowInInspector]  private Dictionary<Vector3Int, Block> placedBlocks = new Dictionary<Vector3Int, Block>();
+    [ShowInInspector] private OccupiedCellSet occupiedCells = new OccupiedCellSet();
+    [ShowInInspector] private Dictionary<Vector3Int, Block> placedBlocks = new Dictionary<Vector3Int, Block>();
 
-    [Header("Tilemap可视化")]
-    public Tilemap tilemap; // 拖拽赋值
+    [Header("Tilemap可视化")] public Tilemap tilemap; // 拖拽赋值
     public TileBase groundTile; // 拖拽你的grass瓦片
 
-    [Header("预制体生成区域")]
-    [SerializeField, LabelText("塔的生成区域物体名")]
+    [Header("预制体生成区域")] [SerializeField, LabelText("塔的生成区域物体名")]
     private string towerAreaName = "TowerArea";
+
     private Transform towerArea;
 
     public static GameMap instance;
@@ -58,6 +57,7 @@ public class GameMap : MonoBehaviour
     {
         return mapConfig;
     }
+
     public MapData GetMapData()
     {
         return mapConfig.GetMapData(difficultyLevel);
@@ -85,6 +85,7 @@ public class GameMap : MonoBehaviour
             Debug.LogError("未找到塔生成区域");
             return false;
         }
+
         return true;
     }
 
@@ -94,6 +95,7 @@ public class GameMap : MonoBehaviour
         {
             towerArea = GameObject.Find(towerAreaName)?.transform;
         }
+
         return towerArea;
     }
 
@@ -147,13 +149,13 @@ public class GameMap : MonoBehaviour
             {
                 return false;
             }
+
             // Debug.Log($"  检查格子 ({cell.x},{cell.y}) 是否可放置 {!occupiedCells.Contains(cell)}");
             // 检查格子是否已被占用
             if (occupiedCells.Contains(cell))
             {
                 return false;
             }
-            
         }
 
         return true;
@@ -185,9 +187,9 @@ public class GameMap : MonoBehaviour
         // 标记格子为已占用
         foreach (Vector2Int coord in coordinates)
         {
-            Vector3Int cell = cellPos + new Vector3Int(coord.x, coord.y, 0);  // 修复：使用正确的相对坐标
+            Vector3Int cell = cellPos + new Vector3Int(coord.x, coord.y, 0); // 修复：使用正确的相对坐标
             // Debug.Log($"占用格子: {cell}");
-            occupiedCells.Add(new OccupiedCell(cell,!block.CanBeOverridden));
+            occupiedCells.Add(new OccupiedCell(cell, !block.CanBeOverridden));
         }
 
         // 设置方块位置并添加到地图
@@ -197,7 +199,7 @@ public class GameMap : MonoBehaviour
         // Debug.Log($"方块成功放置到cell位置 {cellPos}");
         return true;
     }
-  
+
     /// <summary>
     /// 放置方块到地图上
     /// </summary>
@@ -205,7 +207,7 @@ public class GameMap : MonoBehaviour
     /// <param name="block">要放置的方块</param>
     /// <param name="tilemap">Tilemap引用</param>
     /// <returns>是否放置成功</returns>
-    public bool PlaceBlock(Vector3Int cellPos, Block block,Tilemap tilemap)
+    public bool PlaceBlock(Vector3Int cellPos, Block block, Tilemap tilemap)
     {
         if (block == null || block.Config == null)
         {
@@ -222,8 +224,8 @@ public class GameMap : MonoBehaviour
         // 标记格子为已占用
         foreach (Vector2Int coord in block.Config.Coordinates)
         {
-            Vector3Int cell = cellPos + new Vector3Int(coord.x, coord.y, 0);  // 修复：使用正确的相对坐标
-            occupiedCells.Add(new OccupiedCell(cell,!block.CanBeOverridden));
+            Vector3Int cell = cellPos + new Vector3Int(coord.x, coord.y, 0); // 修复：使用正确的相对坐标
+            occupiedCells.Add(new OccupiedCell(cell, !block.CanBeOverridden));
         }
 
         // 设置方块位置并添加到地图
@@ -232,6 +234,7 @@ public class GameMap : MonoBehaviour
 
         return true;
     }
+
     /// <summary>
     /// 移除方块
     /// </summary>
@@ -251,7 +254,7 @@ public class GameMap : MonoBehaviour
             // 取消标记格子占用
             foreach (Vector2Int coord in block.Config.Coordinates)
             {
-                Vector3Int cell = cellPos + new Vector3Int(coord.x, coord.y, 0);  // 修复：使用正确的相对坐标
+                Vector3Int cell = cellPos + new Vector3Int(coord.x, coord.y, 0); // 修复：使用正确的相对坐标
                 occupiedCells.Remove(cell);
             }
         }
@@ -351,6 +354,19 @@ public class GameMap : MonoBehaviour
     {
         return tilemap;
     }
+
+    /// <summary>
+    /// 刷新
+    /// </summary>
+    public void RefreshWithMoney()
+    {
+        if (GameManager.Instance.ShopSystem.CanAfford(GameMap.instance.GetMapData().ItemRefreshMoney))
+        {
+            GameManager.Instance.ShopSystem.SpendMoney(GameMap.instance.GetMapData().ItemRefreshMoney);
+            PreviewAreaController.instance.RefreshShowArea();
+            GameManager.Instance.ItemManage.ShowItem();
+        }
+    }
 }
 
 [System.Serializable]
@@ -375,6 +391,7 @@ public class OccupiedCell
         {
             return CellPosition.Equals(other.CellPosition);
         }
+
         return false;
     }
 
@@ -395,6 +412,7 @@ public class OccupiedCellSet : HashSet<OccupiedCell>
                 return cell.IsOccupied;
             }
         }
+
         return false;
     }
 
@@ -407,6 +425,7 @@ public class OccupiedCellSet : HashSet<OccupiedCell>
                 return base.Remove(cell);
             }
         }
+
         return false;
     }
 }
