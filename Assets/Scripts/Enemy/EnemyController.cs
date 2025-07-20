@@ -61,6 +61,9 @@ public class EnemyController : MonoBehaviour
     {
         // 初始化为移动状态
         ChangeState(new EnemyMoveState(this));
+        
+        // 调试信息
+        Debug.Log($"敌人 {name} 初始化完成，攻击行为: {AttackBehavior?.GetType().Name ?? "null"}");
     }
     
     private void Update()
@@ -92,24 +95,94 @@ public class EnemyController : MonoBehaviour
     }
     
     /// <summary>
-    /// 检查攻击范围内是否有塔（centerTower或tower标签）
+    /// 检查攻击范围内是否有塔（centerTower或tower标签），排除ShowArea塔
     /// </summary>
     /// <returns>是否有塔在攻击范围内</returns>
     public bool IsTowerInAttackRange()
     {
-        string[] tags = { "CenterTower", "Tower" };
-        foreach (string tag in tags)
+        // 优先检查中心塔
+        GameObject centerTower = GameObject.FindGameObjectWithTag("CenterTower");
+        if (centerTower != null && !IsShowAreaTower(centerTower))
         {
-            GameObject[] towers = GameObject.FindGameObjectsWithTag(tag);
-            foreach (GameObject tower in towers)
+            float distance = Vector3.Distance(transform.position, centerTower.transform.position);
+            if (distance <= AttackRange)
             {
-                float distance = Vector3.Distance(transform.position, tower.transform.position);
-                if (distance <= AttackRange)
-                {
-                    return true;
-                }
+                Debug.Log($"{name} 在攻击范围内找到中心塔，距离: {distance:F2}");
+                return true;
             }
         }
+        
+        // 检查普通塔
+        GameObject[] towers = GameObject.FindGameObjectsWithTag("Tower");
+        Debug.Log($"{name} 找到 {towers.Length} 个普通塔");
+        
+        foreach (GameObject tower in towers)
+        {
+            // 过滤掉ShowArea塔
+            if (IsShowAreaTower(tower))
+            {
+                Debug.Log($"{name} 跳过ShowArea塔: {tower.name}");
+                continue;
+            }
+                
+            float distance = Vector3.Distance(transform.position, tower.transform.position);
+            if (distance <= AttackRange)
+            {
+                Debug.Log($"{name} 在攻击范围内找到塔 {tower.name}，距离: {distance:F2}");
+                return true;
+            }
+        }
+        
+        Debug.Log($"{name} 没有在攻击范围内找到塔");
+        return false;
+    }
+    
+    /// <summary>
+    /// 检查中心塔是否被摧毁
+    /// </summary>
+    /// <returns>如果中心塔不存在或被摧毁则返回true</returns>
+    public bool IsCenterTowerDestroyed()
+    {
+        GameObject centerTower = GameObject.FindGameObjectWithTag("CenterTower");
+        if (centerTower == null)
+        {
+            return true; // 中心塔不存在
+        }
+        
+        // 检查中心塔是否被摧毁（通过DamageTaker组件）
+        var damageTaker = centerTower.GetComponent<DamageTaker>();
+        if (damageTaker != null && damageTaker.currentHealth <= 0)
+        {
+            return true; // 中心塔生命值为0
+        }
+        
+        // 检查中心塔是否被禁用
+        if (!centerTower.activeInHierarchy)
+        {
+            return true; // 中心塔被禁用
+        }
+        
+        return false; // 中心塔仍然存在且健康
+    }
+    
+    /// <summary>
+    /// 检查是否为ShowArea塔
+    /// </summary>
+    private bool IsShowAreaTower(GameObject tower)
+    {
+        if (tower == null) return false;
+        
+        // 检查父物体名称是否包含"showarea"
+        Transform parent = tower.transform.parent;
+        while (parent != null)
+        {
+            if (parent.name.ToLower().Contains("showarea"))
+            {
+                return true;
+            }
+            parent = parent.parent;
+        }
+        
         return false;
     }
     

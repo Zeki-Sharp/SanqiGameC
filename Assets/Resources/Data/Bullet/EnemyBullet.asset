@@ -9,15 +9,20 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f31d169b0100ab144965420b556efbdd, type: 3}
-  m_Name: Ranged Attack
+  m_Script: {fileID: 11500000, guid: d6ec39cee63d9514abcbf2c22260e2f5, type: 3}
+  m_Name: EnemyBullet
   m_EditorClassIdentifier: 
-  damage: 15
-  attackCooldown: 1.5
-  attackRange: 5
-  bulletSpeed: 8
-  attackAnimationTrigger: Attack
+  bulletName: EnemyBullet
   bulletPrefab: {fileID: 3447451743312656527, guid: 32d3d5890e9c433499f4e42e067ae303, type: 3}
-  bulletConfig: {fileID: 11400000, guid: ec8e31838e4c8e242a930307cc159f5d, type: 2}
-  attackSound: {fileID: 0}
-  bulletHitSound: {fileID: 0}
+  bulletType: 0
+  bulletCategory: 1
+  defaultSpeed: 10
+  lifetime: 5
+  movementType: 0
+  targetTags:
+  - Tower
+  - CenterTower
+  targetType: 0
+  aoeRadius: 1.5
+  initialPoolSize: 20
+  maxPoolSize: 100

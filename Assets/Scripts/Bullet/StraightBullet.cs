@@ -1,92 +1,53 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-public class StraightBullet : MonoBehaviour, IBullet
+/// <summary>
+/// 直线子弹 - 继承自BulletBase，实现直线移动
+/// </summary>
+public class StraightBullet : BulletBase
 {
-    public enum TargetType { Single, Aoe }
-
-    [Header("可调参数")]
-    [SerializeField] private float defaultSpeed = 10f;
-    [SerializeField] private float lifetime = 5f;
-    [SerializeField] private string[] targetTags = new string[] { "Enemy" };
-    [Header("命中类型")]
-    public TargetType targetType = TargetType.Single;
-    [Header("Aoe参数")]
-    public float aoeRadius = 1.5f;
-    public LayerMask aoeLayer;
-
-    private Vector3 direction;
-    private float speed;
-    private float spawnTime;
-    private GameObject owner;
-    private float damage;
-
-    public void Initialize(Vector3 direction, float speed, GameObject owner, GameObject target = null, string[] targetTags = null, float damage = 0f)
+    [Header("直线子弹特定配置")]
+    [SerializeField] private float height = 0f; // 直线子弹高度偏移
+    
+    // 碰撞检测 - 移除重复的碰撞检测，使用基类的实现
+    // private void OnTriggerEnter2D(Collider2D other)
+    // {
+    //     if (!gameObject.activeInHierarchy) return; // 防止重复处理
+    //     HandleCollision(other.gameObject);
+    // }
+    
+    // private void OnTriggerEnter(Collider other)
+    // {
+    //     if (!gameObject.activeInHierarchy) return; // 防止重复处理
+    //     HandleCollision(other.gameObject);
+    // }
+    
+    /// <summary>
+    /// 子类特定的初始化逻辑
+    /// </summary>
+    protected override void OnInitialize()
     {
-        this.direction = direction.normalized;
-        this.speed = defaultSpeed;
-        this.owner = owner;
-        this.spawnTime = Time.time;
-        if (targetTags != null && targetTags.Length > 0)
-            this.targetTags = targetTags;
-        this.damage = damage;
-        transform.right = direction;
+        // 直线子弹不需要特殊初始化
     }
-
-    private void Update()
+    
+    /// <summary>
+    /// 实现抽象方法OnUpdate
+    /// </summary>
+    protected override void OnUpdate()
     {
+        // 如果子弹已经返回对象池，不再更新
+        if (!gameObject.activeInHierarchy) return;
+        
+        // 直线移动
         transform.position += direction * speed * Time.deltaTime;
-        if (Time.time - spawnTime > lifetime)
-            Destroy(gameObject);
     }
-
-    private void OnTriggerEnter2D(Collider2D other)
+    
+    /// <summary>
+    /// 重置子弹状态
+    /// </summary>
+    public override void Reset()
     {
-        if (other.gameObject == owner) return;
-        List<GameObject> targets = new List<GameObject>();
-        if (targetType == TargetType.Single)
-        {
-            foreach (var tag in targetTags)
-            {
-                if (other.CompareTag(tag))
-                {
-                    targets.Add(other.gameObject);
-                    break;
-                }
-            }
-        }
-        else if (targetType == TargetType.Aoe)
-        {
-            Collider2D[] hits = Physics2D.OverlapCircleAll(transform.position, aoeRadius, aoeLayer);
-            foreach (var hit in hits)
-            {
-                if (hit.gameObject == owner) continue;
-                foreach (var tag in targetTags)
-                {
-                    if (hit.CompareTag(tag))
-                    {
-                        targets.Add(hit.gameObject);
-                        break;
-                    }
-                }
-            }
-        }
-        if (targets.Count > 0)
-        {
-            foreach (var target in targets)
-            {
-                // 1. 先造成伤害
-                var taker = target.GetComponent<DamageTaker>();
-                if (taker != null)
-                    taker.TakeDamage(this.damage);
-                // 2. 再分发所有效果
-                var effectControllers = GetComponents<IBulletEffectDispatcher>();
-                foreach (var dispatcher in effectControllers)
-                {
-                    dispatcher.DispatchEffect(target, owner);
-                }
-            }
-            Destroy(gameObject);
-        }
+        base.Reset();
+        // 直线子弹不需要额外的重置逻辑
     }
 } 

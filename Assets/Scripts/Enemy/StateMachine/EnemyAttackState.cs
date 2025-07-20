@@ -53,6 +53,13 @@ public class EnemyAttackState : EnemyState
     
     public override void CheckTransitions()
     {
+        // 首先检查中心塔是否被摧毁
+        if (controller.IsCenterTowerDestroyed())
+        {
+            controller.ChangeState(new EnemyDefeatState(controller));
+            return;
+        }
+        
         // 检查攻击范围内是否还有塔
         if (!controller.IsTowerInAttackRange())
         {
@@ -62,29 +69,79 @@ public class EnemyAttackState : EnemyState
     
     private void FindTargetTower()
     {
-        string[] tags = { "CenterTower", "Tower" };
+        // 优先寻找中心塔
+        GameObject centerTower = GameObject.FindGameObjectWithTag("CenterTower");
+        if (centerTower != null && !IsShowAreaTower(centerTower))
+        {
+            targetTower = centerTower;
+            Debug.Log($"{controller.name} 找到中心塔目标: {centerTower.name}");
+            return;
+        }
+        
+        // 如果没有中心塔或中心塔是ShowArea，寻找攻击范围内最近的普通塔
+        string[] tags = { "Tower" };
         foreach (string tag in tags)
         {
             GameObject[] towers = GameObject.FindGameObjectsWithTag(tag);
+            Debug.Log($"{controller.name} 找到 {towers.Length} 个 {tag} 标签的塔");
+            
             if (towers.Length > 0)
             {   
-                // 找到最近的塔
+                // 找到攻击范围内最近的非ShowArea塔
                 float closestDistance = float.MaxValue;
                 GameObject closestTower = null;
                 
                 foreach (GameObject tower in towers)
                 {
+                    // 过滤掉ShowArea塔
+                    if (IsShowAreaTower(tower))
+                    {
+                        Debug.Log($"{controller.name} 跳过ShowArea塔: {tower.name}");
+                        continue;
+                    }
+                        
                     float distance = Vector3.Distance(controller.transform.position, tower.transform.position);
-                    if (distance < closestDistance)
+                    Debug.Log($"{controller.name} 检查塔 {tower.name}，距离: {distance:F2}，攻击范围: {controller.AttackRange}");
+                    
+                    // 只考虑攻击范围内的塔
+                    if (distance <= controller.AttackRange && distance < closestDistance)
                     {
                         closestDistance = distance;
                         closestTower = tower;
                     }
                 }
                 
-                targetTower = closestTower;
+                if (closestTower != null)
+                {
+                    targetTower = closestTower;
+                    Debug.Log($"{controller.name} 找到目标塔: {closestTower.name}，距离: {closestDistance:F2}");
+                    return;
+                }
             }
         }
+        
+        Debug.Log($"{controller.name} 没有找到目标塔");
+    }
+    
+    /// <summary>
+    /// 检查是否为ShowArea塔
+    /// </summary>
+    private bool IsShowAreaTower(GameObject tower)
+    {
+        if (tower == null) return false;
+        
+        // 检查父物体名称是否包含"showarea"
+        Transform parent = tower.transform.parent;
+        while (parent != null)
+        {
+            if (parent.name.ToLower().Contains("showarea"))
+            {
+                return true;
+            }
+            parent = parent.parent;
+        }
+        
+        return false;
     }
     
     
@@ -95,6 +152,7 @@ public class EnemyAttackState : EnemyState
     {
         if (controller.AttackBehavior != null)
         {
+            Debug.Log($"{controller.name} 执行攻击，目标: {targetTower?.name ?? "null"}");
             controller.AttackBehavior.PerformAttack(controller, targetTower);
         }
         else

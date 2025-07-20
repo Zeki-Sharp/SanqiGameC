@@ -14,7 +14,7 @@ public class RangedAttackBehavior : ScriptableObject, IAttackBehavior
     [SerializeField] private string attackAnimationTrigger = "Attack";
     
     [Header("子弹配置")]
-    [SerializeField] private GameObject bulletPrefab;
+    [SerializeField] private BulletConfig bulletConfig; // 子弹配置
     
     [Header("特效配置")]
     [SerializeField] private AudioClip attackSound;
@@ -46,18 +46,31 @@ public class RangedAttackBehavior : ScriptableObject, IAttackBehavior
         Vector3 firePosition = firePoint != null ? firePoint.position : attacker.transform.position;
         Vector3 direction = (target.transform.position - firePosition).normalized;
         
-        if (bulletPrefab != null)
+        // 使用新的子弹系统
+        if (bulletConfig != null)
         {
-            GameObject bullet = Instantiate(bulletPrefab, firePosition, Quaternion.identity);
-            var bulletScript = bullet.GetComponent<IBullet>();
-            if (bulletScript != null)
+            var bulletManager = GameManager.Instance?.GetSystem<BulletManager>();
+            if (bulletManager != null)
             {
-                bulletScript.Initialize(direction, bulletSpeed, attacker.gameObject, target, new string[]{"Tower", "CenterTower"}, damage);
+                GameObject bullet = bulletManager.GetBullet(bulletConfig.BulletName, firePosition, Quaternion.identity);
+                var bulletScript = bullet.GetComponent<IBullet>();
+                if (bulletScript != null)
+                {
+                    bulletScript.Initialize(direction, bulletSpeed, attacker.gameObject, target, bulletConfig.TargetTags, damage);
+                }
+                else
+                {
+                    Debug.LogWarning("子弹预制体未挂载IBullet实现脚本！");
+                }
             }
             else
             {
-                Debug.LogWarning("子弹预制体未挂载IBullet实现脚本！");
+                Debug.LogWarning("BulletManager未找到！");
             }
+        }
+        else
+        {
+            Debug.LogWarning("远程攻击行为没有配置子弹配置！请在RangedAttackBehavior中设置BulletConfig。");
         }
     }
     

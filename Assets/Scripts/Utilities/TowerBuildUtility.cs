@@ -39,7 +39,9 @@ public static class TowerBuildUtility
         Tower towerComponent = towerObj.GetComponent<Tower>();
         if (towerComponent != null)
         {
-            towerComponent.Initialize(towerData, cell, hasCheck);
+            // 预览塔和展示区域塔都不进行游戏逻辑
+            bool isShowArea = isPreview;
+            towerComponent.Initialize(towerData, cell, hasCheck, isShowArea);
             const int BaseOrder = 1000;
             const int VerticalOffsetMultiplier = 10;
             int verticalOffset = Mathf.RoundToInt(-worldPos.y * VerticalOffsetMultiplier);

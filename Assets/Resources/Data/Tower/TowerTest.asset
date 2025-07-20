@@ -20,4 +20,5 @@ MonoBehaviour:
     physicAttack: 100
     attackRange: 100
     attackInterval: 100
-    attackSpeed: 10
+    attackSpeed: 1
+  bulletConfig: {fileID: 11400000, guid: 834d67b011e3c7144ad4ed8ac70e5225, type: 2}

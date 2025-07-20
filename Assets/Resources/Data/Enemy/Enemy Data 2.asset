@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Enemy Data 2
   m_EditorClassIdentifier: 
   enemyName: Enemy
-  maxHealth: 100
+  maxHealth: 500
   moveSpeed: 2
   attackRange: 4
   attackBehavior: {fileID: 11400000, guid: f8e6a5643e2672f47b4f65008aaf27a2, type: 2}

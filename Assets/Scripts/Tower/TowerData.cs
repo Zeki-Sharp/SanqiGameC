@@ -32,7 +32,10 @@ public class TowerData : ScriptableObject
     [SerializeField] private Sprite towerSprite;
     
     [Header("等级数据")]
-    [SerializeField] private TowerLevel[] levels = new TowerLevel[0];
+[SerializeField] private TowerLevel[] levels = new TowerLevel[0];
+
+[Header("子弹配置")]
+[SerializeField] private BulletConfig bulletConfig;
 
     // 公共属性访问器
     public int ID => id;
@@ -98,24 +101,14 @@ public class TowerData : ScriptableObject
         }
         return levels[level].AttackSpeed;
     }
+    
+    /// <summary>
+    /// 获取子弹配置
+    /// </summary>
+    public BulletConfig GetBulletConfig()
+    {
+        return bulletConfig;
+    }
 
-    // public float GetPhysicDefense(int level)
-    // {
-    //     if (levels == null || level < 0 || level >= levels.Length)
-    //     {
-    //         Debug.LogError($"无效等级 {level}，等级范围应为 0-{levels?.Length - 1 ?? 0}");
-    //         return 0;
-    //     }
-    //     return levels[level].PhysicDefense;
-    // }
-
-    // public float GetMagicDefense(int level)
-    // {
-    //     if (levels == null || level < 0 || level >= levels.Length)
-    //     {
-    //         Debug.LogError($"无效等级 {level}，等级范围应为 0-{levels?.Length - 1 ?? 0}");
-    //         return 0;
-    //     }
-    //     return levels[level].MagicDefense;
-    // }
+  
 }

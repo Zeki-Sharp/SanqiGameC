@@ -326,6 +326,12 @@ public class BlockPlacementManager : MonoBehaviour
                 isShowArea ? normalColor : (parent != null ? previewColor : normalColor),
                 hasCheck
             );
+            
+            // 确保展示区域的塔被正确标记
+            if (isShowArea && tower != null)
+            {
+                tower.SetAsShowAreaTower(true);
+            }
             block.SetTower(new Vector3Int(cell.x, cell.y), tower);
         }
     }

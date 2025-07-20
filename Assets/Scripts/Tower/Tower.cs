@@ -15,9 +15,13 @@ public class Tower : MonoBehaviour
     [SerializeField] private TextMeshPro text;
     [SerializeField] private Block block;
 
-    [Header("攻击相关")] [SerializeField] private GameObject bulletPrefab;
+    [Header("攻击相关")] 
+    // 移除旧系统，只使用新的子弹配置系统
 
     [SerializeField] private LayerMask TowerLayerMask = 1 << 8;
+    
+    [Header("展示区域设置")]
+    [SerializeField] private bool isShowAreaTower = false; // 是否为展示区域的塔
 
     // 公共属性
     public TowerData TowerData => towerData;
@@ -31,6 +35,7 @@ public class Tower : MonoBehaviour
     public float BulletSpeed => 10f; // 可根据塔数据扩展
     public float AttackDamage => towerData != null ? towerData.GetPhysicAttack(level) : 10f;
     public int Level => level > towerData.MaxLevel ? towerData.MaxLevel : level;
+    public bool IsShowAreaTower => isShowAreaTower;
 
     private void Awake()
     {
@@ -48,6 +53,34 @@ public class Tower : MonoBehaviour
         MeshRenderer renderer = GetComponentInChildren<MeshRenderer>();
         renderer.sortingOrder = order;
     }
+    
+    /// <summary>
+    /// 设置为展示区域塔
+    /// </summary>
+    public void SetAsShowAreaTower(bool isShowArea)
+    {
+        isShowAreaTower = isShowArea;
+        
+        // 展示区域的塔可以禁用一些组件来节省性能
+        if (isShowArea)
+        {
+            // 禁用DamageTaker组件（展示区域不需要伤害处理）
+            var damageTaker = GetComponent<DamageTaker>();
+            if (damageTaker != null)
+            {
+                damageTaker.enabled = false;
+            }
+        }
+        else
+        {
+            // 重新启用DamageTaker组件
+            var damageTaker = GetComponent<DamageTaker>();
+            if (damageTaker != null)
+            {
+                damageTaker.enabled = true;
+            }
+        }
+    }
 
    public enum TowerCheckResult
 {
@@ -56,7 +89,7 @@ public class Tower : MonoBehaviour
     ShouldDelete
 }
 
-public void Initialize(TowerData data, Vector3Int pos, bool hasCheck = false)
+    public void Initialize(TowerData data, Vector3Int pos, bool hasCheck = false, bool isShowArea = false)
 {
     // try
     // {
@@ -103,6 +136,9 @@ public void Initialize(TowerData data, Vector3Int pos, bool hasCheck = false)
         block = GetComponentInParent<Block>();
         // 优化的字符串拼接
         text.text = $"塔名：{data.TowerName} \n 等级：{level / (float)data.MaxLevel}";
+        
+        // 设置是否为展示区域塔
+        SetAsShowAreaTower(isShowArea);
 
         if (hasCheck)
         {
@@ -223,7 +259,10 @@ public void Initialize(TowerData data, Vector3Int pos, bool hasCheck = false)
 
     private void Update()
     {
-        if (towerData == null || bulletPrefab == null) return;
+        // 展示区域的塔不进行游戏逻辑
+        if (isShowAreaTower) return;
+        
+        if (towerData == null) return;
         float attackSpeed = towerData.GetAttackSpeed(level) > 0 ? towerData.GetAttackSpeed(level) : 1f;
         if (Time.time - lastAttackTime >= 1f / attackSpeed)
         {
@@ -270,17 +309,33 @@ public void Initialize(TowerData data, Vector3Int pos, bool hasCheck = false)
 
     private void FireAt(GameObject target)
     {
-        GameObject bullet = Instantiate(bulletPrefab, transform.position, Quaternion.identity);
-        var bulletScript = bullet.GetComponent<IBullet>();
-        if (bulletScript != null)
+        // 使用新的子弹系统
+        var bulletConfig = towerData?.GetBulletConfig();
+        if (bulletConfig != null)
         {
-            float speed = 0; // 让子弹用自己的Inspector速度
-            bulletScript.Initialize((target.transform.position - transform.position).normalized, speed, gameObject,
-                target, new string[] { "Enemy" }, towerData.GetPhysicAttack(level));
+            var bulletManager = GameManager.Instance?.GetSystem<BulletManager>();
+            if (bulletManager != null)
+            {
+                GameObject bullet = bulletManager.GetBullet(bulletConfig.BulletName, transform.position, Quaternion.identity);
+                var bulletScript = bullet.GetComponent<IBullet>();
+                if (bulletScript != null)
+                {
+                    Vector3 direction = (target.transform.position - transform.position).normalized;
+                    bulletScript.Initialize(direction, 0, gameObject, target, bulletConfig.TargetTags, towerData.GetPhysicAttack(level));
+                }
+                else
+                {
+                    Debug.LogWarning("子弹预制体未挂载IBullet实现脚本！");
+                }
+            }
+            else
+            {
+                Debug.LogWarning("BulletManager未找到！");
+            }
         }
         else
         {
-            Debug.LogWarning("塔的子弹预制体未挂载IBullet实现脚本！");
+            Debug.LogWarning("塔没有配置子弹配置！请在TowerData中设置BulletConfig。");
         }
     }
 }
