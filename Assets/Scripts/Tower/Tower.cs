@@ -106,15 +106,16 @@ public void Initialize(TowerData data, Vector3Int pos, bool hasCheck = false)
 
         if (hasCheck)
         {
-            // 检查 GameMap.instance 是否有效
-            if (GameMap.instance == null)
+            // 检查 GameMap 是否有效
+            var gameMap = GameManager.Instance?.GetSystem<GameMap>();
+            if (gameMap == null)
             {
-                Debug.LogError("GameMap.instance 未初始化，跳过碰撞检测");
+                Debug.LogError("GameMap 未初始化，跳过碰撞检测");
                 return;
             }
 
             // 优化的碰撞检测
-            Vector3 cellCenter = CoordinateUtility.CellToWorldPosition(GameMap.instance.GetTilemap(), new Vector3Int(pos.x, pos.y, 0));
+            Vector3 cellCenter = CoordinateUtility.CellToWorldPosition(gameMap.GetTilemap(), new Vector3Int(pos.x, pos.y, 0));
             Collider2D[] towers = Physics2D.OverlapPointAll(cellCenter, TowerLayerMask);
 
             TowerCheckResult checkResult = TowerCheckResult.None;

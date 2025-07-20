@@ -11,11 +11,14 @@ public class BlockTestManager : MonoBehaviour
     [SerializeField] private string prefabShowName = "PrefabArea";
     [SerializeField] private MapConfig mapConfig;
 
-    public static BlockTestManager instance;
+    // 移除传统单例模式，改为通过GameManager注册
     private void Start()
     {
-        if (instance == null) instance = this;
-        else Destroy(gameObject);
+        // 注册到GameManager
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.RegisterSystem(this);
+        }
 
         if (gameMap == null)
             gameMap = FindFirstObjectByType<GameMap>();

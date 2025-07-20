@@ -9,10 +9,10 @@ public class GameStateManager : MonoBehaviour
     [Header("当前状态")]
     [SerializeField] private GamePhase currentPhase = GamePhase.BuildingPhase;
     
-    [Header("管理器引用")]
-    [SerializeField] private RoundManager roundManager;
-    [SerializeField] private VictoryConditionChecker victoryChecker;
-    [SerializeField] private UIManager uiManager;
+    // 管理器引用 - 通过GameManager自动获取
+    private RoundManager RoundManager => GameManager.Instance?.GetSystem<RoundManager>();
+    private VictoryConditionChecker VictoryChecker => GameManager.Instance?.GetSystem<VictoryConditionChecker>();
+    private UIManager UIManager => GameManager.Instance?.GetSystem<UIManager>();
     
     // 公共属性
     public GamePhase CurrentPhase => currentPhase;
@@ -68,15 +68,7 @@ public class GameStateManager : MonoBehaviour
     
     private void Start()
     {
-        // 自动获取组件引用
-        if (roundManager == null)
-            roundManager = GameManager.Instance?.GetSystem<RoundManager>();
-        if (victoryChecker == null)
-            victoryChecker = GameManager.Instance?.GetSystem<VictoryConditionChecker>();
-        if (uiManager == null)
-            uiManager = GameManager.Instance?.GetSystem<UIManager>();
-            
-        // 初始化游戏状态
+        // 初始化游戏状态，引用通过属性自动获取
         InitializeGameState();
     }
     
@@ -114,8 +106,8 @@ public class GameStateManager : MonoBehaviour
         });
         
         // 更新UI
-        if (uiManager != null)
-            uiManager.SwitchToPhase(GamePhase.BuildingPhase);
+        if (UIManager != null)
+            UIManager.SwitchToPhase(GamePhase.BuildingPhase);
             
         Debug.Log($"游戏状态切换：{oldPhase} → 建设阶段");
     }
@@ -139,12 +131,12 @@ public class GameStateManager : MonoBehaviour
         });
         
         // 开始新的Round
-        if (roundManager != null)
-            roundManager.StartNextRound();
+        if (RoundManager != null)
+            RoundManager.StartNextRound();
             
         // 更新UI
-        if (uiManager != null)
-            uiManager.SwitchToPhase(GamePhase.CombatPhase);
+        if (UIManager != null)
+            UIManager.SwitchToPhase(GamePhase.CombatPhase);
             
         Debug.Log($"游戏状态切换：{oldPhase} → 战斗阶段");
     }
@@ -168,8 +160,8 @@ public class GameStateManager : MonoBehaviour
         });
         
         // 更新UI
-        if (uiManager != null)
-            uiManager.SwitchToPhase(GamePhase.VictoryPhase);
+        if (UIManager != null)
+            UIManager.SwitchToPhase(GamePhase.VictoryPhase);
             
         Debug.Log($"游戏状态切换：{oldPhase} → 胜利阶段");
     }
@@ -182,9 +174,9 @@ public class GameStateManager : MonoBehaviour
         Debug.Log($"Round {e.RoundNumber} 完成，奖励金钱：{e.RewardMoney}");
         
         // 检查是否满足胜利条件
-        if (victoryChecker != null)
+        if (VictoryChecker != null)
         {
-            victoryChecker.CheckVictoryConditions();
+            VictoryChecker.CheckVictoryConditions();
         }
         else
         {
@@ -229,10 +221,10 @@ public class GameStateManager : MonoBehaviour
     private void RestartGame()
     {
         // 重置所有管理器
-        if (roundManager != null)
-            roundManager.Reset();
-        if (victoryChecker != null)
-            victoryChecker.Reset();
+        if (RoundManager != null)
+            RoundManager.Reset();
+        if (VictoryChecker != null)
+            VictoryChecker.Reset();
             
         // 切换回建设阶段
         SwitchToBuildingPhase();

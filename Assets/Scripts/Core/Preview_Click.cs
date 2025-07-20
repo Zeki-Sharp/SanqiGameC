@@ -10,23 +10,25 @@ public class Preview_Click : MonoBehaviour
     [SerializeField] private string previewShowName;
     [SerializeField] private bool hasClick = false;
     [SerializeField] private GameMap gameMap;
-    [SerializeField] private BlockPlacementManager blockPlacementManager;
+    // 放置管理器 - 通过GameManager自动获取
+    private BlockPlacementManager BlockPlacementManager => GameManager.Instance?.GetSystem<BlockPlacementManager>();
 
     [SerializeField] private List<TowerData> previewTowerDatas;
     [SerializeField] private BlockGenerationConfig previewConfig;
 
     void Start()
     {
-        gameMap = GameObject.Find("GameMap").GetComponent<GameMap>();
-        if (blockPlacementManager == null)
-            blockPlacementManager = FindFirstObjectByType<BlockPlacementManager>();
+        // 引用通过属性自动获取，无需手动查找
     }
 
     private void Update()
     {
         if (Input.GetMouseButtonDown(0) && !hasClick)
         {
-            if (GameManager.Instance.ShopSystem.CanAfford(GameMap.instance.GetMapData().BlockBuildMoney))
+            var shopSystem = GameManager.Instance?.GetSystem<ShopSystem>();
+        var gameMap = GameManager.Instance?.GetSystem<GameMap>();
+        
+        if (shopSystem != null && gameMap != null && shopSystem.CanAfford(gameMap.GetMapData().BlockBuildMoney))
             {
                    GameObject obj = UIInteractionUtility.GetFirstPickGameObject(Input.mousePosition);
                             if (obj != null && obj.name == previewShowName)
@@ -36,8 +38,8 @@ public class Preview_Click : MonoBehaviour
                 
                                 if (previewConfig != null && previewTowerDatas != null)
                                 {
-                                    blockPlacementManager.StartPlacement(previewConfig, previewTowerDatas);
-                                    GameManager.Instance.ShopSystem.SpendMoney(GameMap.instance.GetMapData().BlockBuildMoney);
+                                    BlockPlacementManager.StartPlacement(previewConfig, previewTowerDatas);
+                                    shopSystem.SpendMoney(gameMap.GetMapData().BlockBuildMoney);
                                     
                                     hasClick = true;
                                     Debug.Log("触发建造：调用 StartPlacement");

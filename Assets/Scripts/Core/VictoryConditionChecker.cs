@@ -13,9 +13,9 @@ public class VictoryConditionChecker : MonoBehaviour
     [SerializeField] private bool enableRoundVictory = true;
     [SerializeField] private bool enableFinalVictory = true;
     
-    [Header("管理器引用")]
-    [SerializeField] private RoundManager roundManager;
-    [SerializeField] private ShopSystem shopSystem;
+    // 管理器引用 - 通过GameManager自动获取
+    private RoundManager RoundManager => GameManager.Instance?.GetSystem<RoundManager>();
+    private ShopSystem ShopSystem => GameManager.Instance?.GetSystem<ShopSystem>();
     
     // 私有变量
     private float gameStartTime;
@@ -68,13 +68,7 @@ public class VictoryConditionChecker : MonoBehaviour
     
     private void Start()
     {
-        // 自动获取组件引用
-        if (roundManager == null)
-            roundManager = FindFirstObjectByType<RoundManager>();
-        if (shopSystem == null)
-            shopSystem = FindFirstObjectByType<ShopSystem>();
-            
-        // 初始化胜利配置
+        // 初始化胜利配置，引用通过属性自动获取
         InitializeVictoryConfig();
         
         // 记录游戏开始时间
@@ -155,7 +149,7 @@ public class VictoryConditionChecker : MonoBehaviour
     /// </summary>
     private bool CheckRoundVictory(Dictionary<string, object> statistics)
     {
-        if (roundManager == null || !roundManager.IsRoundInProgress)
+        if (RoundManager == null || !RoundManager.IsRoundInProgress)
             return false;
             
         // 检查所有敌人是否被消灭
@@ -185,10 +179,10 @@ public class VictoryConditionChecker : MonoBehaviour
     /// </summary>
     private bool CheckFinalVictory(Dictionary<string, object> statistics)
     {
-        if (roundManager == null || victoryConfig == null)
+        if (RoundManager == null || victoryConfig == null)
             return false;
             
-        int completedRounds = roundManager.CurrentRoundNumber;
+        int completedRounds = RoundManager.CurrentRoundNumber;
         bool centerTowerAlive = CheckCenterTowerAlive();
         
         bool roundCondition = completedRounds >= victoryConfig.finalVictoryRound;
@@ -235,8 +229,8 @@ public class VictoryConditionChecker : MonoBehaviour
         
         // 基础统计
         statistics["GameTime"] = Time.time - gameStartTime;
-        statistics["CurrentRound"] = roundManager != null ? roundManager.CurrentRoundNumber : 0;
-        statistics["PlayerMoney"] = shopSystem != null ? shopSystem.Money : 0;
+        statistics["CurrentRound"] = RoundManager != null ? RoundManager.CurrentRoundNumber : 0;
+        statistics["PlayerMoney"] = ShopSystem != null ? ShopSystem.Money : 0;
         
         // 敌人统计
         GameObject[] enemies = GameObject.FindGameObjectsWithTag("Enemy");

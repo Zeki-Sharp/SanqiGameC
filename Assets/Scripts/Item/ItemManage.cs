@@ -37,7 +37,7 @@ public class ItemManage : MonoBehaviour
 
         if (map == null)
         {
-            map = GameMap.instance;
+            map = GameManager.Instance?.GetSystem<GameMap>();
         }
     }
 

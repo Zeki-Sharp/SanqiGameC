@@ -166,10 +166,11 @@ public class Block : MonoBehaviour
             return;
         }
 
-        // 检查 GameMap.instance 是否有效
-        if (GameMap.instance == null)
+        // 检查 GameMap 是否有效
+        var gameMap = GameManager.Instance?.GetSystem<GameMap>();
+        if (gameMap == null)
         {
-            string errorMessage = $"GameMap.instance 未初始化，无法移除格子 ({localCoord.x}, {localCoord.y}) 的塔";
+            string errorMessage = $"GameMap 未初始化，无法移除格子 ({localCoord.x}, {localCoord.y}) 的塔";
             Debug.LogError(errorMessage, this);
             // 可选：开发环境下触发断点
 #if UNITY_EDITOR
@@ -211,7 +212,7 @@ public class Block : MonoBehaviour
                 if (gameObject != null)
                 {
                     // 移除地块
-                    GameMap.instance.RemoveBlock(localCoord);
+                    gameMap.RemoveBlock(localCoord);
                 }
                 else
                 {

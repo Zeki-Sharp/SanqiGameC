@@ -12,10 +12,10 @@ public class RoundManager : MonoBehaviour
     [SerializeField] private bool isRoundInProgress = false;
     [SerializeField] private List<RoundConfig> roundConfigs = new List<RoundConfig>();
     
-    [Header("管理器引用")]
-    [SerializeField] private EnemySpawner enemySpawner;
-    [SerializeField] private ShopSystem shopSystem;
-    [SerializeField] private VictoryConditionChecker victoryChecker;
+    // 管理器引用 - 通过GameManager自动获取
+    private EnemySpawner EnemySpawner => GameManager.Instance?.GetSystem<EnemySpawner>();
+    private ShopSystem ShopSystem => GameManager.Instance?.GetSystem<ShopSystem>();
+    private VictoryConditionChecker VictoryChecker => GameManager.Instance?.GetSystem<VictoryConditionChecker>();
     
     // 公共属性
     public int CurrentRoundNumber => currentRoundNumber;
@@ -68,15 +68,7 @@ public class RoundManager : MonoBehaviour
     
     private void Start()
     {
-        // 自动获取组件引用
-        if (enemySpawner == null)
-            enemySpawner = FindFirstObjectByType<EnemySpawner>();
-        if (shopSystem == null)
-            shopSystem = FindFirstObjectByType<ShopSystem>();
-        if (victoryChecker == null)
-            victoryChecker = GameManager.Instance?.GetSystem<VictoryConditionChecker>();
-            
-        // 初始化Round配置
+        // 初始化Round配置，引用通过属性自动获取
         InitializeRoundConfigs();
     }
     
@@ -223,12 +215,12 @@ public class RoundManager : MonoBehaviour
         });
         
         // 开始生成敌人
-        if (enemySpawner != null)
+        if (EnemySpawner != null)
         {
             Debug.Log("设置EnemySpawner的Waves配置");
-            enemySpawner.SetWaves(config.waves);
+            EnemySpawner.SetWaves(config.waves);
             Debug.Log("开始EnemySpawner的Wave生成");
-            enemySpawner.StartWaves();
+            EnemySpawner.StartWaves();
         }
         else
         {
@@ -236,9 +228,9 @@ public class RoundManager : MonoBehaviour
         }
         
         // 设置Round开始时间
-        if (victoryChecker != null)
+        if (VictoryChecker != null)
         {
-            victoryChecker.SetRoundStartTime(Time.time);
+            VictoryChecker.SetRoundStartTime(Time.time);
         }
         
         Debug.Log($"开始Round {currentRoundNumber}，包含 {config.waves.Count} 个Wave");
@@ -265,9 +257,9 @@ public class RoundManager : MonoBehaviour
         }
         
         // 给予奖励
-        if (shopSystem != null)
+        if (ShopSystem != null)
         {
-            shopSystem.AddMoney(config.rewardMoney);
+            ShopSystem.AddMoney(config.rewardMoney);
         }
         
         // 发布Round完成事件
@@ -298,7 +290,7 @@ public class RoundManager : MonoBehaviour
     private void OnEnemyDeath(EnemyDeathEventArgs e)
     {
         // 检查是否所有敌人都被消灭
-        if (isRoundInProgress && enemySpawner != null)
+        if (isRoundInProgress && EnemySpawner != null)
         {
             // 使用EnemySpawner提供的方法检查Round完成
             StartCoroutine(CheckRoundCompletion());
@@ -313,7 +305,7 @@ public class RoundManager : MonoBehaviour
         yield return new WaitForSeconds(0.5f); // 等待一段时间确保所有敌人都被处理
         
         // 使用EnemySpawner提供的方法检查是否所有敌人都被消灭
-        if (enemySpawner.AreAllEnemiesDefeated() && isRoundInProgress)
+        if (EnemySpawner.AreAllEnemiesDefeated() && isRoundInProgress)
         {
             Debug.Log($"Round {currentRoundNumber} 所有敌人已被消灭，完成Round");
             CompleteCurrentRound();
@@ -329,9 +321,9 @@ public class RoundManager : MonoBehaviour
         isRoundInProgress = false;
         
         // 清除所有敌人
-        if (enemySpawner != null)
+        if (EnemySpawner != null)
         {
-            enemySpawner.ClearAllEnemies();
+            EnemySpawner.ClearAllEnemies();
         }
         
         Debug.Log("Round管理器已重置");

@@ -28,8 +28,7 @@ public class GameMap : MonoBehaviour
 
     private Transform towerArea;
 
-    public static GameMap instance;
-    private static readonly object lockObj = new object();
+    // 移除传统单例模式，改为通过GameManager注册
 
     // 公共属性
     public int MapWidth => mapWidth;
@@ -38,10 +37,10 @@ public class GameMap : MonoBehaviour
 
     private void Awake()
     {
-        lock (lockObj)
+        // 注册到GameManager
+        if (GameManager.Instance != null)
         {
-            if (instance == null)
-                instance = this;
+            GameManager.Instance.RegisterSystem(this);
         }
 
         if (!InitializeScene())
@@ -360,11 +359,18 @@ public class GameMap : MonoBehaviour
     /// </summary>
     public void RefreshWithMoney()
     {
-        if (GameManager.Instance.ShopSystem.CanAfford(GameMap.instance.GetMapData().ItemRefreshMoney))
+        var shopSystem = GameManager.Instance?.GetSystem<ShopSystem>();
+        var itemManage = GameManager.Instance?.GetSystem<ItemManage>();
+        
+        if (shopSystem != null && itemManage != null && shopSystem.CanAfford(GetMapData().ItemRefreshMoney))
         {
-            GameManager.Instance.ShopSystem.SpendMoney(GameMap.instance.GetMapData().ItemRefreshMoney);
-            PreviewAreaController.instance.RefreshShowArea();
-            GameManager.Instance.ItemManage.ShowItem();
+            shopSystem.SpendMoney(GetMapData().ItemRefreshMoney);
+            var previewAreaController = GameManager.Instance?.GetSystem<PreviewAreaController>();
+            if (previewAreaController != null)
+            {
+                previewAreaController.RefreshShowArea();
+            }
+            itemManage.ShowItem();
         }
     }
 }

@@ -30,12 +30,16 @@ public class PreviewAreaController : MonoBehaviour
     public int MapHeight => mapHeight;
     public float CellSize => cellSize;
     
-    public static PreviewAreaController instance;
+    // 移除传统单例模式，改为通过GameManager注册
     private void Awake()
     {
         InitializeMap();
-        if (instance == null) instance = this;  
-        else Destroy(gameObject);
+        
+        // 注册到GameManager
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.RegisterSystem(this);
+        }
     }
     public void ClickBuildingButton()
     {
@@ -260,7 +264,11 @@ public class PreviewAreaController : MonoBehaviour
     public void RefreshShowArea()
     {
         ClearShowArea();
-        BlockTestManager.instance.Test_01();
+        var blockTestManager = GameManager.Instance?.GetSystem<BlockTestManager>();
+        if (blockTestManager != null)
+        {
+            blockTestManager.Test_01();
+        }
 
     }
    

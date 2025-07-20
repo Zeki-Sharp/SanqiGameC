@@ -20,11 +20,10 @@ public class BlockPlacementManager : MonoBehaviour
     [SerializeField] private GameObject previewBlock; // 预览方块
     [SerializeField] private Vector3Int previewPosition; // 预览位置
 
-    [Header("颜色配置")] [SerializeField] private Color normalColor = Color.white;
+    [Header("颜色配置")] 
+    [SerializeField] private Color normalColor = Color.white;
     [SerializeField] private Color previewColor = new Color(1f, 1f, 1f, 0.5f);
-    [SerializeField] private Color canPlaceColor = Color.green;
-    [SerializeField] private Color cannotPlaceColor = Color.red;
-    [SerializeField] private Color canReplaceColor = Color.yellow;
+    // 移除未使用的颜色配置，预览颜色管理已由BlockPreviewSystem负责
 
     // 公共属性
     public bool IsPlacing => isPlacing;
@@ -35,8 +34,8 @@ public class BlockPlacementManager : MonoBehaviour
     [Header("输入处理器")]
     [SerializeField] private BlockPlacementInputHandler inputHandler;
 
-    [Header("预览系统")]
-    [SerializeField] private BlockPreviewSystem previewSystem;
+    // 预览系统 - 通过GameManager自动获取
+    private BlockPreviewSystem PreviewSystem => GameManager.Instance?.GetSystem<BlockPreviewSystem>();
 
     private void Awake()
     {
@@ -65,10 +64,9 @@ public class BlockPlacementManager : MonoBehaviour
             inputHandler.OnPreviewPositionChanged += OnPreviewPositionChanged;
         }
 
-        if (previewSystem == null)
-            previewSystem = FindFirstObjectByType<BlockPreviewSystem>();
-        if (previewSystem != null && gameMap != null && towerPrefabCache != null)
-            previewSystem.Init(gameMap, towerPrefabCache);
+        // 初始化预览系统
+        if (PreviewSystem != null && gameMap != null && towerPrefabCache != null)
+            PreviewSystem.Init(gameMap, towerPrefabCache);
     }
 
     private void OnDestroy()
@@ -105,8 +103,8 @@ public class BlockPlacementManager : MonoBehaviour
         currentTowerDatas = towerDatas;
         if (inputHandler != null)
             inputHandler.StartPlacement();
-        if (previewSystem != null)
-            previewSystem.ShowPreview(config, towerDatas);
+        if (PreviewSystem != null)
+            PreviewSystem.ShowPreview(config, towerDatas);
     }
 
     /// <summary>
@@ -117,8 +115,8 @@ public class BlockPlacementManager : MonoBehaviour
         isPlacing = false;
         if (inputHandler != null)
             inputHandler.StopPlacement();
-        if (previewSystem != null)
-            previewSystem.ClearPreview();
+        if (PreviewSystem != null)
+            PreviewSystem.ClearPreview();
         FindFirstObjectByType<Preview_Click>()?.ResetClickState(); // 重置建造状态
 
         // 销毁预览方块
@@ -186,9 +184,10 @@ public class BlockPlacementManager : MonoBehaviour
             // 停止放置模式并清除预览（已由BlockPreviewSystem处理）
 
             // 只在这里刷新 ShowArea
-            if (PreviewAreaController.instance != null)
+            var previewAreaController = GameManager.Instance?.GetSystem<PreviewAreaController>();
+            if (previewAreaController != null)
             {
-                PreviewAreaController.instance.RefreshShowArea();
+                previewAreaController.RefreshShowArea();
                 FindFirstObjectByType<Preview_Click>()?.ResetClickState(); // 重置建造状态
             }
 
@@ -345,10 +344,10 @@ public class BlockPlacementManager : MonoBehaviour
     // 新增：预览位置变化时刷新预览塔
     private void OnPreviewPositionChanged(Vector3 mouseWorldPos)
     {
-        if (isPlacing && previewSystem != null && currentBlockConfig != null)
+        if (isPlacing && PreviewSystem != null && currentBlockConfig != null)
         {
             Vector3Int gridPos = CoordinateUtility.WorldToCellPosition(gameMap.GetTilemap(), mouseWorldPos);
-            previewSystem.UpdatePreview(gridPos);
+            PreviewSystem.UpdatePreview(gridPos);
         }
     }
 }
