@@ -45,10 +45,10 @@ public class BlockGenerationConfig : ScriptableObject
                     blockGrid[y * 4 + x] = value[y, x];
                 }
             }
-#if UNITY_EDITOR
-            UnityEditor.EditorUtility.SetDirty(this);
-            UnityEditor.AssetDatabase.SaveAssets();
-#endif
+// #if UNITY_EDITOR
+//             UnityEditor.EditorUtility.SetDirty(this);
+//             UnityEditor.AssetDatabase.SaveAssets();
+// #endif
             Save(); // 新增：每次修改后自动同步
         }
     }
@@ -76,7 +76,7 @@ public class BlockGenerationConfig : ScriptableObject
     private void OnValidate()
     {
         shapeName = name;
-        Save(); // 新增：每次编辑器变更后自动同步
+        // Save(); // 新增：每次编辑器变更后自动同步
         
     }
     // [Button("获取格子")]
