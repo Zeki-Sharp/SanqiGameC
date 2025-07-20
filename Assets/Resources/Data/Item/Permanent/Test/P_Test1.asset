@@ -16,4 +16,7 @@ MonoBehaviour:
   ItemSprite: {fileID: 21300000, guid: 7d02e600426878e4db93c09148bad7c3, type: 3}
   Description: 1
   Price: 2
-  PermanentDatas: []
+  ItemDatas:
+  - type: 1
+    valueType: 0
+    value: 23.9

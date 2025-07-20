@@ -16,7 +16,7 @@ MonoBehaviour:
   ItemSprite: {fileID: 0}
   Description: 1
   Price: 2
-  TemmporaryDatas:
+  ItemDatas:
   - type: 1
     valueType: 0
-    value: 0
+    value: 29

@@ -6,11 +6,11 @@ using UnityEngine.UI;
 public class Item : MonoBehaviour
 {
     private ItemConfig itemConfig;
-    public Image ItemSprite;
-    public TextMeshProUGUI ItemName;
-    public TextMeshProUGUI ItemDescription;
-    public TextMeshProUGUI ItemPrice;
-
+    private Image ItemSprite;
+    private TextMeshProUGUI ItemName;
+    private TextMeshProUGUI ItemDescription;
+    private TextMeshProUGUI ItemPrice;
+    private Button UseButton;
     private void Awake()
     {
         if (itemConfig == null )
@@ -29,6 +29,14 @@ public class Item : MonoBehaviour
         {
             ItemPrice = transform.Find("ItemPrice").GetComponent<TextMeshProUGUI>();
         }
+        UseButton = GetComponent<Button>();
+        UseButton.onClick.AddListener(() =>
+        {
+            if (itemConfig != null)
+            {
+                itemConfig.Use();
+            }
+        });
     }
     public void SetItem(ItemConfig itemConfig)
     {
