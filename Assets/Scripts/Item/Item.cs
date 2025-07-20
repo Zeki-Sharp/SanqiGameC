@@ -35,6 +35,7 @@ public class Item : MonoBehaviour
             if (itemConfig != null)
             {
                 itemConfig.Use();
+                GameManager.Instance.ItemManage.ShowItem();
             }
         });
     }
