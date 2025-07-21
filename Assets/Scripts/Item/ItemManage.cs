@@ -15,7 +15,7 @@ public class ItemManage : MonoBehaviour
             return;
         }
 
-        if (itemArea !=null)
+        if (itemArea != null)
         {
             GameObject item = Instantiate(itemPrefab, itemArea.transform);
             item.GetComponent<Item>().SetItem(itemConfig);
@@ -29,7 +29,7 @@ public class ItemManage : MonoBehaviour
         {
             GameManager.Instance.RegisterSystem(this);
         }
-        
+
         if (itemPrefab == null)
         {
             itemPrefab = Resources.Load<GameObject>("Prefab/Item/Item");
@@ -47,21 +47,28 @@ public class ItemManage : MonoBehaviour
         itemLimitCount = map.GetMapData().itemLimitCount;
         ShowItem();
     }
+    
 
-    // Update is called once per frame
-    void Update()
+    public void ShowItem(bool isRefse = false)
     {
-    }
+        if (!isRefse)
+        {
+            for (int i = itemArea.transform.childCount - 1; i >= 0; i--)
+            {
+                Destroy(itemArea.transform.GetChild(i).gameObject);
+            }
+            for (int i = 0; i < itemLimitCount; i++)
+            {
+                GenerateItem();
+            }
+        }
+        else
+        {
+            for (int i = itemArea.transform.childCount; i < itemLimitCount; i++)
+            {
+                GenerateItem();
+            }
+        }
 
-    public void ShowItem()
-    {
-        for (int i = itemArea.transform.childCount - 1; i >= 0; i--)
-        {
-            Destroy(itemArea.transform.GetChild(i).gameObject);
-        }
-        for (int i = 0; i < itemLimitCount; i++)
-        {
-            GenerateItem();
-        }
     }
 }
