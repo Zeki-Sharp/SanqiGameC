@@ -34,6 +34,14 @@ public class Item : MonoBehaviour
         {
             if (itemConfig != null)
             {
+                if (GameManager.Instance.ShopSystem.CanAfford(itemConfig.Price))
+                {
+                    GameManager.Instance.ShopSystem.SpendMoney(itemConfig.Price);
+                }
+                else
+                {
+                    return;
+                }
                 itemConfig.Use();
                 GameManager.Instance.ItemManage.ShowItem();
             }
