@@ -1,9 +1,11 @@
 using UnityEngine;
 using System.Collections.Generic;
+using UnityEngine.Tilemaps;
 
 /// <summary>
 /// 抛物线子弹 - 继承自BulletBase，实现抛物线移动
 /// </summary>
+
 public class ParabolaBullet : BulletBase
 {
     [Header("抛物线子弹特定配置")]
@@ -58,6 +60,16 @@ public class ParabolaBullet : BulletBase
         Vector3 pos = Vector3.Lerp(start, end, t);
         pos.y += height * 4 * (t - t * t);
         transform.position = pos;
+    }
+    public override void OnCheckGroundCollision()
+    {
+       // Tilemap tilemap =  MapUtility.FindTilemapBySortingLayer("Ground");
+       //
+       // if (tilemap != null)
+       // {
+       //     Vector2 velocity = direction * speed;
+       //     CoordinateUtility.PredictParabolaImpact(start,velocity,tilemap)
+       // }
     }
     
     /// <summary>

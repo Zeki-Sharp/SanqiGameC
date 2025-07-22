@@ -29,7 +29,11 @@ public class StraightBullet : BulletBase
     {
         // 直线子弹不需要特殊初始化
     }
-    
+    public override void OnCheckGroundCollision()
+    {
+        throw new System.NotImplementedException();
+    }
+
     /// <summary>
     /// 实现抽象方法OnUpdate
     /// </summary>

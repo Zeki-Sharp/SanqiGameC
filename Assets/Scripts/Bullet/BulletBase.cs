@@ -1,9 +1,11 @@
 using UnityEngine;
 using System.Collections.Generic;
+using UnityEngine.Tilemaps;
 
 /// <summary>
 /// 子弹基类 - 统一管理子弹生命周期和对象池集成
 /// </summary>
+[RequireComponent(typeof(BulletLayerController))]
 public abstract class BulletBase : MonoBehaviour, IBullet
 {
     [Header("基础配置")]
@@ -17,7 +19,9 @@ public abstract class BulletBase : MonoBehaviour, IBullet
     [SerializeField] protected float damage;
     [SerializeField] protected string[] targetTags;
     [SerializeField] protected GameObject target;
-    
+    [SerializeField] protected Vector3 endPosition;
+    [Header("子弹配置")]
+    [SerializeField] protected float height; // 直线子弹高度偏移
     // 对象池相关
     protected bool isFromPool = false;
     protected string poolKey = "";
@@ -40,7 +44,13 @@ public abstract class BulletBase : MonoBehaviour, IBullet
         this.target = target;
         this.damage = damage;
         this.spawnTime = Time.time;
-        
+        Tilemap tilemap =  MapUtility.FindTilemapBySortingLayer("Ground");
+
+        if (tilemap != null)
+        {
+            Vector2 velocity = direction * speed;
+            endPosition = CoordinateUtility.PredictParabolaImpact(this.transform.position, height, velocity, tilemap);
+        }
         // 设置目标标签
         if (targetTags != null && targetTags.Length > 0)
         {
@@ -139,13 +149,15 @@ public abstract class BulletBase : MonoBehaviour, IBullet
     /// </summary>
     protected virtual void CheckGroundCollision()
     {
-        // 检查是否击中地面（Y坐标小于等于0）
-        if (transform.position.y <= 0f)
-        {
-            ReturnToPool();
-        }
+
+        // // 检查是否击中地面（Y坐标小于等于0）
+        // if (transform.position.y <= 0f)
+        // {
+        //     ReturnToPool();
+        // }
+        OnCheckGroundCollision();
     }
-    
+    public abstract void OnCheckGroundCollision();
     /// <summary>
     /// 检查是否飞出屏幕
     /// </summary>
