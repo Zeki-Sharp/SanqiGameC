@@ -55,6 +55,11 @@ public class EnemyController : MonoBehaviour
             position.z = 0f;
             transform.position = position;
         }
+        
+        // 新增渲染顺序控制：基于Y轴区间和X轴位置
+        int baseOrder = Mathf.RoundToInt(position.y * 100f); // 每个Y值对应100个排序区间
+        int xOrder = Mathf.RoundToInt(-position.x); // X轴逆序排列（右→左）
+        spriteRenderer.sortingOrder = baseOrder + xOrder;
     }
     
     private void Start()
