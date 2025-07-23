@@ -31,7 +31,6 @@ public class StraightBullet : BulletBase
     }
     public override void OnCheckGroundCollision()
     {
-        throw new System.NotImplementedException();
     }
 
     /// <summary>

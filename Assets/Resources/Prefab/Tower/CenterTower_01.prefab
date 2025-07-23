@@ -95,7 +95,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e536fb11cc79d0247b8cb9484c0fe508, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  sortingLayerName: Default
+  sortingLayerName: Tower
   sortingOrder: 2000
 --- !u!114 &9081182979500157578
 MonoBehaviour:
@@ -242,7 +242,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   config: {fileID: 11400000, guid: f62da1e755004f84ca7ffb86da418562, type: 2}
-  worldPosition: {x: 0, y: 0}
+  cellPosition: {x: 0, y: 0, z: 0}
   canBeOverridden: 0
   towerPrefab: {fileID: 0}
 --- !u!114 &8622939898402481615
@@ -260,13 +260,14 @@ MonoBehaviour:
   towerData: {fileID: 11400000, guid: 2c56d48c1b17cd04e8bfca12c88f6655, type: 2}
   currentHealth: 0
   level: 0
-  position: {x: 0, y: 0}
+  cellPosition: {x: 0, y: 0, z: 0}
   spriteRenderer: {fileID: 0}
   text: {fileID: 0}
-  bulletPrefab: {fileID: 3447451743312656527, guid: 2fb7abf005420a1429b21a013ddbccb1, type: 3}
+  block: {fileID: 0}
   TowerLayerMask:
     serializedVersion: 2
     m_Bits: 0
+  isShowAreaTower: 0
 --- !u!70 &2274610060129136706
 CapsuleCollider2D:
   m_ObjectHideFlags: 0
@@ -403,8 +404,8 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
+  m_SortingLayerID: -1041142905
+  m_SortingLayer: 3
   m_SortingOrder: 4
   m_Sprite: {fileID: 4293587053738703087, guid: b4bf0700b3c507e48b3075acc47fefb1, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}

@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 4032237375440005743}
   - component: {fileID: 8856315114042948262}
   - component: {fileID: 4051412511425562908}
+  - component: {fileID: 4672124412910421376}
   m_Layer: 0
   m_Name: Bullet_Test
   m_TagString: Bullet
@@ -77,8 +78,8 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
+  m_SortingLayerID: 1590572477
+  m_SortingLayer: 6
   m_SortingOrder: 1
   m_Sprite: {fileID: -2413806693520163455, guid: a86470a33a6bf42c4b3595704624658b, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -166,16 +167,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7ad8575bf26e4094b8f47fac7f167099, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  defaultSpeed: 10
-  lifetime: 5
-  height: 2
+  bulletConfig: {fileID: 0}
+  direction: {x: 0, y: 0, z: 0}
+  speed: 0
+  spawnTime: 0
+  owner: {fileID: 0}
+  damage: 0
   targetTags:
   - Enemy
-  targetType: 0
-  aoeRadius: 1.5
-  aoeLayer:
-    serializedVersion: 2
-    m_Bits: 0
+  target: {fileID: 0}
+  endPosition: {x: 0, y: 0, z: 0}
+  height: 2
+  height: 2
 --- !u!114 &4051412511425562908
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -195,3 +198,19 @@ MonoBehaviour:
     effectFx: {fileID: 0}
     effectFxDuration: 0
     sfx: {fileID: 0}
+--- !u!114 &4672124412910421376
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3447451743312656527}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1976a8ddc6fcd4e47a2de0b11677c3ef, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  bulletOrderInLayer: 0
+  maxBulletOrderInLayer: 0
+  minBulletOrderInLayer: 0
+  layerConfigure: {fileID: 0}

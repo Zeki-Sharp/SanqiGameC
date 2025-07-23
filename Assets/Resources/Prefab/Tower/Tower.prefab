@@ -73,8 +73,8 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
+  m_SortingLayerID: -1041142905
+  m_SortingLayer: 3
   m_SortingOrder: 4
   m_Sprite: {fileID: 4293587053738703087, guid: b4bf0700b3c507e48b3075acc47fefb1, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -98,6 +98,7 @@ GameObject:
   - component: {fileID: 9054151160336859648}
   - component: {fileID: 1967903675104210712}
   - component: {fileID: 1863550285456472549}
+  - component: {fileID: 2575750801196166123}
   m_Layer: 6
   m_Name: Text (TMP)
   m_TagString: Untagged
@@ -263,6 +264,20 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_renderer: {fileID: 1967903675104210712}
   m_maskType: 0
+--- !u!114 &2575750801196166123
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5343205042941032988}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e536fb11cc79d0247b8cb9484c0fe508, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sortingLayerName: Tower
+  sortingOrder: 5
 --- !u!1 &8732031508292489554
 GameObject:
   m_ObjectHideFlags: 0
@@ -319,10 +334,10 @@ MonoBehaviour:
   spriteRenderer: {fileID: 7333680532966165153}
   text: {fileID: 1863550285456472549}
   block: {fileID: 0}
-  bulletPrefab: {fileID: 0}
   TowerLayerMask:
     serializedVersion: 2
     m_Bits: 64
+  isShowAreaTower: 0
 --- !u!70 &4211962382010843008
 CapsuleCollider2D:
   m_ObjectHideFlags: 0
