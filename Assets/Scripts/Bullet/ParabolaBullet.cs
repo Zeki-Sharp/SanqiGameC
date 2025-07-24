@@ -43,7 +43,7 @@ public class ParabolaBullet : BulletBase
         totalDistance = Vector3.Distance(start, end);
         // 计算抛物线总时间
         float distance = Vector3.Distance(start, end);
-        totalTime = distance / speed;
+        totalTime = distance / moveSpeed;
         t = 0f;
     }
     
@@ -53,7 +53,7 @@ public class ParabolaBullet : BulletBase
     protected override void OnUpdate()
     {
         if (!gameObject.activeInHierarchy) return;
-
+        t += Time.deltaTime;
         // 当前沿线的进度 [0,1]
         float traveled = Vector3.Distance(start, transform.position);
         float progress = Mathf.Clamp01(traveled / totalDistance);
@@ -68,8 +68,9 @@ public class ParabolaBullet : BulletBase
         transform.position = nextPos;
 
         // // 检查是否到达目标点
-        if (MathUtility.IsValueInRange(Mathf.Abs(Vector3.Distance(transform.position, endPosition)), -0.5f, 0.5f))
+        if ( t >= (totalTime +4f) || MathUtility.IsValueInRange(Mathf.Abs(Vector3.Distance(transform.position, endPosition)), -0.5f, 0.5f))
         {
+            t = 0;
             Debug.Log($"起点{transform.position} 结束 {endPosition}");
             OnCheckGroundCollision();
         }
