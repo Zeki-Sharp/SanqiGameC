@@ -15,6 +15,8 @@ public class CombatUIPanel : UIPanel
     [SerializeField] private GameObject combatUI;
     [SerializeField] private GameObject pauseButton;
 
+    private Button pauseBtnComponent;
+
     private float roundStartTime;
     private float roundTimeLimit = 300f; // 5分钟时间限制
 
@@ -25,6 +27,9 @@ public class CombatUIPanel : UIPanel
         // 自动获取组件引用
         if (roundInfoText == null)
             roundInfoText = GetComponentInChildren<TextMeshProUGUI>();
+        // 获取Pause按钮组件
+        if (pauseButton != null)
+            pauseBtnComponent = pauseButton.GetComponent<Button>();
     }
 
     protected override void OnShow()
@@ -39,6 +44,13 @@ public class CombatUIPanel : UIPanel
         
         // 显示战斗相关UI
         ShowCombatUI();
+        // 绑定Pause按钮事件
+        if (pauseBtnComponent != null)
+        {
+            Debug.Log("绑定暂停按钮事件");
+            pauseBtnComponent.onClick.RemoveAllListeners();
+            pauseBtnComponent.onClick.AddListener(OnPauseButtonClicked);
+        }
     }
 
     protected override void OnHide()
@@ -199,5 +211,18 @@ public class CombatUIPanel : UIPanel
         {
             pauseButton.GetComponent<Button>().interactable = interactable;
         }
+    }
+
+    private void OnPauseButtonClicked()
+    {
+        Debug.Log("暂停按钮被点击");
+        // 显示PauseUI
+        var pauseUI = UIManager.Instance.GetPanel<PauseUIPanel>();
+        if (pauseUI != null)
+        {
+            pauseUI.Show();
+        }
+        // 暂停游戏
+        Time.timeScale = 0f;
     }
 } 

@@ -27,6 +27,7 @@ public class UIManager : MonoBehaviour
     [SerializeField] private BuildingUIPanel buildingUIPanel;
     [SerializeField] private CombatUIPanel combatUIPanel;
     [SerializeField] private VictoryUIPanel victoryUIPanel;
+    [SerializeField] private PauseUIPanel pauseUIPanel;
 
     // 当前显示的面板
     private UIPanel currentPanel;
@@ -73,6 +74,8 @@ public class UIManager : MonoBehaviour
             combatUIPanel = FindFirstObjectByType<CombatUIPanel>();
         if (victoryUIPanel == null)
             victoryUIPanel = FindFirstObjectByType<VictoryUIPanel>();
+        if (pauseUIPanel == null)
+            pauseUIPanel = FindFirstObjectByType<PauseUIPanel>();
 
         // 注册面板到字典
         if (buildingUIPanel != null)
@@ -89,6 +92,11 @@ public class UIManager : MonoBehaviour
         {
             panels[PanelType.Victory] = victoryUIPanel;
             victoryUIPanel.Initialize();
+        }
+        if (pauseUIPanel != null)
+        {
+            panels[PanelType.Pause] = pauseUIPanel; 
+            pauseUIPanel.Initialize();
         }
 
         Debug.Log($"UIManager初始化完成，共找到{panels.Count}个面板");
@@ -208,6 +216,18 @@ public class UIManager : MonoBehaviour
         }
         Debug.Log("重置所有面板");
     }
+
+    public void ShowPausePanel()
+    {
+        if (pauseUIPanel != null)
+            pauseUIPanel.Show();
+    }
+
+    public void HidePausePanel()
+    {
+        if (pauseUIPanel != null)
+            pauseUIPanel.Hide();
+    }
 }
 
 /// <summary>
@@ -217,5 +237,6 @@ public enum PanelType
 {
     Building,  // 建设阶段UI
     Combat,    // 战斗阶段UI
-    Victory    // 胜利阶段UI
+    Victory,    // 胜利阶段UI
+    Pause //暂停界面UI
 } 

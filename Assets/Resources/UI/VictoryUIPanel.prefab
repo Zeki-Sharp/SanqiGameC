@@ -807,7 +807,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &8822293758107259992
 RectTransform:
   m_ObjectHideFlags: 0
@@ -844,14 +844,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isVisible: 1
-  canvasGroup: {fileID: 0}
+  canvasGroup: {fileID: 446295623282383051}
   panelRoot: {fileID: 0}
-  victoryTitleText: {fileID: 0}
-  statisticsText: {fileID: 0}
-  nextLevelButton: {fileID: 0}
-  restartButton: {fileID: 0}
-  mainMenuButton: {fileID: 0}
-  victoryUI: {fileID: 0}
+  victoryTitleText: {fileID: 1651067754945615724}
+  statisticsText: {fileID: 3458356504708289928}
+  nextLevelButton: {fileID: 270830898308099935}
+  restartButton: {fileID: 1521612213511819119}
+  mainMenuButton: {fileID: 2356640279098018910}
+  victoryUI: {fileID: 4368742062877657431}
 --- !u!225 &446295623282383051
 CanvasGroup:
   m_ObjectHideFlags: 0
