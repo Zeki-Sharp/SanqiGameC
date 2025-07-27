@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 4032237375440005743}
   - component: {fileID: 3921739120260228092}
   - component: {fileID: 4672124412910421376}
+  - component: {fileID: 7914976394893169665}
   m_Layer: 0
   m_Name: Bullet_Test_straight
   m_TagString: Bullet
@@ -194,3 +195,51 @@ MonoBehaviour:
   maxBulletOrderInLayer: 0
   minBulletOrderInLayer: 0
   layerConfigure: {fileID: 0}
+--- !u!114 &7914976394893169665
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3447451743312656527}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 92ba0c82484240f79bfe4b515dc8da6c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  influence: 1
+  triggerInteraction: 0
+  detectLayer:
+    serializedVersion: 2
+    m_Bits: 1
+  autoUpdate: 1
+  colorProfile: {fileID: 0}
+  gizmosUpdate: 0
+  timeMode: 0
+  baseIgnoreTime: 0.1
+  bulletID: 
+  onCast:
+    m_PersistentCalls:
+      m_Calls: []
+  onEndCast:
+    m_PersistentCalls:
+      m_Calls: []
+  onEnd:
+    m_PersistentCalls:
+      m_Calls: []
+  onPlanar:
+    m_PersistentCalls:
+      m_Calls: []
+  moveType: 0
+  callMethod: OnBullet
+  messageUpward: 0
+  ownerReference: {fileID: 0}
+  damage: 10
+  speed: 6
+  lifeTime: 10
+  endDelay: 0
+  endFunction: 1
+  endOnCollide: 1
+  caster: {fileID: 0}
+  raySource: {fileID: 0}
+  collisionRay: {fileID: 0}
