@@ -14,10 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   damage: 15
   attackCooldown: 1.5
-  attackRange: 5
+  attackRange: 6
   bulletSpeed: 8
   attackAnimationTrigger: Attack
-  bulletPrefab: {fileID: 3447451743312656527, guid: 32d3d5890e9c433499f4e42e067ae303, type: 3}
   bulletConfig: {fileID: 11400000, guid: ec8e31838e4c8e242a930307cc159f5d, type: 2}
   attackSound: {fileID: 0}
   bulletHitSound: {fileID: 0}
