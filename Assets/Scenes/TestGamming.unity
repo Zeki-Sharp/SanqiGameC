@@ -898,11 +898,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!1 &1048998416 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 4824348002976040155, guid: df809271d5c54964d909c4a2966737f0, type: 3}
-  m_PrefabInstance: {fileID: 5731569247834218679}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1052176711
 GameObject:
   m_ObjectHideFlags: 0
@@ -3270,7 +3265,7 @@ PrefabInstance:
     - target: {fileID: 6155631485223325436, guid: df809271d5c54964d909c4a2966737f0, type: 3}
       propertyPath: combatUI
       value: 
-      objectReference: {fileID: 1048998416}
+      objectReference: {fileID: 0}
     - target: {fileID: 6155631485223325436, guid: df809271d5c54964d909c4a2966737f0, type: 3}
       propertyPath: panelRoot
       value: 
@@ -3280,7 +3275,8 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1376559345}
     m_RemovedComponents: []
-    m_RemovedGameObjects: []
+    m_RemovedGameObjects:
+    - {fileID: 4824348002976040155, guid: df809271d5c54964d909c4a2966737f0, type: 3}
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: df809271d5c54964d909c4a2966737f0, type: 3}
