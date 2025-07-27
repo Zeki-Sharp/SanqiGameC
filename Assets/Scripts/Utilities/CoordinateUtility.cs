@@ -64,52 +64,6 @@ public static class CoordinateUtility
         return new Vector3Int(centerX, centerY, 0);
     }
 
-
-    /// <summary>
-    /// 预测抛物线运动的落点坐标
-    /// </summary>
-    /// <param name="origin">抛射起点的世界坐标</param>
-    /// <param name="initialVelocity">初始速度向量（x,y方向）</param>
-    /// <param name="map">Tilemap地图引用，用于检测碰撞</param>
-    /// <returns>命中位置的cell坐标，若未命中返回(-999, -999, 0)</returns>
-    public static Vector3 PredictParabolaImpact(Vector3 origin,float initialHeight, Vector2 initialVelocity,Tilemap map)
-    {
-        if (map == null)
-        {
-            Debug.LogError("Tilemap未赋值，无法进行坐标转换");
-            return Vector3.zero;
-        }
-        
-        Vector3 pos = origin;
-        Vector2 velocity = initialVelocity;
-        float currentHeight = initialHeight;
-        Vector2 gravity = Physics2D.gravity;
-        float timeStep = 0.05f;
-        float maxTime = 5f;
-
-        for (float t = 0; t < maxTime; t += timeStep)
-        {
-            // 水平移动（X/Y）
-            pos += (Vector3)(velocity * timeStep);
-
-            // 高度更新（Z轴或模拟的“抛物高度”）
-            currentHeight += velocity.y * timeStep;
-            velocity -= gravity * timeStep;
-
-            // 判断是否到达地面（高度 <= 0）
-            if (currentHeight <= origin.y)
-            {
-                Debug.Log( "命中");
-                Vector3Int cell = map.WorldToCell(pos);
-                if (map.HasTile(cell))
-                    return pos;
-            }
-        }
-
-        // 如果循环结束仍未找到命中点
-        return new Vector3(-999, -999, 0); // 表示没命中
-    }
-
     #endregion
 
     #region 坐标转换

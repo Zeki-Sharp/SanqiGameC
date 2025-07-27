@@ -149,25 +149,6 @@ public static class MapUtility
         
         tilemap.SetTile(position, tile);
     }
-    
-    /// <summary>
-    /// 根据 Sorting Layer 名称查找场景中的 Tilemap。
-    /// </summary>
-    public static Tilemap FindTilemapBySortingLayer(string sortingLayerName)
-    {
-        Tilemap[] tilemaps = Object.FindObjectsByType<Tilemap>(FindObjectsSortMode.None);
-
-        foreach (var tilemap in tilemaps)
-        {
-            Renderer renderer = tilemap.GetComponent<Renderer>();
-            if (renderer != null && renderer.sortingLayerName == sortingLayerName)
-            {
-                return tilemap;
-            }
-        }
-
-        return null;
-    }
 
     #endregion
 } 

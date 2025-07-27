@@ -1,8 +1,4 @@
-﻿
-
-using System;
-
-namespace RaycastPro.Bullets2D
+﻿namespace RaycastPro.Bullets2D
 {
     using UnityEngine;
 
@@ -36,45 +32,17 @@ namespace RaycastPro.Bullets2D
         
         [SerializeField]
         private AxisRun axisRun = new AxisRun();
-        
-        // protected override void OnCast()
-        // {
-        //     transform.position = raySource.Base;
-        //     transform.right = (target.position - transform.position).normalized;
-        //     
-        //     targetPoint = target.position;
-        //     currentForce = force;
-        // }
 
         protected override void OnCast()
         {
-            if (raySource)
-            {
-                transform.position = raySource.Base;
-                transform.right = (target.position - transform.position).normalized;
-            }
-
-#if UNITY_EDITOR
-            if (!target)
-            {
-                RCProEditor.Log($"<color=#4AFF98>{caster.name}</color> missing <color=#FF1E21>TrackTarget</color> transform!");
-            }
-#endif
-
-            if (target)
-            {
-                targetPoint = target.position;
-            }
-            else
-            {
-                targetPoint = raySource.TipTarget;
-            }
+            transform.position = raySource.Base;
+            transform.right = (target.position - transform.position).normalized;
             
+            targetPoint = target.position;
             currentForce = force;
-            _t = transform; 
         }
-        
-        [SerializeField]private Transform _t;
+
+        private Transform _t;
         private float _dis, _dt, currentForce;
         private Vector2 _dir;
 
@@ -145,9 +113,6 @@ namespace RaycastPro.Bullets2D
                 
                 EditorGUILayout.PropertyField(_so.FindProperty(nameof(distanceThreshold)));
                 EditorGUILayout.PropertyField(_so.FindProperty(nameof(trackOffset)));
-
-                EditorGUILayout.PropertyField(_so.FindProperty(nameof(target)));
-                // EditorGUILayout.PropertyField(_so.FindProperty(nameof(_t)));
             }
             
             if (hasGeneral) GeneralField(_so);

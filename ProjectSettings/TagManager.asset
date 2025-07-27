@@ -15,11 +15,11 @@ TagManager:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - Ground
+  - 
   - Water
   - UI
   - Tower
-  - Enemy
+  - 
   - 
   - 
   - 
@@ -47,24 +47,6 @@ TagManager:
   m_SortingLayers:
   - name: Default
     uniqueID: 0
-    locked: 0
-  - name: Ground
-    uniqueID: 3395438437
-    locked: 0
-  - name: BuildArea
-    uniqueID: 2226206017
-    locked: 0
-  - name: Tower
-    uniqueID: 3253824391
-    locked: 0
-  - name: Enemy
-    uniqueID: 4148194225
-    locked: 0
-  - name: Ornament
-    uniqueID: 1178647735
-    locked: 0
-  - name: Bullet
-    uniqueID: 1590572477
     locked: 0
   m_RenderingLayers:
   - Default
