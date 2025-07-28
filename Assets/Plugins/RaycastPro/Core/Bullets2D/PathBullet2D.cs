@@ -70,7 +70,7 @@
         internal override void RuntimeUpdate()
         {
             position = Mathf.Clamp01(position);
-
+            
             if (moveType == MoveType.Curve)
             {
                 posM = curve.Evaluate(position) * pathLength;
@@ -110,6 +110,7 @@
             else transform.position = _pos.ToDepth(Z);
             if (axisRun.syncAxis) axisRun.SyncAxis(transform, _dir);
             if (collisionRay) CollisionRun(_dt);
+            transform.eulerAngles = Vector3.zero;
         }
         private float lineDistance;
 #if UNITY_EDITOR
