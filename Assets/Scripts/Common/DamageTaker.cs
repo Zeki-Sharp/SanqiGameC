@@ -1,4 +1,5 @@
 using RaycastPro.Bullets;
+using Sirenix.OdinInspector;
 using UnityEngine;
 
 /// <summary>
@@ -6,11 +7,11 @@ using UnityEngine;
 /// </summary>
 public class DamageTaker : MonoBehaviour
 {
-    [HideInInspector] public float maxHealth;
-    [HideInInspector] public float currentHealth;
+    [ShowInInspector]public float maxHealth;
+    [ShowInInspector] public float currentHealth;
 
-    public System.Action<float> onTakeDamage;
-    public System.Action onDeath;
+   [ShowInInspector] public System.Action<float> onTakeDamage;
+   [ShowInInspector]public System.Action onDeath;
 
     private void Awake()
     {

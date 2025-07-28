@@ -46,48 +46,54 @@ public class Tower : MonoBehaviour
     public bool IsShowAreaTower => isShowAreaTower;
 
     [SerializeField] private RangeDetector2D rangeDetector;
-    [SerializeField]  public ArcRay2D raySensor;
+    [SerializeField]  public BezierRay2D raySensor;
     [SerializeField]  private BasicCaster2D bulletCaster;
+    
+    private float cachedAttackSpeed = 1f;
+    private float cachedAttackRange = 3f;
     
     public List<GameObject> agentData; 
     private void Start() 
     { 
         rangeDetector.onDetectCollider.AddListener(OnDetectCollider); 
     } 
-    public void OnDetectCollider(Collider2D collider) 
+    protected virtual void OnDetectCollider(Collider2D collider) 
     {
         // 展示区域的塔不进行游戏逻辑
-        // if (isShowAreaTower) return;
-        //
-        // if (towerData == null) return;
-        float attackSpeed = towerData.GetAttackSpeed(level) > 0 ? towerData.GetAttackSpeed(level) : 1f;
+        if (isShowAreaTower) return;
+        if (towerData == null || bulletCaster == null) return;
+        
+        float attackSpeed = towerData?.GetAttackSpeed(level) ?? 1f;
+        attackSpeed = attackSpeed > 0 ? attackSpeed : 1f;
         bulletCaster.ammo.reloadTime = attackSpeed;
-        rangeDetector.Radius =  towerData.GetAttackRange(level);
-        //   if (Time.time - lastAttackTime >= 1f / attackSpeed)
-        // {
-        //     rangeDetector.Radius =  towerData.GetAttackRange(level);
-        //     GameObject target = FindNearestEnemyInRange();
-        //     // if (target != null)
-        //     // {
-        //     //     FireAt(target);
-        //     //     lastAttackTime = Time.time;
-        //     // }
-        // }
-        Debug.Log("Found Agent!"+ collider.transform);
-        Vector3 position = collider.transform.position   - this.transform.position- new  Vector3(0, 0, 2.44f);
-      
-        raySensor.SetDirection(position);
+        rangeDetector.Radius = towerData?.GetAttackRange(level) ?? 3f;
+        
+        Debug.Log("Found Agent!" + collider.transform);
+        raySensor.SetStartEnd(this.transform, collider.transform);
         SetBulletDamage();
         
         bulletCaster.Cast(0);
-
+        
         Debug.Log("射出了子弹");
     }
     public void SetBulletDamage()
     {
+        if (bulletCaster == null || bulletCaster.bullets == null)
+            return;
+        
         for (int i = 0; i < bulletCaster.bullets.Length; i++)
         {
-            bulletCaster.bullets[i].damage =towerData.GetPhysicAttack(level);
+            if (bulletCaster.bullets[i] == null)
+                continue;
+            
+            bulletCaster.bullets[i].damage = towerData?.GetPhysicAttack(level) ?? 10f;
+            var bulletCollide = bulletCaster.bullets[i].GetComponent<BulletCollide>();
+            if (bulletCollide != null)
+            {
+                 bulletCollide.Initial(towerData?.GetBulletConfig(), this.gameObject);
+            }
+               
+            
         }
     }
     public void OnLostAgent(GameObject data) 
@@ -98,19 +104,39 @@ public class Tower : MonoBehaviour
     {
         damageTaker = GetComponent<DamageTaker>();
         rangeDetector = GetComponentInChildren<RangeDetector2D>();
-        raySensor = GetComponentInChildren<ArcRay2D>();
+        raySensor = GetComponentInChildren<BezierRay2D>();
         bulletCaster = GetComponent<BasicCaster2D>();
-        if (towerData != null && damageTaker != null)
+        
+        if (damageTaker == null)
+            Debug.LogError($"DamageTaker component missing on {name}");
+        if (rangeDetector == null)
+            Debug.LogError($"RangeDetector2D component missing on {name}");
+        if (raySensor == null)
+            Debug.LogError($"BezierRay2D component missing on {name}");
+        if (bulletCaster == null)
+            Debug.LogError($"BasicCaster2D component missing on {name}");
+        
+        if (towerData != null)
         {
             damageTaker.maxHealth = towerData.GetHealth(level);
             damageTaker.currentHealth = towerData.GetHealth(level);
-            float attackSpeed = towerData.GetAttackSpeed(level) > 0 ? towerData.GetAttackSpeed(level) : 1f;
-
-            bulletCaster.ammo.reloadTime = attackSpeed;
-SetBulletDamage();
-            rangeDetector.Radius =  towerData.GetAttackRange(level);
             
+            cachedAttackSpeed = towerData.GetAttackSpeed(level);
+            cachedAttackSpeed = cachedAttackSpeed > 0 ? cachedAttackSpeed : 1f;
+            
+            cachedAttackRange = towerData.GetAttackRange(level);
+            
+            bulletCaster.ammo.reloadTime = cachedAttackSpeed;
+            SetBulletDamage();
         }
+        
+        SetInitialAttackRange();
+    }
+    
+    private void SetInitialAttackRange()
+    {
+        if (rangeDetector != null)
+            rangeDetector.Radius = towerData?.GetAttackRange(level) ?? 3f;
     }
 
     public void SetOrder(int order)
@@ -334,20 +360,19 @@ SetBulletDamage();
     private void Update()
     {
         // 展示区域的塔不进行游戏逻辑
-        if (isShowAreaTower) return;
+        if (isShowAreaTower || towerData == null || rangeDetector == null)
+            return;
         
-        if (towerData == null) return;
-        float attackSpeed = towerData.GetAttackSpeed(level) > 0 ? towerData.GetAttackSpeed(level) : 1f;
-        if (Time.time - lastAttackTime >= 1f / attackSpeed)
+        if (cachedAttackSpeed <= 0f)
+            cachedAttackSpeed = towerData.GetAttackSpeed(level);
+        
+        if (Time.time - lastAttackTime >= 1f / cachedAttackSpeed)
         {
             rangeDetector.Cast();
-            // rangeDetector.Radius =  towerData.GetAttackRange(level);
-            // GameObject target = FindNearestEnemyInRange();
-            // if (target != null)
-            // {
-            //     FireAt(target);
-            //     lastAttackTime = Time.time;
-            // }
+            if (cachedAttackRange <= 0f)
+                cachedAttackRange = towerData.GetAttackRange(level);
+            
+            rangeDetector.Radius = cachedAttackRange;
         }
     }
 
@@ -357,7 +382,12 @@ SetBulletDamage();
         if (towerData != null && damageTaker != null)
         {
             damageTaker.maxHealth = towerData.GetHealth(level);
-            // damageTaker.maxHealth = towerData.GetHealth(level);
+            damageTaker.currentHealth = towerData.GetHealth(level);
+            
+            cachedAttackSpeed = towerData.GetAttackSpeed(level);
+            cachedAttackSpeed = cachedAttackSpeed > 0 ? cachedAttackSpeed : 1f;
+            
+            cachedAttackRange = towerData.GetAttackRange(level);
         }
 
         // spriteRenderer.sprite = towerData.TowerSprite;

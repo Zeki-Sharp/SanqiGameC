@@ -64,7 +64,7 @@ public class EnemyController : MonoBehaviour
             transform.position = position;
         }
     }
-    public void OnBullet(Bullet bullet) =>  damageTaker.TakeDamage(bullet.damage);
+    void OnBullet(Bullet bullet) =>  damageTaker.TakeDamage(bullet.damage);
     private void Start()
     {
         // 初始化为移动状态
@@ -230,7 +230,7 @@ public class EnemyController : MonoBehaviour
         // 在Scene视图中显示调试信息
         #if UNITY_EDITOR
         UnityEditor.Handles.Label(transform.position + Vector3.up * 1.5f, 
-            $"状态: {GetCurrentStateName()}\n生命值: {currentHealth:F0}/{MaxHealth:F0}");
+            $"状态: {GetCurrentStateName()}\n生命值: { damageTaker.currentHealth :F0}/{ damageTaker.maxHealth :F0}");
         #endif
     }
 } 

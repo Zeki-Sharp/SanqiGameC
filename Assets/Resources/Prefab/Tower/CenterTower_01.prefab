@@ -239,7 +239,7 @@ MonoBehaviour:
   triggerInteraction: 0
   detectLayer:
     serializedVersion: 2
-    m_Bits: 1
+    m_Bits: 129
   autoUpdate: 1
   colorProfile: {fileID: 0}
   gizmosUpdate: 0
@@ -270,9 +270,9 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   ignoreList: []
-  boundsSolver: 0
+  boundsSolver: 1
   boundsCenter: 0
-  collectLOS: 0
+  collectLOS: 1
   radius: 2
   local: 1
   minRadius: 0.4
@@ -280,7 +280,7 @@ MonoBehaviour:
   limited: 0
   limitCount: 3
   colliders: []
---- !u!1 &6794178342260812517
+--- !u!1 &6221814315126884827
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -288,40 +288,40 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 7680775028182977374}
-  - component: {fileID: 214374388457226854}
+  - component: {fileID: 5009774707390689449}
+  - component: {fileID: 4185971873869370229}
   m_Layer: 0
-  m_Name: Arc Ray2D
+  m_Name: Bezier Ray2D
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &7680775028182977374
+--- !u!4 &5009774707390689449
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6794178342260812517}
+  m_GameObject: {fileID: 6221814315126884827}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 5965266069931466106}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &214374388457226854
+--- !u!114 &4185971873869370229
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6794178342260812517}
+  m_GameObject: {fileID: 6221814315126884827}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4b90d1eb9374d5846ae6d029dba62ab7, type: 3}
+  m_Script: {fileID: 11500000, guid: 227322fc826bfb943a2d8b39b9fb8340, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   influence: 1
@@ -339,7 +339,7 @@ MonoBehaviour:
   linerEndPosition: 1
   linerBasePosition: 0
   stamp: {fileID: 0}
-  local: 0
+  local: 1
   scalable: 0
   stampOnHit: 0
   stampAutoHide: 0
@@ -373,21 +373,16 @@ MonoBehaviour:
   minAngle: 0
   maxAngle: 90
   hitBackside: 0
-  direction: {x: 1.1, y: 2.08}
-  pathCast: 1
-  PathPoints:
-  - {x: 0, y: 0}
-  - {x: 1.1, y: 1.5799999}
-  - {x: 2.2, y: 2.1599998}
-  - {x: 3.3000002, y: 1.7399998}
-  - {x: 4.4, y: 0.3199997}
-  - {x: 5.5, y: -2.1000004}
+  direction: {x: 1, y: 0}
+  pathCast: 0
+  PathPoints: []
   startRadius: 0
-  segments: 5
-  elapsedTime: 5
+  startTransform: {fileID: 5965266069931466106}
+  hight: 2
+  middenVector: {x: 0, y: 0, z: 0}
+  endTransform: {fileID: 0}
+  resolution: 42
   radius: 0.1
-  velocityLocal: 0
-  velocity: {x: 0, y: -1}
 --- !u!1 &7002921581114174909
 GameObject:
   m_ObjectHideFlags: 0
@@ -426,7 +421,7 @@ Transform:
   - {fileID: 5631160702107299105}
   - {fileID: 1476786037466647404}
   - {fileID: 4973969986473549173}
-  - {fileID: 7680775028182977374}
+  - {fileID: 5009774707390689449}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &-7628005892329325224
@@ -569,9 +564,6 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
   ignoreColliders: []
   ammo:
     infiniteAmmo: 1
@@ -590,11 +582,11 @@ MonoBehaviour:
   cloneIndex: 0
   usingAmmo: 1
   arrayCasting: 1
-  arrayCapacity: 6
+  arrayCapacity: 3
   onCast:
     m_PersistentCalls:
       m_Calls: []
-  raySource: {fileID: 214374388457226854}
+  raySource: {fileID: 4185971873869370229}
 --- !u!1 &7371399421173341675
 GameObject:
   m_ObjectHideFlags: 0

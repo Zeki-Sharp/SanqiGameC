@@ -87,6 +87,109 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!1 &5134239697210706283
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4529008128083189176}
+  - component: {fileID: 6312852668760667847}
+  m_Layer: 0
+  m_Name: Bezier Ray2D
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4529008128083189176
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5134239697210706283}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: -1}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 5274610125877554572}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &6312852668760667847
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5134239697210706283}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 227322fc826bfb943a2d8b39b9fb8340, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  influence: 1
+  triggerInteraction: 0
+  detectLayer:
+    serializedVersion: 2
+    m_Bits: 1
+  autoUpdate: 1
+  colorProfile: {fileID: 0}
+  gizmosUpdate: 0
+  liner: {fileID: 0}
+  linerClamped: 0
+  linerCutOnHit: 0
+  linerFixCut: 1
+  linerEndPosition: 1
+  linerBasePosition: 0
+  stamp: {fileID: 0}
+  local: 1
+  scalable: 0
+  stampOnHit: 0
+  stampAutoHide: 0
+  stampOffset: 0
+  syncStamp:
+    axis: 0
+    syncAxis: 0
+    flipAxis: 0
+  planarSensitive: 0
+  _planar: {fileID: 0}
+  planers: []
+  anyPlanar: 1
+  onCast:
+    m_PersistentCalls:
+      m_Calls: []
+  onDetect:
+    m_PersistentCalls:
+      m_Calls: []
+  onChange:
+    m_PersistentCalls:
+      m_Calls: []
+  onBeginDetect:
+    m_PersistentCalls:
+      m_Calls: []
+  onEndDetect:
+    m_PersistentCalls:
+      m_Calls: []
+  minDepth: 0.5
+  maxDepth: -0.5
+  normalFilter: 0
+  minAngle: 0
+  maxAngle: 90
+  hitBackside: 0
+  direction: {x: 1, y: 0}
+  pathCast: 0
+  PathPoints: []
+  startRadius: 0
+  startTransform: {fileID: 0}
+  hight: 7
+  middenVector: {x: 0, y: 0, z: 0}
+  endTransform: {fileID: 0}
+  resolution: 42
+  radius: 0.1
 --- !u!1 &5343205042941032988
 GameObject:
   m_ObjectHideFlags: 0
@@ -311,7 +414,7 @@ MonoBehaviour:
   triggerInteraction: 0
   detectLayer:
     serializedVersion: 2
-    m_Bits: 1
+    m_Bits: 129
   autoUpdate: 1
   colorProfile: {fileID: 0}
   gizmosUpdate: 0
@@ -342,9 +445,9 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   ignoreList: []
-  boundsSolver: 0
+  boundsSolver: 1
   boundsCenter: 0
-  collectLOS: 0
+  collectLOS: 1
   radius: 2
   local: 1
   minRadius: 0.4
@@ -352,114 +455,6 @@ MonoBehaviour:
   limited: 0
   limitCount: 3
   colliders: []
---- !u!1 &8443257923232248039
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 910592991107887720}
-  - component: {fileID: 3430179086109452584}
-  m_Layer: 0
-  m_Name: Arc Ray2D
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &910592991107887720
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8443257923232248039}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -1}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 5274610125877554572}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &3430179086109452584
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8443257923232248039}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4b90d1eb9374d5846ae6d029dba62ab7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  influence: 1
-  triggerInteraction: 0
-  detectLayer:
-    serializedVersion: 2
-    m_Bits: 1
-  autoUpdate: 1
-  colorProfile: {fileID: 0}
-  gizmosUpdate: 0
-  liner: {fileID: 0}
-  linerClamped: 0
-  linerCutOnHit: 0
-  linerFixCut: 1
-  linerEndPosition: 1
-  linerBasePosition: 0
-  stamp: {fileID: 0}
-  local: 0
-  scalable: 0
-  stampOnHit: 0
-  stampAutoHide: 0
-  stampOffset: 0
-  syncStamp:
-    axis: 0
-    syncAxis: 0
-    flipAxis: 0
-  planarSensitive: 0
-  _planar: {fileID: 0}
-  planers: []
-  anyPlanar: 1
-  onCast:
-    m_PersistentCalls:
-      m_Calls: []
-  onDetect:
-    m_PersistentCalls:
-      m_Calls: []
-  onChange:
-    m_PersistentCalls:
-      m_Calls: []
-  onBeginDetect:
-    m_PersistentCalls:
-      m_Calls: []
-  onEndDetect:
-    m_PersistentCalls:
-      m_Calls: []
-  minDepth: 0.5
-  maxDepth: -0.5
-  normalFilter: 0
-  minAngle: 0
-  maxAngle: 90
-  hitBackside: 0
-  direction: {x: 0, y: 2.44}
-  pathCast: 1
-  PathPoints:
-  - {x: 0, y: 0}
-  - {x: 0, y: 1.94}
-  - {x: 0, y: 2.88}
-  - {x: 0, y: 2.8200002}
-  - {x: 0, y: 1.7600002}
-  - {x: 0, y: -0.29999924}
-  startRadius: 0
-  segments: 5
-  elapsedTime: 5
-  radius: 0.1
-  velocityLocal: 0
-  velocity: {x: 0, y: -1}
 --- !u!1 &8732031508292489554
 GameObject:
   m_ObjectHideFlags: 0
@@ -494,8 +489,8 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 4529008128083189176}
   - {fileID: 5423732737012023960}
-  - {fileID: 910592991107887720}
   - {fileID: 6204369665086127700}
   - {fileID: 9054151160336859648}
   m_Father: {fileID: 0}
@@ -624,9 +619,6 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
   ignoreColliders: []
   ammo:
     infiniteAmmo: 1
@@ -645,8 +637,8 @@ MonoBehaviour:
   cloneIndex: 0
   usingAmmo: 1
   arrayCasting: 1
-  arrayCapacity: 6
+  arrayCapacity: 3
   onCast:
     m_PersistentCalls:
       m_Calls: []
-  raySource: {fileID: 3430179086109452584}
+  raySource: {fileID: 6312852668760667847}

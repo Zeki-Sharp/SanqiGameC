@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &3209918166778928502
+--- !u!1 &1293589349842992454
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,22 +8,22 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 3788083077800896299}
-  - component: {fileID: 4961028554079268143}
+  - component: {fileID: 1409652627146815084}
+  - component: {fileID: 1022687090493798512}
   m_Layer: 0
-  m_Name: Basic Ray2D
+  m_Name: Radial Ray2D
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &3788083077800896299
+--- !u!4 &1409652627146815084
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3209918166778928502}
+  m_GameObject: {fileID: 1293589349842992454}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
@@ -32,24 +32,24 @@ Transform:
   m_Children: []
   m_Father: {fileID: 6364035458975368154}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &4961028554079268143
+--- !u!114 &1022687090493798512
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3209918166778928502}
+  m_GameObject: {fileID: 1293589349842992454}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: babc9962a80e0ea4396119f667b6b816, type: 3}
+  m_Script: {fileID: 11500000, guid: 495b27bdb60fe3347898250da2aca119, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   influence: 1
   triggerInteraction: 0
   detectLayer:
     serializedVersion: 2
-    m_Bits: 1
-  autoUpdate: 1
+    m_Bits: 128
+  autoUpdate: 0
   colorProfile: {fileID: 0}
   gizmosUpdate: 0
   liner: {fileID: 0}
@@ -68,7 +68,7 @@ MonoBehaviour:
     axis: 0
     syncAxis: 0
     flipAxis: 0
-  planarSensitive: 0
+  planarSensitive: 1
   _planar: {fileID: 0}
   planers: []
   anyPlanar: 1
@@ -88,12 +88,15 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   minDepth: 0.5
-  maxDepth: -0.5
+  maxDepth: 1
   normalFilter: 0
   minAngle: 0
   maxAngle: 90
-  hitBackside: 0
-  direction: {x: 1, y: 0}
+  hitBackside: 1
+  direction: {x: 0.13, y: 0}
+  arcAngle: 360
+  value: 0
+  cuts: 0
 --- !u!1 &3447451743312656527
 GameObject:
   m_ObjectHideFlags: 0
@@ -106,6 +109,7 @@ GameObject:
   - component: {fileID: 3965743877062608549}
   - component: {fileID: 4032237375440005743}
   - component: {fileID: 8856315114042948262}
+  - component: {fileID: 6339817047297139863}
   - component: {fileID: 4051412511425562908}
   - component: {fileID: -4261691411315826384}
   m_Layer: 0
@@ -128,7 +132,7 @@ Transform:
   m_LocalScale: {x: 0.25754, y: 0.25754, z: 0.25754}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 3788083077800896299}
+  - {fileID: 1409652627146815084}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &3965743877062608549
@@ -243,7 +247,23 @@ MonoBehaviour:
   targetTags:
   - Enemy
   target: {fileID: 0}
-  height: 2
+--- !u!114 &6339817047297139863
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3447451743312656527}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 66da190bf5271794a8260a0bb901174b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  bulletConfig: {fileID: 0}
+  owner: {fileID: 0}
+  targetTags:
+  - Enemy
+  bullet: {fileID: 0}
 --- !u!114 &4051412511425562908
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -276,14 +296,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   influence: 1
-  triggerInteraction: 0
+  triggerInteraction: 2
   detectLayer:
     serializedVersion: 2
     m_Bits: 1
   autoUpdate: 1
   colorProfile: {fileID: 0}
   gizmosUpdate: 0
-  timeMode: 0
+  timeMode: 1
   baseIgnoreTime: 0.1
   bulletID: Tower_Path
   onCast:
@@ -300,17 +320,17 @@ MonoBehaviour:
       m_Calls: []
   moveType: 0
   callMethod: OnBullet
-  messageUpward: 0
+  messageUpward: 1
   ownerReference: {fileID: 0}
   damage: 100
   speed: 6
   lifeTime: 10
   endDelay: 0
   endFunction: 1
-  endOnCollide: 1
+  endOnCollide: 0
   caster: {fileID: 0}
   raySource: {fileID: 0}
-  collisionRay: {fileID: 4961028554079268143}
+  collisionRay: {fileID: 0}
   duration: 1
   curve:
     serializedVersion: 2

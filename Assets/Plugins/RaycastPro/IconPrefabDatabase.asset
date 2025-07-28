@@ -83,6 +83,7 @@ MonoBehaviour:
   - {fileID: 11500000, guid: b917420847b81a74da1f893dfa97f363, type: 3}
   - {fileID: 11500000, guid: e55e7396e37067e4cb404e3ec36a2d91, type: 3}
   - {fileID: 11500000, guid: 18a8ade133e2c94419d985b083753b18, type: 3}
+  - {fileID: 11500000, guid: 227322fc826bfb943a2d8b39b9fb8340, type: 3}
   detectors2D:
   - {fileID: 11500000, guid: 3814ab3e4ad22bb4daa2f00f543d7895, type: 3}
   - {fileID: 11500000, guid: 676ca8a361c69314c89f608bac886429, type: 3}
