@@ -445,15 +445,15 @@ MonoBehaviour:
   minAngle: 0
   maxAngle: 90
   hitBackside: 0
-  direction: {x: 1, y: 1.37}
+  direction: {x: 0, y: 2.44}
   pathCast: 1
   PathPoints:
   - {x: 0, y: 0}
-  - {x: 1, y: 0.87}
-  - {x: 2, y: 0.74}
-  - {x: 3, y: -0.38999987}
-  - {x: 4, y: -2.52}
-  - {x: 5, y: -5.65}
+  - {x: 0, y: 1.94}
+  - {x: 0, y: 2.88}
+  - {x: 0, y: 2.8200002}
+  - {x: 0, y: 1.7600002}
+  - {x: 0, y: -0.29999924}
   startRadius: 0
   segments: 5
   elapsedTime: 5

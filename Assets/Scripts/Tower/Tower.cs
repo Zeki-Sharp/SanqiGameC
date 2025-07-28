@@ -74,7 +74,7 @@ public class Tower : MonoBehaviour
         //     // }
         // }
         Debug.Log("Found Agent!"+ collider.transform);
-        Vector3 position =  collider.transform.position - this.transform.position;
+        Vector3 position = collider.transform.position   - this.transform.position- new  Vector3(0, 0, 2.44f);
       
         raySensor.SetDirection(position);
         SetBulletDamage();

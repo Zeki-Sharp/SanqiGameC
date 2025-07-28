@@ -64,7 +64,7 @@ public class EnemyController : MonoBehaviour
             transform.position = position;
         }
     }
-    void OnBullet(Bullet bullet) =>  damageTaker.TakeDamage(bullet.damage);
+    public void OnBullet(Bullet bullet) =>  damageTaker.TakeDamage(bullet.damage);
     private void Start()
     {
         // 初始化为移动状态
