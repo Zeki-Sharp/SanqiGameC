@@ -61,4 +61,19 @@ public static class TowerBuildUtility
         }
         return towerComponent;
     }
+    /// <summary>
+    /// 将斜45度视角下的世界坐标转换为方向向量
+    /// </summary>
+    /// <param name="position">世界坐标位置</param>
+    /// <returns>对应的方向向量</returns>
+    public static Vector2 PositionToDirection(Vector2 position)
+    {
+        // 根据示例数据反推的缩放系数（需根据实际场景调整）
+        const float scaleX = 1.22f / 6.03f;
+        const float scaleY = 2.51f / 1.93f;
+    
+        // 应用缩放转换
+        return new Vector2(position.x * scaleX, position.y * scaleY);
+    }
+
 } 

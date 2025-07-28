@@ -31,7 +31,7 @@ public class DamageTaker : MonoBehaviour
             Die();
         }
     }
-    void OnBullet(Bullet bullet)
+    public void OnBullet(Bullet bullet)
     {
         TakeDamage(bullet.damage);
     }

@@ -1,3 +1,4 @@
+using RaycastPro.Bullets;
 using UnityEngine;
 
 /// <summary>
@@ -32,6 +33,11 @@ public class EnemyController : MonoBehaviour
     public float MaxHealth => data != null ? data.MaxHealth : 100f;
     public IAttackBehavior AttackBehavior => data != null ? data.AttackBehavior : null;
     
+    // public void OnBullet(Bullet bullet)
+    // {
+    //     // TakeDamage(bullet.damage);
+    // }
+
     private void Awake()
     {
         damageTaker = GetComponent<DamageTaker>();
@@ -58,7 +64,7 @@ public class EnemyController : MonoBehaviour
             transform.position = position;
         }
     }
-    
+    void OnBullet(Bullet bullet) =>  damageTaker.TakeDamage(bullet.damage);
     private void Start()
     {
         // 初始化为移动状态

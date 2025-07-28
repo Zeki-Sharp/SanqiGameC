@@ -75,6 +75,7 @@ public class Tower : MonoBehaviour
         // }
         Debug.Log("Found Agent!"+ collider.transform);
         Vector3 position =  collider.transform.position - this.transform.position;
+      
         raySensor.SetDirection(position);
         SetBulletDamage();
         
@@ -336,17 +337,18 @@ SetBulletDamage();
         if (isShowAreaTower) return;
         
         if (towerData == null) return;
-        // float attackSpeed = towerData.GetAttackSpeed(level) > 0 ? towerData.GetAttackSpeed(level) : 1f;
-        // if (Time.time - lastAttackTime >= 1f / attackSpeed)
-        // {
-        //     rangeDetector.Radius =  towerData.GetAttackRange(level);
-        //     GameObject target = FindNearestEnemyInRange();
-        //     // if (target != null)
-        //     // {
-        //     //     FireAt(target);
-        //     //     lastAttackTime = Time.time;
-        //     // }
-        // }
+        float attackSpeed = towerData.GetAttackSpeed(level) > 0 ? towerData.GetAttackSpeed(level) : 1f;
+        if (Time.time - lastAttackTime >= 1f / attackSpeed)
+        {
+            rangeDetector.Cast();
+            // rangeDetector.Radius =  towerData.GetAttackRange(level);
+            // GameObject target = FindNearestEnemyInRange();
+            // if (target != null)
+            // {
+            //     FireAt(target);
+            //     lastAttackTime = Time.time;
+            // }
+        }
     }
 
     //塔更新

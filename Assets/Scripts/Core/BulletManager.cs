@@ -17,7 +17,7 @@ public class BulletManager : MonoBehaviour
     // 性能统计
     private Dictionary<string, int> poolUsageStats = new Dictionary<string, int>();
 
-    private GameObject poolManager;
+    [SerializeField]private GameObject poolManager;
 
     public GameObject GetPoolManager()
     {
