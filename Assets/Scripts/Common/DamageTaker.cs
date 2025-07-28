@@ -1,3 +1,4 @@
+using RaycastPro.Bullets;
 using UnityEngine;
 
 /// <summary>
@@ -29,6 +30,10 @@ public class DamageTaker : MonoBehaviour
             currentHealth = 0;
             Die();
         }
+    }
+    void OnBullet(Bullet bullet)
+    {
+        TakeDamage(bullet.damage);
     }
 
     /// <summary>

@@ -16,7 +16,13 @@ public class BulletManager : MonoBehaviour
     
     // 性能统计
     private Dictionary<string, int> poolUsageStats = new Dictionary<string, int>();
-    
+
+    private GameObject poolManager;
+
+    public GameObject GetPoolManager()
+    {
+        return poolManager;
+    }
     private void Awake()
     {
         // 注册到GameManager

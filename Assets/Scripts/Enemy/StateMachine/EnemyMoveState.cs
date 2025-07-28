@@ -6,7 +6,6 @@ using UnityEngine;
 public class EnemyMoveState : EnemyState
 {
     private GameObject targetTower;
-    private float moveSpeed = 2f;
     
     public EnemyMoveState(EnemyController controller) : base(controller) { }
     
@@ -20,13 +19,29 @@ public class EnemyMoveState : EnemyState
     {
         if (targetTower == null)
         {
+            Debug.LogWarning($"{controller.name} 目标塔为null，尝试重新查找");
             FindTargetTower();
-            return;
+            // 如果仍然找不到目标塔，则提前返回
+            if (targetTower == null)
+            {
+                Debug.LogError($"{controller.name} 无法找到任何目标塔");
+                return;
+            }
         }
         
         // 朝向目标塔移动
         Vector3 direction = (targetTower.transform.position - controller.transform.position).normalized;
-        controller.transform.position += direction * moveSpeed * Time.deltaTime;
+        float speed = controller.MoveSpeed;
+        Debug.Log($"{controller.name} 移动方向: {direction}, 速度: {speed}");
+        controller.transform.position = Vector3.MoveTowards(controller.transform.position, targetTower.transform.position, speed * Time.deltaTime);
+        
+        // 确保Z轴位置正确
+        Vector3 position = controller.transform.position;
+        if (position.z != 0f)
+        {
+            position.z = 0f;
+            controller.transform.position = position;
+        }
         
         // 更新朝向
         if (direction != Vector3.zero)
@@ -63,36 +78,32 @@ public class EnemyMoveState : EnemyState
         }
         
         // 如果没有中心塔或中心塔是ShowArea，寻找最近的普通塔
-        string[] tags = { "Tower" };
-        foreach (string tag in tags)
+        GameObject[] towers = GameObject.FindGameObjectsWithTag("Tower");
+        if (towers.Length > 0)
         {
-            GameObject[] towers = GameObject.FindGameObjectsWithTag(tag);
-            if (towers.Length > 0)
+            // 找到最近的非ShowArea塔
+            float closestDistance = float.MaxValue;
+            GameObject closestTower = null;
+            
+            foreach (GameObject tower in towers)
             {
-                // 找到最近的非ShowArea塔
-                float closestDistance = float.MaxValue;
-                GameObject closestTower = null;
-                
-                foreach (GameObject tower in towers)
+                // 过滤掉ShowArea塔
+                if (IsShowAreaTower(tower))
+                    continue;
+                    
+                float distance = Vector3.Distance(controller.transform.position, tower.transform.position);
+                if (distance < closestDistance)
                 {
-                    // 过滤掉ShowArea塔
-                    if (IsShowAreaTower(tower))
-                        continue;
-                        
-                    float distance = Vector3.Distance(controller.transform.position, tower.transform.position);
-                    if (distance < closestDistance)
-                    {
-                        closestDistance = distance;
-                        closestTower = tower;
-                    }
+                    closestDistance = distance;
+                    closestTower = tower;
                 }
-                
-                if (closestTower != null)
-                {
-                    targetTower = closestTower;
-                    Debug.Log($"{controller.name} 找到目标塔: {targetTower.name}");
-                    return;
-                }
+            }
+            
+            if (closestTower != null)
+            {
+                targetTower = closestTower;
+                Debug.Log($"{controller.name} 找到目标塔: {targetTower.name}");
+                return;
             }
         }
         
@@ -110,7 +121,8 @@ public class EnemyMoveState : EnemyState
         Transform parent = tower.transform.parent;
         while (parent != null)
         {
-            if (parent.name.ToLower().Contains("PrefabShowArea"))
+            // 使用OrdinalIgnoreCase比较避免ToLower()的性能开销
+            if (parent.name.IndexOf("PrefabShowArea", System.StringComparison.OrdinalIgnoreCase) >= 0)
             {
                 return true;
             }
@@ -119,4 +131,4 @@ public class EnemyMoveState : EnemyState
         
         return false;
     }
-} 
+}

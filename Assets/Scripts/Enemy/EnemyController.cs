@@ -11,10 +11,11 @@ public class EnemyController : MonoBehaviour
     private DamageTaker damageTaker;
 
     // 私有变量
-    private EnemyState currentState;
+    [SerializeField]private EnemyState currentState;
     private float currentHealth;
     private SpriteRenderer spriteRenderer;
     private float moveSpeedOverride = -1f;
+    private float difDistance;
     
     // 公共属性
     public float AttackRange => data != null ? data.AttackRange : 1.5f;
@@ -34,6 +35,7 @@ public class EnemyController : MonoBehaviour
     private void Awake()
     {
         damageTaker = GetComponent<DamageTaker>();
+        difDistance = Random.Range(0.1f, 1f);
         if (data != null && damageTaker != null)
         {
             damageTaker.maxHealth = data.MaxHealth;
@@ -105,7 +107,7 @@ public class EnemyController : MonoBehaviour
         if (centerTower != null && !IsShowAreaTower(centerTower))
         {
             float distance = Vector3.Distance(transform.position, centerTower.transform.position);
-            if (distance <= AttackRange)
+            if ((distance+ difDistance ) <= AttackRange)
             {
                 Debug.Log($"{name} 在攻击范围内找到中心塔，距离: {distance:F2}");
                 return true;
@@ -126,7 +128,7 @@ public class EnemyController : MonoBehaviour
             }
                 
             float distance = Vector3.Distance(transform.position, tower.transform.position);
-            if (distance <= AttackRange)
+            if ((distance+ difDistance ) <= AttackRange )
             {
                 Debug.Log($"{name} 在攻击范围内找到塔 {tower.name}，距离: {distance:F2}");
                 return true;
