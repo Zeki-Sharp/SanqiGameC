@@ -19,14 +19,15 @@ public class Tower : MonoBehaviour
     [SerializeField] private int level;
     [SerializeField] private Vector3Int cellPosition; // 塔在Tilemap中的cell坐标位置
 
-    [Header("绑定")] [SerializeField] private SpriteRenderer spriteRenderer;
+    [Header("绑定")] 
+    [SerializeField] private SpriteRenderer spriteRenderer;
     [SerializeField] private TextMeshPro text;
     [SerializeField] private Block block;
 
     [Header("攻击相关")] 
     // 移除旧系统，只使用新的子弹配置系统
 
-    [SerializeField] private LayerMask TowerLayerMask = 1 << 8;
+    [SerializeField] private LayerMask towerLayerMask = LayerMask.GetMask("Tower");
     
     [Header("展示区域设置")]
     [SerializeField] private bool isShowAreaTower = false; // 是否为展示区域的塔
@@ -37,6 +38,12 @@ public class Tower : MonoBehaviour
     public Vector3Int CellPosition => cellPosition;
 
     private DamageTaker damageTaker;
+    
+    // 缓存常用组件
+    private SpriteRenderer cachedSpriteRenderer;
+    private TextMeshPro cachedText;
+    private Block cachedBlock;
+    private BulletManager cachedBulletManager;
 
     public float AttackRange => towerData != null ? towerData.GetAttackRange(level) : 3f;
     public float AttackInterval => towerData != null ? towerData.GetAttackInterval(level) : 1f;
@@ -46,35 +53,31 @@ public class Tower : MonoBehaviour
     public bool IsShowAreaTower => isShowAreaTower;
 
     [SerializeField] private RangeDetector2D rangeDetector;
-    [SerializeField]  public BezierRay2D raySensor;
-    [SerializeField]  private BasicCaster2D bulletCaster;
+    [SerializeField] public BezierRay2D raySensor;
+    [SerializeField] private BasicCaster2D bulletCaster;
     
     private float cachedAttackSpeed = 1f;
     private float cachedAttackRange = 3f;
-    
-    public List<GameObject> agentData; 
     private void Start() 
     { 
         rangeDetector.onDetectCollider.AddListener(OnDetectCollider); 
     } 
+    
     protected virtual void OnDetectCollider(Collider2D collider) 
     {
         // 展示区域的塔不进行游戏逻辑
         if (isShowAreaTower) return;
         if (towerData == null || bulletCaster == null) return;
         if (IsCenterTowerDestroyed()) return;
+        
         float attackSpeed = towerData?.GetAttackSpeed(level) ?? 1f;
         attackSpeed = attackSpeed > 0 ? attackSpeed : 1f;
         bulletCaster.ammo.reloadTime = attackSpeed;
         rangeDetector.Radius = towerData?.GetAttackRange(level) ?? 3f;
         
-        Debug.Log("Found Agent!" + collider.transform);
         raySensor.SetStartEnd(this.transform, collider.transform);
         SetBulletDamage();
-        
         bulletCaster.Cast(0);
-        
-        Debug.Log("射出了子弹");
     }
     public void SetBulletDamage()
     {
@@ -129,6 +132,10 @@ public class Tower : MonoBehaviour
         rangeDetector = GetComponentInChildren<RangeDetector2D>();
         raySensor = GetComponentInChildren<BezierRay2D>();
         bulletCaster = GetComponent<BasicCaster2D>();
+        cachedSpriteRenderer = GetComponentInChildren<SpriteRenderer>();
+        cachedText = GetComponentInChildren<TextMeshPro>();
+        cachedBlock = GetComponentInParent<Block>();
+        cachedBulletManager = GameManager.Instance?.GetSystem<BulletManager>();
         
         if (damageTaker == null)
             Debug.LogError($"DamageTaker component missing on {name}");
@@ -154,6 +161,12 @@ public class Tower : MonoBehaviour
         }
         
         SetInitialAttackRange();
+    }
+    
+    private void OnDestroy()
+    {
+        if (rangeDetector != null)
+            rangeDetector.onDetectCollider.RemoveListener(OnDetectCollider);
     }
     
     private void SetInitialAttackRange()
@@ -242,7 +255,7 @@ public class Tower : MonoBehaviour
         // 优化的 Sprite 赋值
         if (data.TowerSprite != null)
         {
-            spriteRenderer.sprite = data.TowerSprite;
+            spriteRenderer.sprite = data.GetTowerSprite(level);
         }
         else
         {
@@ -255,7 +268,7 @@ public class Tower : MonoBehaviour
         // 设置是否为展示区域塔
         SetAsShowAreaTower(isShowArea);
 
-        if (hasCheck)
+        if (!isShowArea)
         {
             // 检查 GameMap 是否有效
             var gameMap = GameManager.Instance?.GetSystem<GameMap>();
@@ -329,10 +342,12 @@ public class Tower : MonoBehaviour
     }
 
 }
+    public LayerMask TowerLayerMask { get; set; }
 
 
     private void DeleteOldTower(GameObject oldTower)
     {
+        Debug.Log("删除");
         if (oldTower == null) return;
 
         Tower tower = oldTower.GetComponent<Tower>();
@@ -382,20 +397,20 @@ public class Tower : MonoBehaviour
 
     private void Update()
     {
-        // 展示区域的塔不进行游戏逻辑
         if (isShowAreaTower || towerData == null || rangeDetector == null)
             return;
         
         if (cachedAttackSpeed <= 0f)
-            cachedAttackSpeed = towerData.GetAttackSpeed(level);
+            cachedAttackSpeed = towerData.GetAttackSpeed(level) > 0 ? towerData.GetAttackSpeed(level) : 1f;
         
-        if (Time.time - lastAttackTime >= 1f / cachedAttackSpeed)
+        if (Time.unscaledTime - lastAttackTime >= 1f / cachedAttackSpeed)
         {
             rangeDetector.Cast();
             if (cachedAttackRange <= 0f)
                 cachedAttackRange = towerData.GetAttackRange(level);
-            
+
             rangeDetector.Radius = cachedAttackRange;
+            lastAttackTime = Time.unscaledTime;
         }
     }
 
@@ -413,9 +428,11 @@ public class Tower : MonoBehaviour
             cachedAttackRange = towerData.GetAttackRange(level);
         }
 
-        // spriteRenderer.sprite = towerData.TowerSprite;
-        level += 1;
-        text.text = $"塔名：{towerData.TowerName} \n 等级：{level / towerData.MaxLevel}";
+        level = Mathf.Min(level + 1, towerData?.MaxLevel ?? level);
+        if (cachedText != null && towerData != null)
+        {
+            cachedText.text = $"塔名：{towerData.TowerName} \n 等级：{level / (float)towerData.MaxLevel}";
+        }
     }
 
     private GameObject FindNearestEnemyInRange()

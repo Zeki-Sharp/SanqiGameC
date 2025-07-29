@@ -113,8 +113,8 @@ TextureImporter:
         y: 369
         width: 1141
         height: 1365
-      alignment: 0
-      pivot: {x: 0, y: 0}
+      alignment: 9
+      pivot: {x: 0.5386155, y: 0.17721425}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -135,8 +135,8 @@ TextureImporter:
         y: 369
         width: 1141
         height: 1365
-      alignment: 0
-      pivot: {x: 0, y: 0}
+      alignment: 9
+      pivot: {x: 0.5418334, y: 0.19469853}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -157,8 +157,8 @@ TextureImporter:
         y: 369
         width: 1141
         height: 1365
-      alignment: 0
-      pivot: {x: 0, y: 0}
+      alignment: 9
+      pivot: {x: 0.5353976, y: 0.20545797}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -175,7 +175,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: bfffdd09dd8748e41b720023c9b7d41f
     internalID: 0
     vertices: []
     indices: 
@@ -184,7 +184,10 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      "\u5355\u4F53\u653B\u51FB_0": -7673397646812646561
+      "\u5355\u4F53\u653B\u51FB_1": 8809870166033487863
+      "\u5355\u4F53\u653B\u51FB_2": -1453434289248300501
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

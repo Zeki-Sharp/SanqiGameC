@@ -14,6 +14,7 @@ public struct TowerLevel
     // [SerializeField] private float physicDefense;
     // [SerializeField] private float magicDefense;
 
+    public Sprite TowerSprite => towerSprite;
     public float Health => health;
     public float AttackRange => attackRange;
     public float AttackInterval => attackInterval; 
@@ -45,6 +46,15 @@ public class TowerData : ScriptableObject
     
     public int MaxLevel => levels != null ? levels.Length : 0;
 
+    public Sprite GetTowerSprite(int level)
+    {
+        if (levels == null || level < 0 || level >= levels.Length)
+        {
+            Debug.LogError($"无效等级 {level}，等级范围应为 0-{levels?.Length - 1 ?? 0}");
+            return null;
+        }
+        return levels[level].TowerSprite;
+    }
     public float GetHealth(int level)
     {
         if (levels == null || level < 0 || level >= levels.Length)

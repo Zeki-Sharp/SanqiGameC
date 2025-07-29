@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   id: 100
   towerName: TestTower
-  towerSprite: {fileID: 4293587053738703087, guid: b4bf0700b3c507e48b3075acc47fefb1, type: 3}
+  towerSprite: {fileID: -7673397646812646561, guid: 71b0af98a7e318a49bf35499b9276410, type: 3}
   levels:
   - towerSprite: {fileID: -7673397646812646561, guid: 71b0af98a7e318a49bf35499b9276410, type: 3}
     health: 100

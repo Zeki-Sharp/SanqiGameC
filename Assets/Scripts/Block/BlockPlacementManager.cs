@@ -82,7 +82,7 @@ public class BlockPlacementManager : MonoBehaviour
 
     private void OnBuildPreviewRequested(BuildPreviewEventArgs args)
     {
-        PlaceTowerGroupAtPositions(args.Positions, args.Config, args.TowerDatas, args.Parent, args.Tilemap);
+        PlaceTowerGroupAtPositions(args.Positions, args.Config, args.TowerDatas, args.Parent, args.Tilemap,true);
     }
 
     /// <summary>
