@@ -62,7 +62,7 @@ public class Tower : MonoBehaviour
         // 展示区域的塔不进行游戏逻辑
         if (isShowAreaTower) return;
         if (towerData == null || bulletCaster == null) return;
-        
+        if (IsCenterTowerDestroyed()) return;
         float attackSpeed = towerData?.GetAttackSpeed(level) ?? 1f;
         attackSpeed = attackSpeed > 0 ? attackSpeed : 1f;
         bulletCaster.ammo.reloadTime = attackSpeed;
@@ -95,6 +95,29 @@ public class Tower : MonoBehaviour
                
             
         }
+    }
+    public bool IsCenterTowerDestroyed()
+    {
+        GameObject centerTower = GameObject.FindGameObjectWithTag("CenterTower");
+        if (centerTower == null)
+        {
+            return true; // 中心塔不存在
+        }
+        
+        // 检查中心塔是否被摧毁（通过DamageTaker组件）
+        var damageTaker = centerTower.GetComponent<DamageTaker>();
+        if (damageTaker != null && damageTaker.currentHealth <= 0)
+        {
+            return true; // 中心塔生命值为0
+        }
+        
+        // 检查中心塔是否被禁用
+        if (!centerTower.activeInHierarchy)
+        {
+            return true; // 中心塔被禁用
+        }
+        
+        return false; // 中心塔仍然存在且健康
     }
     public void OnLostAgent(GameObject data) 
     { 

@@ -4,6 +4,7 @@ using UnityEngine;
 [Serializable]
 public struct TowerLevel
 {
+    [SerializeField] private Sprite towerSprite;
     [SerializeField] private float health;
     [SerializeField] private float physicAttack;
     [SerializeField] private float attackRange;
