@@ -514,14 +514,13 @@ MonoBehaviour:
   spriteRenderer: {fileID: 7333680532966165153}
   text: {fileID: 1863550285456472549}
   block: {fileID: 0}
-  TowerLayerMask:
+  towerLayerMask:
     serializedVersion: 2
     m_Bits: 64
   isShowAreaTower: 0
   rangeDetector: {fileID: 0}
   raySensor: {fileID: 0}
   bulletCaster: {fileID: 0}
-  agentData: []
 --- !u!70 &4211962382010843008
 CapsuleCollider2D:
   m_ObjectHideFlags: 0

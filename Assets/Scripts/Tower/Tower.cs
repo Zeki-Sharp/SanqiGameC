@@ -18,7 +18,6 @@ public class Tower : MonoBehaviour
     [Header("状态")] [SerializeField] private float currentHealth;
     [SerializeField] private int level;
     [SerializeField] private Vector3Int cellPosition; // 塔在Tilemap中的cell坐标位置
-
     [Header("绑定")] 
     [SerializeField] private SpriteRenderer spriteRenderer;
     [SerializeField] private TextMeshPro text;
@@ -27,7 +26,7 @@ public class Tower : MonoBehaviour
     [Header("攻击相关")] 
     // 移除旧系统，只使用新的子弹配置系统
 
-    [SerializeField] private LayerMask towerLayerMask = LayerMask.GetMask("Tower");
+    [SerializeField] private LayerMask towerLayerMask;
     
     [Header("展示区域设置")]
     [SerializeField] private bool isShowAreaTower = false; // 是否为展示区域的塔
@@ -61,6 +60,7 @@ public class Tower : MonoBehaviour
     private void Start() 
     { 
         rangeDetector.onDetectCollider.AddListener(OnDetectCollider); 
+        towerLayerMask = LayerMask.GetMask("Tower");
     } 
     
     protected virtual void OnDetectCollider(Collider2D collider) 
@@ -217,131 +217,221 @@ public class Tower : MonoBehaviour
     ShouldDelete
 }
 
-    public void Initialize(TowerData data, Vector3Int pos, bool hasCheck = false, bool isShowArea = false)
+public void Initialize(TowerData data, Vector3Int pos, bool hasCheck = false, bool isShowArea = false)
 {
     // try
     // {
-        // 检查关键组件是否存在
+    // 检查关键组件是否存在
+    if (spriteRenderer == null)
+    {
+        spriteRenderer = GetComponentInChildren<SpriteRenderer>();
         if (spriteRenderer == null)
         {
-            spriteRenderer = GetComponentInChildren<SpriteRenderer>();
-            if (spriteRenderer == null)
-            {
-                Debug.LogError("SpriteRenderer 未找到，初始化失败");
-                return;
-            }
-        }
-
-        if (text == null)
-        {
-            text = GetComponentInChildren<TextMeshPro>();
-            if (text == null)
-            {
-                Debug.LogError("TextMeshPro 未找到，初始化失败");
-                return;
-            }
-        }
-
-        if (data == null)
-        {
-            Debug.LogError("传入的 TowerData 为 null，初始化失败");
+            Debug.LogError("SpriteRenderer 未找到，初始化失败");
             return;
         }
-
-        towerData = data;
-        cellPosition = pos;
-        currentHealth = data.GetHealth(level);
-
-        // 优化的 Sprite 赋值
-        if (data.TowerSprite != null)
-        {
-            spriteRenderer.sprite = data.GetTowerSprite(level);
-        }
-        else
-        {
-            Debug.LogWarning($"塔 {data.TowerName} 的 Sprite 为空");
-        }
-        block = GetComponentInParent<Block>();
-        // 优化的字符串拼接
-        text.text = $"塔名：{data.TowerName} \n 等级：{level / (float)data.MaxLevel}";
-        
-        // 设置是否为展示区域塔
-        SetAsShowAreaTower(isShowArea);
-
-        if (!isShowArea)
-        {
-            // 检查 GameMap 是否有效
-            var gameMap = GameManager.Instance?.GetSystem<GameMap>();
-            if (gameMap == null)
-            {
-                Debug.LogError("GameMap 未初始化，跳过碰撞检测");
-                return;
-            }
-            bulletCaster.poolManager = GameManager.Instance.GetSystem<BulletManager>().GetPoolManager().transform;
-            // 优化的碰撞检测
-            Vector3 cellCenter = CoordinateUtility.CellToWorldPosition(gameMap.GetTilemap(), new Vector3Int(pos.x, pos.y, 0));
-            Collider2D[] towers = Physics2D.OverlapPointAll(cellCenter, TowerLayerMask);
-
-            TowerCheckResult checkResult = TowerCheckResult.None;
-            GameObject firstTower = null;
-
-            if (towers.Length > 0)
-            {
-                foreach (var tower in towers)
-                {
-                    if (tower == null ||/*|| !tower.CompareTag("Tower") || !this.CompareTag("PreviewTower") ||*/ tower.gameObject == this.gameObject) continue;
-
-                    Tower towerComponent = tower.GetComponent<Tower>();
-                    if (towerComponent == null || towerComponent.block == null) continue;
- 
-                    if ((towerComponent.cellPosition + towerComponent.block.CellPosition) == (this.cellPosition+block.CellPosition))
-                    {
-                        if (towerComponent.TowerData != null  &&
-                            towerComponent.TowerData.TowerName == data.TowerName)
-                        {
-                            DeleteOldTower(tower.gameObject);
-                            checkResult = TowerCheckResult.ShouldUpdate;
-                            firstTower = tower.gameObject;
-                            break;
-                        }
-                        else
-                        {
-                            DeleteOldTower(tower.gameObject);
-                            checkResult = TowerCheckResult.ShouldDelete;
-                            firstTower = tower.gameObject;
-                            break;
-                        }
-                    }
-                }
-            }
-
-            switch (checkResult)
-            {
-                case TowerCheckResult.ShouldUpdate:
-                    UpdateTower();
-                    break;
-                case TowerCheckResult.ShouldDelete:
-                    // DeleteOldTower(firstTower); // 已在 DeleteOldTower 中处理
-                    break;
-            }
-            this.tag = "Tower";
-        }
-    // }
-    // catch (System.Exception ex)
-    // {
-    //     Debug.LogError($"[Tower] 塔 {data?.TowerName ?? "Unknown"} 初始化时发生异常: {ex.Message}\n{ex.StackTrace}");
-    // }
-    if (towerData != null && damageTaker != null)
-    {
-        damageTaker.maxHealth = towerData.GetHealth(level);
-        damageTaker.currentHealth = towerData.GetHealth(level);
-        float attackSpeed = towerData.GetAttackSpeed(level) > 0 ? towerData.GetAttackSpeed(level) : 1f;
-
-        bulletCaster.ammo.reloadTime = attackSpeed;
-        rangeDetector.Radius =  towerData.GetAttackRange(level);
     }
 
+    if (text == null)
+    {
+        text = GetComponentInChildren<TextMeshPro>();
+        if (text == null)
+        {
+            Debug.LogError("TextMeshPro 未找到，初始化失败");
+            return;
+        }
+    }
+
+    if (data == null)
+    {
+        Debug.LogError("传入的 TowerData 为 null，初始化失败");
+        return;
+    }
+
+    towerData = data;
+    cellPosition = pos;
+    currentHealth = data.GetHealth(level);
+
+    // 优化的 Sprite 赋值
+    if (data.TowerSprite != null)
+    {
+        spriteRenderer.sprite = data.GetTowerSprite(level);
+    }
+    else
+    {
+        Debug.LogWarning($"塔 {data.TowerName} 的 Sprite 为空");
+    }
+    block = GetComponentInParent<Block>();
+    // 优化的字符串拼接
+    text.text = $"塔名：{data.TowerName} \n 等级：{level}/{data.MaxLevel}";
+
+    // 设置是否为展示区域塔
+    SetAsShowAreaTower(isShowArea);
+
+ 
+    if (hasCheck)
+    {  
+       
+        // Vector3Int towerCellPos = new Vector3Int(cellPosition.x + block.CellPosition.x, cellPosition.y +block.CellPosition.y, 0);
+
+        var towerCheckResult = DetectTowerAction(cellPosition,towerData); 
+        this.tag = "Tower";
+        //     // 检查 GameMap 是否有效
+        //   
+        //     if (gameMap == null)
+        //     {
+        //         Debug.LogError("GameMap 未初始化，跳过碰撞检测");
+        //         return;
+        //     }
+        //     bulletCaster.poolManager = GameManager.Instance.GetSystem<BulletManager>().GetPoolManager().transform;
+        //     var position = new Vector3Int(pos.x, pos.y, 0) + new Vector3Int(block.CellPosition.x, block.CellPosition.y, 0);
+        //     // 优化的碰撞检测
+        //     Vector3 cellCenter = CoordinateUtility.CellToWorldPosition(gameMap.GetTilemap(), position);
+        //     Collider2D[] towers = Physics2D.OverlapPointAll(cellCenter, TowerLayerMask);
+        //
+        //     TowerCheckResult checkResult = TowerCheckResult.None;
+        //     GameObject firstTower = null;
+        //
+        //     if (towers.Length > 0)
+        //     {
+        //         foreach (var tower in towers)
+        //         {
+        //             if (tower == null ||/*|| !tower.CompareTag("Tower") || !this.CompareTag("PreviewTower") ||*/ tower.gameObject == this.gameObject) continue;
+        //
+        //             Tower towerComponent = tower.GetComponent<Tower>();
+        //             if (towerComponent == null || towerComponent.block == null) continue;
+        //
+        //             if ((towerComponent.cellPosition + towerComponent.block.CellPosition) == (this.cellPosition+block.CellPosition))
+        //             {
+        //                 if (towerComponent.TowerData != null  &&
+        //                     towerComponent.TowerData.TowerName == data.TowerName)
+        //                 {
+        //                     DeleteOldTower(tower.gameObject);
+        //                     checkResult = TowerCheckResult.ShouldUpdate;
+        //                     firstTower = tower.gameObject;
+        //                     break;
+        //                 }
+        //                 else
+        //                 {
+        //                     DeleteOldTower(tower.gameObject);
+        //                     checkResult = TowerCheckResult.ShouldDelete;
+        //                     firstTower = tower.gameObject;
+        //                     break;
+        //                 }
+        //             }
+        //         }
+        //     }
+        //
+        switch (towerCheckResult)
+        {
+            case TowerCheckResult.ShouldUpdate:
+                UpdateTower();
+                break;
+            case TowerCheckResult.ShouldDelete:
+                // DeleteOldTower(firstTower); 
+                break;
+        }
+    }
+    
+    
+     
+        if (towerData != null && damageTaker != null)
+        {
+            damageTaker.maxHealth = towerData.GetHealth(level);
+            damageTaker.currentHealth = towerData.GetHealth(level);
+            float attackSpeed = towerData.GetAttackSpeed(level) > 0 ? towerData.GetAttackSpeed(level) : 1f;
+
+            bulletCaster.ammo.reloadTime = attackSpeed;
+            rangeDetector.Radius = towerData.GetAttackRange(level);
+        }
+
+   
 }
+/// <summary>
+    /// 检测单个位置的塔操作类型
+    /// </summary>
+    private TowerCheckResult DetectTowerAction(Vector3Int cellPos, TowerData newTowerData)
+    {
+        var gameMap = GameManager.Instance?.GetSystem<GameMap>();
+        if (gameMap == null || newTowerData == null) return TowerCheckResult.None;
+        
+        // Vector3 worldPos = CoordinateUtility.CellToWorldPosition(gameMap.GetTilemap(), cellPos);
+        //
+        // 使用更精确的点检测，避免检测到附近位置的塔
+        Collider2D[] allColliders = Physics2D.OverlapPointAll(this.transform.position);
+        
+        Debug.Log($"=== 检测位置 {cellPos} (世界坐标: {this.transform.position}) ===");
+        Debug.Log($"找到 {allColliders.Length} 个碰撞体");
+        
+        // 遍历所有碰撞体，详细分析
+        foreach (var collider in allColliders)
+        {
+            if (collider == null)
+            {
+                Debug.Log("跳过空碰撞体");
+                continue;
+            }
+            
+            // Debug.Log($"碰撞体: {collider.name}, Tag: {collider.tag}, Layer: {collider.gameObject.layer}");
+            
+            // 跳过预览塔
+            if (collider.CompareTag("PreviewTower"))
+            {
+                Debug.Log($"跳过预览塔: {collider.name}");
+                continue;
+            }
+            
+            // 检查是否在正确的层级
+            if (((1 << collider.gameObject.layer) & towerLayerMask) == 0)
+            {
+                Debug.Log($"跳过非塔层级物体: {collider.name} (层级: {collider.gameObject.layer})");
+                continue;
+            }
+            
+            // 检查是否有Tower组件
+            Tower existingTower = collider.GetComponent<Tower>();
+            if (existingTower == null)
+            {
+                Debug.Log($"跳过无Tower组件的物体: {collider.name}");
+                continue;
+            }
+            
+            if (existingTower.TowerData == null)
+            {
+                Debug.Log($"跳过无TowerData的塔: {collider.name}");
+                continue;
+            }
+            
+            // 验证塔的位置是否真的在这个cell
+            Vector3Int towerCellPos = existingTower.CellPosition;
+            if (towerCellPos != cellPos)
+            {
+                Debug.Log($"跳过位置不匹配的塔: {collider.name} (塔位置: {towerCellPos}, 检测位置: {cellPos})");
+                continue;
+            }
+            
+            Debug.Log($"找到匹配的塔: {collider.name}, 类型: {existingTower.TowerData.TowerName}, 位置: {towerCellPos}");
+            Debug.Log($"比较塔类型: 现有={existingTower.TowerData.TowerName}, 新塔={newTowerData.TowerName}");
+      
+            // 比较塔类型
+            if (existingTower.TowerData.TowerName == newTowerData.TowerName)
+            {    
+                DeleteOldTower(existingTower.gameObject);
+                Debug.Log($"检测到升级: {newTowerData.TowerName}");
+                return TowerCheckResult.ShouldUpdate;
+            }
+            else
+            {
+                DeleteOldTower(existingTower.gameObject);
+                Debug.Log($"检测到替换: {existingTower.TowerData.TowerName} -> {newTowerData.TowerName}");
+                return TowerCheckResult.ShouldDelete;
+            }
+        }
+        
+        Debug.Log($"位置 {cellPos} 无操作（空地新建）");
+        return TowerCheckResult.None;
+    }
+   
     public LayerMask TowerLayerMask { get; set; }
 
 
@@ -372,7 +462,7 @@ public class Tower : MonoBehaviour
         }
 
         try
-        {
+        { 
             block.RemoveTower(tower.CellPosition);
         }
         catch (System.Exception ex)
@@ -417,6 +507,11 @@ public class Tower : MonoBehaviour
     //塔更新
     public void UpdateTower()
     {
+        level = Mathf.Min(level + 1, towerData?.MaxLevel ?? level);
+        if (cachedText != null && towerData != null)
+        {
+            cachedText.text = $"塔名：{towerData.TowerName} \n 等级：{level}/{towerData.MaxLevel}";
+        }
         if (towerData != null && damageTaker != null)
         {
             damageTaker.maxHealth = towerData.GetHealth(level);
@@ -426,12 +521,6 @@ public class Tower : MonoBehaviour
             cachedAttackSpeed = cachedAttackSpeed > 0 ? cachedAttackSpeed : 1f;
             
             cachedAttackRange = towerData.GetAttackRange(level);
-        }
-
-        level = Mathf.Min(level + 1, towerData?.MaxLevel ?? level);
-        if (cachedText != null && towerData != null)
-        {
-            cachedText.text = $"塔名：{towerData.TowerName} \n 等级：{level / (float)towerData.MaxLevel}";
         }
     }
 

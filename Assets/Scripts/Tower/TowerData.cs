@@ -44,7 +44,7 @@ public class TowerData : ScriptableObject
     public string TowerName => towerName;
     public Sprite TowerSprite => towerSprite;
     
-    public int MaxLevel => levels != null ? levels.Length : 0;
+    public int MaxLevel => levels != null ? levels.Length-1 : 0;
 
     public Sprite GetTowerSprite(int level)
     {

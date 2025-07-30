@@ -459,14 +459,13 @@ MonoBehaviour:
   spriteRenderer: {fileID: 0}
   text: {fileID: 0}
   block: {fileID: 0}
-  TowerLayerMask:
+  towerLayerMask:
     serializedVersion: 2
     m_Bits: 0
   isShowAreaTower: 0
   rangeDetector: {fileID: 0}
   raySensor: {fileID: 0}
   bulletCaster: {fileID: 0}
-  agentData: []
 --- !u!70 &2274610060129136706
 CapsuleCollider2D:
   m_ObjectHideFlags: 0

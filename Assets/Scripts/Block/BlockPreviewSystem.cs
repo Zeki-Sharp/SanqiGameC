@@ -101,7 +101,7 @@ public class BlockPreviewSystem : MonoBehaviour
                 continue;
             }
             
-            Debug.Log($"处理预览塔 {i}: 位置={cellPos}, 塔类型={currentTowerDatas[i]?.TowerName ?? "null"}");
+            // Debug.Log($"处理预览塔 {i}: 位置={cellPos}, 塔类型={currentTowerDatas[i]?.TowerName ?? "null"}");
             
             // 检测该位置的操作类型
             TowerActionType actionType = DetectTowerAction(cellPos, currentTowerDatas[i]);
@@ -138,7 +138,7 @@ public class BlockPreviewSystem : MonoBehaviour
                 continue;
             }
             
-            Debug.Log($"碰撞体: {collider.name}, Tag: {collider.tag}, Layer: {collider.gameObject.layer}");
+            // Debug.Log($"碰撞体: {collider.name}, Tag: {collider.tag}, Layer: {collider.gameObject.layer}");
             
             // 跳过预览塔
             if (collider.CompareTag("PreviewTower"))
@@ -192,7 +192,7 @@ public class BlockPreviewSystem : MonoBehaviour
             }
         }
         
-        Debug.Log($"位置 {cellPos} 无操作（空地新建）");
+        // Debug.Log($"位置 {cellPos} 无操作（空地新建）");
         return TowerActionType.None;
     }
 

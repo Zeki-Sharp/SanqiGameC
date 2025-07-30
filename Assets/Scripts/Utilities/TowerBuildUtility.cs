@@ -36,6 +36,7 @@ public static class TowerBuildUtility
         towerObj.tag = isPreview ? "PreviewTower" : "Tower";
         Vector3 worldPos = tilemap != null ? tilemap.GetCellCenterWorld(cell) : new Vector3(cell.x, cell.y, 0);
         towerObj.transform.position = worldPos;
+        Block blockComponent = towerObj.GetComponent<Block>();
         Tower towerComponent = towerObj.GetComponent<Tower>();
         if (towerComponent != null)
         {

@@ -137,7 +137,7 @@ public class Block : MonoBehaviour
             Color.white,
             hasCheck
         );
-        towers[localCoord] = towerComponent;
+        towers[towerCellPos] = towerComponent;
         return towerComponent;
     }
 
