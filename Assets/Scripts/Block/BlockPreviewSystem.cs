@@ -139,7 +139,11 @@ public class BlockPreviewSystem : MonoBehaviour
             }
             
             // Debug.Log($"碰撞体: {collider.name}, Tag: {collider.tag}, Layer: {collider.gameObject.layer}");
-            
+            if (this.gameObject == collider.gameObject)
+            {
+                Debug.Log($"跳过自身: {collider.name}");
+                continue;
+            }
             // 跳过预览塔
             if (collider.CompareTag("PreviewTower"))
             {

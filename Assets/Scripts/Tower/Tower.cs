@@ -263,8 +263,7 @@ public void Initialize(TowerData data, Vector3Int pos, bool hasCheck = false, bo
     }
     block = GetComponentInParent<Block>();
     // 优化的字符串拼接
-    text.text = $"塔名：{data.TowerName} \n 等级：{level}/{data.MaxLevel}";
-
+    text.text = $"塔名：{towerData.TowerName} \n 等级：{level+1}/{towerData.MaxLevel}";
     // 设置是否为展示区域塔
     SetAsShowAreaTower(isShowArea);
 
@@ -276,52 +275,7 @@ public void Initialize(TowerData data, Vector3Int pos, bool hasCheck = false, bo
 
         var towerCheckResult = DetectTowerAction(cellPosition,towerData); 
         this.tag = "Tower";
-        //     // 检查 GameMap 是否有效
-        //   
-        //     if (gameMap == null)
-        //     {
-        //         Debug.LogError("GameMap 未初始化，跳过碰撞检测");
-        //         return;
-        //     }
-        //     bulletCaster.poolManager = GameManager.Instance.GetSystem<BulletManager>().GetPoolManager().transform;
-        //     var position = new Vector3Int(pos.x, pos.y, 0) + new Vector3Int(block.CellPosition.x, block.CellPosition.y, 0);
-        //     // 优化的碰撞检测
-        //     Vector3 cellCenter = CoordinateUtility.CellToWorldPosition(gameMap.GetTilemap(), position);
-        //     Collider2D[] towers = Physics2D.OverlapPointAll(cellCenter, TowerLayerMask);
-        //
-        //     TowerCheckResult checkResult = TowerCheckResult.None;
-        //     GameObject firstTower = null;
-        //
-        //     if (towers.Length > 0)
-        //     {
-        //         foreach (var tower in towers)
-        //         {
-        //             if (tower == null ||/*|| !tower.CompareTag("Tower") || !this.CompareTag("PreviewTower") ||*/ tower.gameObject == this.gameObject) continue;
-        //
-        //             Tower towerComponent = tower.GetComponent<Tower>();
-        //             if (towerComponent == null || towerComponent.block == null) continue;
-        //
-        //             if ((towerComponent.cellPosition + towerComponent.block.CellPosition) == (this.cellPosition+block.CellPosition))
-        //             {
-        //                 if (towerComponent.TowerData != null  &&
-        //                     towerComponent.TowerData.TowerName == data.TowerName)
-        //                 {
-        //                     DeleteOldTower(tower.gameObject);
-        //                     checkResult = TowerCheckResult.ShouldUpdate;
-        //                     firstTower = tower.gameObject;
-        //                     break;
-        //                 }
-        //                 else
-        //                 {
-        //                     DeleteOldTower(tower.gameObject);
-        //                     checkResult = TowerCheckResult.ShouldDelete;
-        //                     firstTower = tower.gameObject;
-        //                     break;
-        //                 }
-        //             }
-        //         }
-        //     }
-        //
+
         switch (towerCheckResult)
         {
             case TowerCheckResult.ShouldUpdate:
@@ -372,8 +326,18 @@ public void Initialize(TowerData data, Vector3Int pos, bool hasCheck = false, bo
                 continue;
             }
             
-            // Debug.Log($"碰撞体: {collider.name}, Tag: {collider.tag}, Layer: {collider.gameObject.layer}");
+            if (this.gameObject == collider.gameObject)
+            {
+                Debug.Log("跳过空碰撞体");
+                continue;
+            }
             
+            // Debug.Log($"碰撞体: {collider.name}, Tag: {collider.tag}, Layer: {collider.gameObject.layer}");
+            if (collider.name.Contains("PreviewTower"))
+            {
+                Debug.Log($"跳过预览塔: {collider.name}");
+                continue;
+            }
             // 跳过预览塔
             if (collider.CompareTag("PreviewTower"))
             {
@@ -507,10 +471,14 @@ public void Initialize(TowerData data, Vector3Int pos, bool hasCheck = false, bo
     //塔更新
     public void UpdateTower()
     {
-        level = Mathf.Min(level + 1, towerData?.MaxLevel ?? level);
+        Debug.Log($"{this.name} 塔升级到{level}级");
+        if (level + 1 < towerData?.MaxLevel )
+        {
+            level++;
+        }
         if (cachedText != null && towerData != null)
         {
-            cachedText.text = $"塔名：{towerData.TowerName} \n 等级：{level}/{towerData.MaxLevel}";
+            cachedText.text = $"塔名：{towerData.TowerName} \n 等级：{level+1}/{towerData.MaxLevel}";
         }
         if (towerData != null && damageTaker != null)
         {
@@ -554,34 +522,34 @@ public void Initialize(TowerData data, Vector3Int pos, bool hasCheck = false, bo
     }
 
     private void FireAt(GameObject target)
-    {
-        // 使用新的子弹系统
-        var bulletConfig = towerData?.GetBulletConfig();
-        if (bulletConfig != null)
-        {
-            var bulletManager = GameManager.Instance?.GetSystem<BulletManager>();
-            if (bulletManager != null)
-            {
-                GameObject bullet = bulletManager.GetBullet(bulletConfig.BulletName, transform.position, Quaternion.identity);
-                var bulletScript = bullet.GetComponent<IBullet>();
-                if (bulletScript != null)
-                {
-                    Vector3 direction = (target.transform.position - transform.position).normalized;
-                    bulletScript.Initialize(direction, 0, gameObject, target, bulletConfig.TargetTags, towerData.GetPhysicAttack(level));
-                }
-                else
-                {
-                    Debug.LogWarning("子弹预制体未挂载IBullet实现脚本！");
-                }
-            }
-            else
-            {
-                Debug.LogWarning("BulletManager未找到！");
-            }
-        }
-        else
-        {
-            Debug.LogWarning("塔没有配置子弹配置！请在TowerData中设置BulletConfig。");
-        }
+    { 
+        // // 使用新的子弹系统
+        // var bulletConfig = towerData?.GetBulletConfig();
+        // if (bulletConfig != null)
+        // {
+        //     var bulletManager = GameManager.Instance?.GetSystem<BulletManager>();
+        //     if (bulletManager != null)
+        //     {
+        //         GameObject bullet = bulletManager.GetBullet(bulletConfig.BulletName, transform.position, Quaternion.identity);
+        //         var bulletScript = bullet.GetComponent<IBullet>();
+        //         if (bulletScript != null)
+        //         {
+        //             Vector3 direction = (target.transform.position - transform.position).normalized;
+        //             bulletScript.Initialize(direction, 0, gameObject, target, bulletConfig.TargetTags, towerData.GetPhysicAttack(level));
+        //         }
+        //         else
+        //         {
+        //             Debug.LogWarning("子弹预制体未挂载IBullet实现脚本！");
+        //         }
+        //     }
+        //     else
+        //     {
+        //         Debug.LogWarning("BulletManager未找到！");
+        //     }
+        // }
+        // else
+        // {
+        //     Debug.LogWarning("塔没有配置子弹配置！请在TowerData中设置BulletConfig。");
+        // }
     }
 }
