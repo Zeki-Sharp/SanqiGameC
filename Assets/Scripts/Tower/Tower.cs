@@ -380,6 +380,7 @@ public void Initialize(TowerData data, Vector3Int pos, bool hasCheck = false, bo
             // 比较塔类型
             if (existingTower.TowerData.TowerName == newTowerData.TowerName)
             {    
+                level = existingTower.Level;
                 DeleteOldTower(existingTower.gameObject);
                 Debug.Log($"检测到升级: {newTowerData.TowerName}");
                 return TowerCheckResult.ShouldUpdate;
@@ -479,6 +480,14 @@ public void Initialize(TowerData data, Vector3Int pos, bool hasCheck = false, bo
         if (cachedText != null && towerData != null)
         {
             cachedText.text = $"塔名：{towerData.TowerName} \n 等级：{level+1}/{towerData.MaxLevel}";
+        }
+        if (towerData.TowerSprite != null)
+        {
+            spriteRenderer.sprite = towerData.GetTowerSprite(level);
+        }
+        else
+        {
+            Debug.LogWarning($"塔 {towerData.TowerName} 的 Sprite 为空");
         }
         if (towerData != null && damageTaker != null)
         {
