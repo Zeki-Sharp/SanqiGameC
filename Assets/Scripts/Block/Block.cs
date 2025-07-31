@@ -108,7 +108,6 @@ public class Block : MonoBehaviour
             }
 
             Tower tower = GenerateTower(localCoord[i], towerData[i], tilemap,hasCheck);
-            towers[localCoord[i]] = tower;
         }
     }
 
