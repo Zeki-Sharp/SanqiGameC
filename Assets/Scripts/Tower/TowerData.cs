@@ -1,9 +1,11 @@
 using System;
+using Sirenix.OdinInspector;
 using UnityEngine;
 
 [Serializable]
 public struct TowerLevel
 {
+    [PreviewField(150)]
     [SerializeField] private Sprite towerSprite;
     [SerializeField] private float health;
     [SerializeField] private float physicAttack;
@@ -31,6 +33,9 @@ public class TowerData : ScriptableObject
     [Header("基础信息")]
     [SerializeField] private int id;
     [SerializeField] private string towerName;
+    [TextArea]
+    [SerializeField] private string towerDescription;
+    [PreviewField(150)]
     [SerializeField] private Sprite towerSprite;
     
     [Header("等级数据")]
