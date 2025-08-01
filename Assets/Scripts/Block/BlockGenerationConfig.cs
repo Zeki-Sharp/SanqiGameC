@@ -8,9 +8,9 @@ public class BlockGenerationConfig : ScriptableObject
 {
     [SerializeField]
     private string shapeName;
-    
+    [SerializeField,HideInInspector]
     // 使用一维数组保存 4x4 网格数据
-    private bool[] blockGrid = new bool[16];
+    public bool[] blockGrid = new bool[16];
 
     [ShowInInspector]
     [PropertySpace(5)]

@@ -350,10 +350,14 @@ public class BlockPlacementManager : MonoBehaviour
     // 新增：预览位置变化时刷新预览塔
     private void OnPreviewPositionChanged(Vector3 mouseWorldPos)
     {
-        if (isPlacing && PreviewSystem != null && currentBlockConfig != null)
+        if (isPlacing && PreviewSystem != null && currentBlockConfig != null && GameStateManager.Instance.IsInBuildingPhase)
         {
             Vector3Int gridPos = CoordinateUtility.WorldToCellPosition(gameMap.GetTilemap(), mouseWorldPos);
             PreviewSystem.UpdatePreview(gridPos);
+        }
+        else
+        {
+            StopPlacement();
         }
     }
 }
