@@ -10,7 +10,7 @@ public class BlockGenerationConfig : ScriptableObject
     private string shapeName;
     
     // 使用一维数组保存 4x4 网格数据
-    public bool[] blockGrid = new bool[16];
+    private bool[] blockGrid = new bool[16];
 
     [ShowInInspector]
     [PropertySpace(5)]
@@ -67,7 +67,7 @@ public class BlockGenerationConfig : ScriptableObject
     public int cellCount;
     [HideInInspector]
     public Vector3Int[] coordinates;
-
+    public string ShapeName => shapeName;
     public Vector3Int[] Coordinates => coordinates;
     public int CellCount => cellCount;
     

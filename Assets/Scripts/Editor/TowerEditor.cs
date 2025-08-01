@@ -8,10 +8,16 @@ using UnityEngine;
 public class TowerEditor : OdinMenuEditorWindow
 {
     private TowerSetting _towerSetting;
+
+    private void Awake()
+    {
+        GetWindow<BlockConfigManagerEditor>().titleContent = new GUIContent("塔编辑器");
+    }
     [MenuItem("Tools/塔编辑器")]
     public static void OpenWindow()
     {
         GetWindow<TowerEditor>().Show();
+
     }
     protected override OdinMenuTree BuildMenuTree()
     {
