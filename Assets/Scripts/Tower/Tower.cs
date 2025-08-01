@@ -61,6 +61,7 @@ public class Tower : MonoBehaviour
     { 
         rangeDetector.onDetectCollider.AddListener(OnDetectCollider); 
         towerLayerMask = LayerMask.GetMask("Tower");
+       
     } 
     
     protected virtual void OnDetectCollider(Collider2D collider) 
@@ -380,8 +381,8 @@ public void Initialize(TowerData data, Vector3Int pos, bool hasCheck = false, bo
             // 比较塔类型
             if (existingTower.TowerData.TowerName == newTowerData.TowerName)
             {    
-                level = existingTower.Level;
-                DeleteOldTower(existingTower.gameObject);
+                existingTower.UpdateTower();
+                DeleteOldTower(this.gameObject);
                 Debug.Log($"检测到升级: {newTowerData.TowerName}");
                 return TowerCheckResult.ShouldUpdate;
             }
