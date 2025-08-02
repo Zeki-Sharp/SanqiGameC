@@ -175,7 +175,7 @@ public class BulletManager : MonoBehaviour
         
         // 创建Unity官方对象池
         ObjectPool<BulletBase> pool = new ObjectPool<BulletBase>(
-            createFunc: () => CreateBulletInstance(config.BulletPrefab),
+            createFunc: () => CreateBulletInstance(config.BulletPrefab, config),
             actionOnGet: (obj) => OnBulletGet(obj),
             actionOnRelease: (obj) => OnBulletRelease(obj),
             actionOnDestroy: (obj) => OnBulletDestroy(obj),
@@ -214,6 +214,24 @@ public class BulletManager : MonoBehaviour
     }
     
     /// <summary>
+    /// 创建子弹实例（带配置）
+    /// </summary>
+    private BulletBase CreateBulletInstance(GameObject prefab, BulletConfig config)
+    {
+        GameObject instance = Instantiate(prefab);
+        instance.SetActive(false);
+        
+        BulletBase bullet = instance.GetComponent<BulletBase>();
+        if (bullet != null)
+        {
+            // 设置bulletConfig
+            bullet.SetBulletConfig(config);
+        }
+        
+        return bullet;
+    }
+    
+    /// <summary>
     /// 子弹获取时的处理
     /// </summary>
     private void OnBulletGet(BulletBase bullet)
@@ -224,6 +242,11 @@ public class BulletManager : MonoBehaviour
         if (bullet.OriginalScale != Vector3.zero)
         {
             bullet.transform.localScale = bullet.OriginalScale;
+        }
+        
+        if (showDebugInfo)
+        {
+            Debug.Log($"BulletManager: 激活子弹 {bullet.name}，位置: {bullet.transform.position}");
         }
     }
     

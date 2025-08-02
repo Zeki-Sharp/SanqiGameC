@@ -56,6 +56,7 @@ public class EnemyMoveState : EnemyState
         // 检查攻击范围内是否有塔
         if (controller.IsTowerInAttackRange())
         {
+            Debug.Log($"{controller.name} 检测到攻击范围内的塔，切换到攻击状态");
             controller.ChangeState(new EnemyAttackState(controller));
         }
     }

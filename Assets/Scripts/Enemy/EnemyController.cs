@@ -19,7 +19,14 @@ public class EnemyController : MonoBehaviour
     private float difDistance;
     
     // 公共属性
-    public float AttackRange => data != null ? data.AttackRange : 1.5f;
+    public float AttackRange 
+    { 
+        get 
+        {
+            // 直接使用数据中的攻击范围，避免与AttackBehavior冲突
+            return data != null ? data.AttackRange : 1.5f;
+        }
+    }
     public float MoveSpeed {
         get {
             if (moveSpeedOverride >= 0f) return moveSpeedOverride;
@@ -111,35 +118,28 @@ public class EnemyController : MonoBehaviour
         if (centerTower != null && !IsShowAreaTower(centerTower))
         {
             float distance = Vector3.Distance(transform.position, centerTower.transform.position);
-            if ((distance+ difDistance ) <= AttackRange)
+            if (distance <= AttackRange)
             {
-                Debug.Log($"{name} 在攻击范围内找到中心塔，距离: {distance:F2}");
                 return true;
             }
         }
         
         // 检查普通塔
         GameObject[] towers = GameObject.FindGameObjectsWithTag("Tower");
-        Debug.Log($"{name} 找到 {towers.Length} 个普通塔");
         
         foreach (GameObject tower in towers)
         {
             // 过滤掉ShowArea塔
             if (IsShowAreaTower(tower))
-            {
-                Debug.Log($"{name} 跳过ShowArea塔: {tower.name}");
                 continue;
-            }
                 
             float distance = Vector3.Distance(transform.position, tower.transform.position);
-            if ((distance+ difDistance ) <= AttackRange )
+            if (distance <= AttackRange)
             {
-                Debug.Log($"{name} 在攻击范围内找到塔 {tower.name}，距离: {distance:F2}");
                 return true;
             }
         }
         
-        Debug.Log($"{name} 没有在攻击范围内找到塔");
         return false;
     }
     

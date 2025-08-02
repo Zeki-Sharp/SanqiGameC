@@ -25,4 +25,10 @@ public interface IAttackBehavior
     /// </summary>
     /// <returns>攻击冷却时间</returns>
     float GetAttackCooldown();
+    
+    /// <summary>
+    /// 获取攻击范围
+    /// </summary>
+    /// <returns>攻击范围</returns>
+    float AttackRange { get; }
 } 

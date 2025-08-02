@@ -18,6 +18,9 @@ public abstract class BulletBase : MonoBehaviour, IBullet
     [SerializeField] protected string[] targetTags;
     [SerializeField] protected GameObject target;
     
+    // 碰撞检测延迟
+    protected float collisionDelay = 0.1f; // 0.1秒后开始检测碰撞
+    
     // 对象池相关
     protected bool isFromPool = false;
     protected string poolKey = "";
@@ -69,6 +72,8 @@ public abstract class BulletBase : MonoBehaviour, IBullet
         
         // 调用子类特定的初始化
         OnInitialize();
+        
+        Debug.Log($"子弹 {name} 初始化完成，位置: {transform.position}, 速度: {this.speed}, 方向: {this.direction}");
     }
     
     /// <summary>
@@ -95,14 +100,31 @@ public abstract class BulletBase : MonoBehaviour, IBullet
     }
     
     /// <summary>
+    /// 设置子弹配置
+    /// </summary>
+    /// <param name="config">子弹配置</param>
+    public virtual void SetBulletConfig(BulletConfig config)
+    {
+        this.bulletConfig = config;
+        // 确保预制体中的冗余配置被覆盖
+        if (config != null)
+        {
+            Debug.Log($"子弹 {name} 设置配置: {config.BulletName}");
+        }
+    }
+    
+    /// <summary>
     /// 返回对象池
     /// </summary>
     public virtual void ReturnToPool()
     {
         // 防止重复返回
-        if (!gameObject.activeInHierarchy) return;
+        if (!gameObject.activeInHierarchy) 
+        {
+            return;
+        }
         
-        Debug.Log($"子弹 {name} 返回对象池");
+        Debug.Log($"子弹 {name} 返回对象池，位置: {transform.position}");
         
         if (isFromPool && !string.IsNullOrEmpty(poolKey))
         {
@@ -113,11 +135,13 @@ public abstract class BulletBase : MonoBehaviour, IBullet
             }
             else
             {
+                Debug.LogWarning($"子弹 {name} BulletManager未找到，直接销毁");
                 Destroy(gameObject);
             }
         }
         else
         {
+            Debug.LogWarning($"子弹 {name} 不是从对象池获取，直接销毁");
             Destroy(gameObject);
         }
     }
@@ -128,8 +152,11 @@ public abstract class BulletBase : MonoBehaviour, IBullet
     protected virtual void CheckLifetime()
     {
         float lifetime = bulletConfig != null ? bulletConfig.Lifetime : 5f;
-        if (Time.time - spawnTime > lifetime)
+        float elapsed = Time.time - spawnTime;
+        
+        if (elapsed > lifetime)
         {
+            Debug.Log($"子弹 {name} 生命周期结束，返回对象池");
             ReturnToPool();
         }
     }
@@ -139,9 +166,16 @@ public abstract class BulletBase : MonoBehaviour, IBullet
     /// </summary>
     protected virtual void CheckGroundCollision()
     {
+        // 直线子弹不进行地面碰撞检测
+        if (bulletConfig != null && bulletConfig.BulletType == BulletType.Straight)
+        {
+            return;
+        }
+        
         // 检查是否击中地面（Y坐标小于等于0）
         if (transform.position.y <= 0f)
         {
+            Debug.Log($"子弹 {name} 击中地面，返回对象池");
             ReturnToPool();
         }
     }
@@ -159,10 +193,11 @@ public abstract class BulletBase : MonoBehaviour, IBullet
         Vector3 screenPos = mainCamera.WorldToViewportPoint(transform.position);
         
         // 检查是否飞出屏幕（添加一些边距）
-        float margin = 0.1f;
+        float margin = 0.5f; // 增加边距
         if (screenPos.x < -margin || screenPos.x > 1f + margin || 
             screenPos.y < -margin || screenPos.y > 1f + margin)
         {
+            Debug.Log($"子弹 {name} 飞出屏幕，返回对象池。屏幕坐标: {screenPos}");
             ReturnToPool();
         }
     }
@@ -278,6 +313,14 @@ public abstract class BulletBase : MonoBehaviour, IBullet
         // 防止重复处理碰撞
         if (!gameObject.activeInHierarchy) return;
         
+        // 延迟碰撞检测，防止立即碰撞到发射者
+        float elapsed = Time.time - spawnTime;
+        if (elapsed < collisionDelay)
+        {
+            Debug.Log($"子弹 {name} 碰撞延迟中，忽略碰撞: {other.name}");
+            return;
+        }
+        
         Debug.Log($"子弹 {name} 碰撞到 {other.name}");
         HandleCollision(other.gameObject);
     }
@@ -285,10 +328,16 @@ public abstract class BulletBase : MonoBehaviour, IBullet
     /// <summary>
     /// 更新逻辑（子类实现）
     /// </summary>
-    protected virtual void Update()
+    private void Update()
     {
         // 如果子弹已经返回对象池，不再更新
         if (!gameObject.activeInHierarchy) return;
+        
+        // 调试信息（每秒输出一次）
+        if (Time.frameCount % 60 == 0)
+        {
+            Debug.Log($"子弹 {name} Update被调用，位置: {transform.position}, 激活状态: {gameObject.activeInHierarchy}");
+        }
         
         CheckLifetime();
         CheckGroundCollision();
