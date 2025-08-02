@@ -153,6 +153,28 @@ public class EnemySpawner : MonoBehaviour
         GameObject[] enemies = GameObject.FindGameObjectsWithTag("Enemy");
         return enemies.Length == 0;
     }
+
+    /// <summary>
+    /// 恢复Wave生成
+    /// </summary>
+    public void ResumeWaves()
+    {
+        Debug.Log("EnemySpawner: 恢复Wave生成");
+        
+        if (spawnRoutine == null && waves != null && waves.Count > 0)
+        {
+            // 如果协程被暂停，重新开始生成
+            spawnRoutine = StartCoroutine(SpawnWavesCoroutine());
+        }
+        else if (spawnRoutine != null)
+        {
+            Debug.Log("EnemySpawner: Wave生成协程正在运行中");
+        }
+        else
+        {
+            Debug.LogWarning("EnemySpawner: 没有配置waves或waves已结束，无法恢复");
+        }
+    }
     
     /// <summary>
     /// 获取中心塔位置

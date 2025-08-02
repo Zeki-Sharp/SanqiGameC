@@ -55,8 +55,26 @@ public class PauseUIPanel : UIPanel
 
     private void OnResumeClicked()
     {
+        Debug.Log("恢复游戏");
+        
+        // 恢复时间缩放
         Time.timeScale = 1f;
+        
+        // 隐藏暂停面板
         UIManager.Instance.HidePausePanel();
+        
+        // 恢复战斗UI显示
+        var combatUI = UIManager.Instance.GetPanel<CombatUIPanel>();
+        if (combatUI != null)
+        {
+            combatUI.Show();
+        }
+        
+        // 通知GameManager恢复游戏
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.ResumeGame();
+        }
     }
 
     private void OnMainMenuClicked()

@@ -328,6 +328,29 @@ public class RoundManager : MonoBehaviour
         
         Debug.Log("Round管理器已重置");
     }
+
+    /// <summary>
+    /// 恢复Round状态
+    /// </summary>
+    public void ResumeRound()
+    {
+        Debug.Log($"RoundManager: 恢复Round {currentRoundNumber}");
+        
+        if (isRoundInProgress)
+        {
+            // 恢复EnemySpawner的状态
+            if (EnemySpawner != null)
+            {
+                EnemySpawner.ResumeWaves();
+            }
+            
+            Debug.Log($"Round {currentRoundNumber} 已恢复");
+        }
+        else
+        {
+            Debug.LogWarning("当前没有Round在进行中，无法恢复");
+        }
+    }
     
     private void OnDestroy()
     {

@@ -202,4 +202,30 @@ public class GameManager : MonoBehaviour
         systems.Clear();
         Debug.Log("所有系统已清理");
     }
+
+    /// <summary>
+    /// 恢复游戏
+    /// </summary>
+    public void ResumeGame()
+    {
+        Debug.Log("GameManager: 恢复游戏");
+        
+        // 恢复时间缩放
+        Time.timeScale = 1f;
+        
+        // 通知相关系统恢复游戏
+        var roundManager = GetSystem<RoundManager>();
+        if (roundManager != null)
+        {
+            roundManager.ResumeRound();
+        }
+        
+        // 确保UI显示正确的面板
+        var uiManager = GetSystem<UIManager>();
+        if (uiManager != null)
+        {
+            var currentPhase = GetCurrentGamePhase();
+            uiManager.SwitchToPhase(currentPhase);
+        }
+    }
 }
