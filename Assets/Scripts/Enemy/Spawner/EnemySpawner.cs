@@ -179,11 +179,13 @@ public class EnemySpawner : MonoBehaviour
         // 确保Transform旋转为0
         enemy.transform.rotation = Quaternion.identity;
         
-        // 重置所有子对象的Transform
+        // 重置所有子对象的Transform（只影响敌人，不影响塔）
         Transform[] children = enemy.GetComponentsInChildren<Transform>();
         foreach (Transform child in children)
         {
-            if (child.rotation != Quaternion.identity)
+            // 确保只影响敌人及其子对象，不影响塔
+            if (child.rotation != Quaternion.identity && 
+                (child.CompareTag("Enemy") || child.parent != null))
             {
                 child.rotation = Quaternion.identity;
             }

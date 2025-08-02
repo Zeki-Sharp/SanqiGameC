@@ -280,10 +280,17 @@ public void Initialize(TowerData data, Vector3Int pos, bool hasCheck = false, bo
         switch (towerCheckResult)
         {
             case TowerCheckResult.ShouldUpdate:
-                UpdateTower();
-                break;
+                // 升级情况下，删除新创建的塔，让现有塔升级
+                Debug.Log($"升级情况：删除新创建的塔 {this.name}");
+                Destroy(this.gameObject);
+                return; // 直接返回，不执行后续初始化
             case TowerCheckResult.ShouldDelete:
-                // DeleteOldTower(firstTower); 
+                // 替换情况下，继续初始化新塔
+                Debug.Log($"替换情况：继续初始化新塔 {this.name}");
+                break;
+            case TowerCheckResult.None:
+                // 新建情况，继续初始化
+                Debug.Log($"新建情况：继续初始化新塔 {this.name}");
                 break;
         }
     }
@@ -381,13 +388,14 @@ public void Initialize(TowerData data, Vector3Int pos, bool hasCheck = false, bo
             // 比较塔类型
             if (existingTower.TowerData.TowerName == newTowerData.TowerName)
             {    
+                // 升级现有塔，删除新创建的塔
                 existingTower.UpdateTower();
-                DeleteOldTower(this.gameObject);
-                Debug.Log($"检测到升级: {newTowerData.TowerName}");
+                Debug.Log($"检测到升级: {newTowerData.TowerName}，删除新创建的塔");
                 return TowerCheckResult.ShouldUpdate;
             }
             else
             {
+                // 替换现有塔
                 DeleteOldTower(existingTower.gameObject);
                 Debug.Log($"检测到替换: {newTowerData.TowerName} -> {existingTower.TowerData.TowerName}");
                 return TowerCheckResult.ShouldDelete;
@@ -477,9 +485,15 @@ public void Initialize(TowerData data, Vector3Int pos, bool hasCheck = false, bo
     public void UpdateTower()
     {
         Debug.Log($"{this.name} 塔升级到{level}级");
-        if (level + 1 < towerData?.MaxLevel )
+        // 修复升级逻辑：确保能升级到最高等级
+        if (level < towerData?.MaxLevel - 1)
         {
             level++;
+            Debug.Log($"{this.name} 成功升级到{level + 1}级，最大等级为{towerData.MaxLevel}");
+        }
+        else
+        {
+            Debug.LogWarning($"{this.name} 已达到最大等级{towerData.MaxLevel}，无法继续升级");
         }
         // if (cachedText != null && towerData != null)
         // {
