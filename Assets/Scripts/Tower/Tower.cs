@@ -333,12 +333,12 @@ public void Initialize(TowerData data, Vector3Int pos, bool hasCheck = false, bo
                 continue;
             }
             
-            Debug.Log($"碰撞体: {collider.name}, Tag: {collider.tag}, Layer: {collider.gameObject.layer}");
-            if (collider.name.Contains("PreviewTower"))
-            {
-                Debug.Log($"跳过预览塔: {collider.name}");
-                continue;
-            }
+            // Debug.Log($"碰撞体: {collider.name}, Tag: {collider.tag}, Layer: {collider.gameObject.layer}");
+            // if (collider.name.Contains("PreviewTower"))
+            // {
+            //     Debug.Log($"跳过预览塔: {collider.name}");
+            //     continue;
+            // }
             // 跳过预览塔
             if (collider.CompareTag("PreviewTower"))
             {
@@ -346,12 +346,12 @@ public void Initialize(TowerData data, Vector3Int pos, bool hasCheck = false, bo
                 continue;
             }
             //
-            // 检查是否在正确的层级
-            if (((1 << collider.gameObject.layer) & towerLayerMask) == 0)
-            {
-                Debug.Log($"跳过非塔层级物体: {collider.name} (层级: {collider.gameObject.layer})");
-                continue;
-            }
+            // // 检查是否在正确的层级
+            // if (((1 << collider.gameObject.layer) & towerLayerMask) == 0)
+            // {
+            //     Debug.Log($"跳过非塔层级物体: {collider.name} (层级: {collider.gameObject.layer})");
+            //     continue;
+            // }
             
             // 检查是否有Tower组件
             Tower existingTower = collider.GetComponent<Tower>();
@@ -381,8 +381,8 @@ public void Initialize(TowerData data, Vector3Int pos, bool hasCheck = false, bo
             // 比较塔类型
             if (existingTower.TowerData.TowerName == newTowerData.TowerName)
             {    
-               level =  existingTower.level;
-                DeleteOldTower(existingTower.gameObject);
+                existingTower.UpdateTower();
+                DeleteOldTower(this.gameObject);
                 Debug.Log($"检测到升级: {newTowerData.TowerName}");
                 return TowerCheckResult.ShouldUpdate;
             }
@@ -570,7 +570,7 @@ public void Initialize(TowerData data, Vector3Int pos, bool hasCheck = false, bo
         // 在Scene视图中显示调试信息
         #if UNITY_EDITOR
         UnityEditor.Handles.Label(transform.position + Vector3.up * 0.5f, 
-            $"塔名: {towerData.TowerName}\n等级: {level+1 :F0}/{ towerData.MaxLevel:F0}");
+            $"塔名: {towerData.TowerName}\n等级: {level :F0}/{ towerData.MaxLevel:F0}");
         #endif
     }
 }

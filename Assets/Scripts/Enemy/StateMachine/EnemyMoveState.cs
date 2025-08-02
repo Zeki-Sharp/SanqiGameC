@@ -42,12 +42,6 @@ public class EnemyMoveState : EnemyState
             position.z = 0f;
             controller.transform.position = position;
         }
-        
-        // 更新朝向
-        if (direction != Vector3.zero)
-        {
-            controller.transform.right = direction;
-        }
     }
     
     public override void CheckTransitions()

@@ -34,13 +34,6 @@ public class EnemyAttackState : EnemyState
         
         if (distanceToTarget <= attackRange)
         {
-            // 面向目标
-            Vector3 direction = (targetTower.transform.position - controller.transform.position).normalized;
-            if (direction != Vector3.zero)
-            {
-                controller.transform.right = direction;
-            }
-            
             // 执行攻击
             float attackCooldown = controller.AttackBehavior != null ? controller.AttackBehavior.GetAttackCooldown() : 1f;
             if (Time.time - lastAttackTime >= attackCooldown)

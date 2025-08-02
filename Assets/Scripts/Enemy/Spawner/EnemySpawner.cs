@@ -86,6 +86,10 @@ public class EnemySpawner : MonoBehaviour
         }
         Vector3 spawnPosition = CalculateSpawnPositionInAreas();
         GameObject enemyObject = Instantiate(enemyPrefab, spawnPosition, Quaternion.identity);
+        
+        // 设置敌人朝向
+        SetEnemyDirection(enemyObject, spawnPosition);
+        
         currentEnemyCount++;
         
         if (debugSpawnInfo)
@@ -148,6 +152,49 @@ public class EnemySpawner : MonoBehaviour
     {
         GameObject[] enemies = GameObject.FindGameObjectsWithTag("Enemy");
         return enemies.Length == 0;
+    }
+    
+    /// <summary>
+    /// 获取中心塔位置
+    /// </summary>
+    private Vector3 GetCenterTowerPosition()
+    {
+        GameObject centerTower = GameObject.FindGameObjectWithTag("CenterTower");
+        if (centerTower == null)
+        {
+            Debug.LogWarning("未找到中心塔，使用默认位置(0,0,0)");
+            return Vector3.zero;
+        }
+        return centerTower.transform.position;
+    }
+    
+    /// <summary>
+    /// 根据生成位置设置敌人朝向
+    /// </summary>
+    private void SetEnemyDirection(GameObject enemy, Vector3 spawnPosition)
+    {
+        Vector3 centerTowerPosition = GetCenterTowerPosition();
+        bool isOnLeftSide = spawnPosition.x < centerTowerPosition.x;
+        
+        // 确保Transform旋转为0
+        enemy.transform.rotation = Quaternion.identity;
+        
+        // 重置所有子对象的Transform
+        Transform[] children = enemy.GetComponentsInChildren<Transform>();
+        foreach (Transform child in children)
+        {
+            if (child.rotation != Quaternion.identity)
+            {
+                child.rotation = Quaternion.identity;
+            }
+        }
+        
+        SpriteRenderer spriteRenderer = enemy.GetComponent<SpriteRenderer>();
+        if (spriteRenderer != null)
+        {
+            // 左侧生成朝右，右侧生成朝左
+            spriteRenderer.flipX = !isOnLeftSide;
+        }
     }
 
     private void OnDrawGizmos()
