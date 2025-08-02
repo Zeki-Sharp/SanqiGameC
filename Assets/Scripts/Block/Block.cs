@@ -136,7 +136,8 @@ public class Block : MonoBehaviour
             Color.white,
             hasCheck
         );
-        towers[towerCellPos] = towerComponent;
+        // 修复：使用localCoord作为key，保持坐标系统一致性
+        towers[localCoord] = towerComponent;
         return towerComponent;
     }
 
@@ -211,8 +212,8 @@ Debug.Log($"格子 ({localCoord.x}, {localCoord.y}) 的塔将要移除");
             {
                 if (gameObject != null)
                 {
-                    // 移除地块
-                    gameMap.RemoveBlock(localCoord,this);
+                    // 修复：使用正确的cellPosition而不是localCoord
+                    gameMap.RemoveBlock(cellPosition,this);
                 }
                 else
                 {

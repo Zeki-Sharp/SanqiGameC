@@ -179,7 +179,8 @@ public class BlockPlacementManager : MonoBehaviour
             // 生成塔
             Tilemap tilemap = gameMap.GetTilemap();
             // Debug.Log($"生成塔: 配置坐标数量={currentBlockConfig.Coordinates.Length}, 塔数据数量={currentTowerDatas.Count}");
-            block.GenerateTowers(currentBlockConfig.Coordinates, currentTowerDatas.ToArray(), tilemap ,true);
+            // 恢复：保持hasCheck为true，确保升级替换机制正常工作
+            block.GenerateTowers(currentBlockConfig.Coordinates, currentTowerDatas.ToArray(), tilemap, true);
 
             // 停止放置模式并清除预览（已由BlockPreviewSystem处理）
 
@@ -309,6 +310,11 @@ public class BlockPlacementManager : MonoBehaviour
         block.ClearTower();
         block.tag = "Block";
         tilemap = tilemap != null ? tilemap : (gameMap != null ? gameMap.GetTilemap() : null);
+        
+        // 计算Block的cellPosition（使用第一个cell作为基准）
+        Vector3Int blockCellPos = cells[0];
+        block.SetCellPosition(blockCellPos, tilemap);
+        
         for (int i = 0; i < cells.Count; i++)
         {
             Vector3Int cell = cells[i];
@@ -332,7 +338,10 @@ public class BlockPlacementManager : MonoBehaviour
             {
                 tower.SetAsShowAreaTower(true);
             }
-            block.SetTower(new Vector3Int(cell.x, cell.y), tower);
+            
+            // 修复：计算正确的相对坐标
+            Vector3Int localCoord = cell - blockCellPos;
+            block.SetTower(localCoord, tower);
         }
     }
 

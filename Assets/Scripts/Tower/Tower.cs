@@ -456,9 +456,10 @@ public void Initialize(TowerData data, Vector3Int pos, bool hasCheck = false, bo
                 continue;
             }
             
+            // 修复：跳过自己，避免误删
             if (this.gameObject == collider.gameObject)
             {
-                Debug.Log("跳过空碰撞体");
+                Debug.Log("跳过自己，避免误删");
                 continue;
             }
             
@@ -562,7 +563,9 @@ public void Initialize(TowerData data, Vector3Int pos, bool hasCheck = false, bo
 
         try
         { 
-            block.RemoveTower(tower.CellPosition);
+            // 修复：计算正确的localCoord
+            Vector3Int localCoord = tower.CellPosition - block.CellPosition;
+            block.RemoveTower(localCoord);
         }
         catch (System.Exception ex)
         {
