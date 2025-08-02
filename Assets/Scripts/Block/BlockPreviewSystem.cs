@@ -74,6 +74,7 @@ public class BlockPreviewSystem : MonoBehaviour
             Vector3Int cellPos = baseGridPos + offset;
             Vector3 worldPos = CoordinateUtility.CellToWorldPosition(gameMap.GetTilemap(), cellPos);
             previewTowers[i].transform.position = worldPos;
+            previewTowers[i].gameObject.tag = "PreviewTower";
         }
     }
 

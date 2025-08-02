@@ -334,24 +334,24 @@ public void Initialize(TowerData data, Vector3Int pos, bool hasCheck = false, bo
             }
             
             // Debug.Log($"碰撞体: {collider.name}, Tag: {collider.tag}, Layer: {collider.gameObject.layer}");
-            if (collider.name.Contains("PreviewTower"))
-            {
-                Debug.Log($"跳过预览塔: {collider.name}");
-                continue;
-            }
+            // if (collider.name.Contains("PreviewTower"))
+            // {
+            //     Debug.Log($"跳过预览塔: {collider.name}");
+            //     continue;
+            // }
             // 跳过预览塔
             if (collider.CompareTag("PreviewTower"))
             {
                 Debug.Log($"跳过预览塔: {collider.name}");
                 continue;
             }
-            
-            // 检查是否在正确的层级
-            if (((1 << collider.gameObject.layer) & towerLayerMask) == 0)
-            {
-                Debug.Log($"跳过非塔层级物体: {collider.name} (层级: {collider.gameObject.layer})");
-                continue;
-            }
+            //
+            // // 检查是否在正确的层级
+            // if (((1 << collider.gameObject.layer) & towerLayerMask) == 0)
+            // {
+            //     Debug.Log($"跳过非塔层级物体: {collider.name} (层级: {collider.gameObject.layer})");
+            //     continue;
+            // }
             
             // 检查是否有Tower组件
             Tower existingTower = collider.GetComponent<Tower>();
@@ -367,7 +367,7 @@ public void Initialize(TowerData data, Vector3Int pos, bool hasCheck = false, bo
                 continue;
             }
             
-            // 验证塔的位置是否真的在这个cell
+            // // 验证塔的位置是否真的在这个cell
             Vector3Int towerCellPos = existingTower.CellPosition;
             if (towerCellPos != cellPos)
             {
@@ -389,7 +389,7 @@ public void Initialize(TowerData data, Vector3Int pos, bool hasCheck = false, bo
             else
             {
                 DeleteOldTower(existingTower.gameObject);
-                Debug.Log($"检测到替换: {existingTower.TowerData.TowerName} -> {newTowerData.TowerName}");
+                Debug.Log($"检测到替换: {newTowerData.TowerName} -> {existingTower.TowerData.TowerName}");
                 return TowerCheckResult.ShouldDelete;
             }
         }
@@ -404,7 +404,10 @@ public void Initialize(TowerData data, Vector3Int pos, bool hasCheck = false, bo
     private void DeleteOldTower(GameObject oldTower)
     {
         Debug.Log("删除");
-        if (oldTower == null) return;
+        if (oldTower == null)
+        {
+            Debug.LogError("删除物为空");
+        }
 
         Tower tower = oldTower.GetComponent<Tower>();
         if (tower == null)
@@ -561,5 +564,13 @@ public void Initialize(TowerData data, Vector3Int pos, bool hasCheck = false, bo
         // {
         //     Debug.LogWarning("塔没有配置子弹配置！请在TowerData中设置BulletConfig。");
         // }
+    }
+    private void OnDrawGizmos()
+    {
+        // 在Scene视图中显示调试信息
+        #if UNITY_EDITOR
+        UnityEditor.Handles.Label(transform.position + Vector3.up * 0.5f, 
+            $"塔名: {towerData.TowerName}\n等级: {level :F0}/{ towerData.MaxLevel:F0}");
+        #endif
     }
 }

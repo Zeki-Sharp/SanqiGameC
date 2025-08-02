@@ -68,12 +68,12 @@ public class Block : MonoBehaviour
 
         towers.Clear();
 
-        foreach (Vector3Int coord in config.Coordinates)
-        {
-            towers[coord] = null;
-            // 开发阶段调试日志，上线前可关闭
-            // Debug.Log($"生成塔于格子 ({coord.x}, {coord.y})");
-        }
+        // foreach (Vector3Int coord in config.Coordinates)
+        // {
+        //     towers[coord] = null;
+        //     // 开发阶段调试日志，上线前可关闭
+        //     // Debug.Log($"生成塔于格子 ({coord.x}, {coord.y})");
+        // }
 
         // Debug.Log($"方块初始化完成，形状: {config.name}，包含 {config.CellCount} 个格子");
     }
@@ -180,7 +180,7 @@ public class Block : MonoBehaviour
 #endif
             return;
         }
-
+Debug.Log($"格子 ({localCoord.x}, {localCoord.y}) 的塔将要移除");
         if (towers.TryGetValue(localCoord, out var tower))
         {
             // 检查 tower 是否有效
@@ -199,6 +199,7 @@ public class Block : MonoBehaviour
             if (tower.gameObject != null)
             {
                 Destroy(tower.gameObject);
+                Debug.Log($"销毁塔({localCoord.x}, {localCoord.y})");
             }
             else
             {
@@ -211,7 +212,7 @@ public class Block : MonoBehaviour
                 if (gameObject != null)
                 {
                     // 移除地块
-                    gameMap.RemoveBlock(localCoord);
+                    gameMap.RemoveBlock(localCoord,this);
                 }
                 else
                 {

@@ -267,7 +267,34 @@ public class GameMap : MonoBehaviour
         placedBlocks.Remove(cellPos);
         return true;
     }
+    /// <summary>
+    /// 移除方块
+    /// </summary>
+    /// <param name="cellPos">方块左下角的cell坐标</param>
+    /// <returns>是否移除成功</returns>
+    public bool RemoveBlock(Vector3Int cellPos,Block block)
+    {
 
+        Block _block = block;
+        if (_block.Config != null && _block.Config.Coordinates != null)
+        {
+            // 取消标记格子占用
+            foreach (Vector2Int coord in _block.Config.Coordinates)
+            {
+                Vector3Int cell = cellPos + new Vector3Int(coord.x, coord.y, 0); // 修复：使用正确的相对坐标
+                occupiedCells.Remove(cell);
+            }
+        }
+
+        // 销毁方块GameObject
+        if (_block.gameObject != null && _block.gameObject.scene.IsValid())
+        {
+            Destroy(_block.gameObject);
+        }
+
+        placedBlocks.Remove(cellPos);
+        return true;
+    }
 
     /// <summary>
     /// 获取指定位置的方块
