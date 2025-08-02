@@ -1,4 +1,5 @@
 
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -11,8 +12,7 @@ public class BlockTestManager : MonoBehaviour
     [SerializeField] private string prefabShowName = "PrefabArea";
     [SerializeField] private MapConfig mapConfig;
 
-    // 移除传统单例模式，改为通过GameManager注册
-    private void Start()
+    private void Awake()
     {
         // 注册到GameManager
         if (GameManager.Instance != null)
@@ -24,6 +24,11 @@ public class BlockTestManager : MonoBehaviour
             gameMap = FindFirstObjectByType<GameMap>();
         if (mapConfig == null)
             mapConfig = gameMap.GetMapConfig();
+    }
+    // 移除传统单例模式，改为通过GameManager注册
+    private void Start()
+    {
+       
         if (runTestsOnStart)
         {
             RunAllTests();

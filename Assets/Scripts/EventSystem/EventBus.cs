@@ -32,7 +32,7 @@ public class EventBus : MonoBehaviour
             Destroy(gameObject);
             return;
         }
-        
+
         _instance = this;
         DontDestroyOnLoad(gameObject);
     }
@@ -51,12 +51,12 @@ public class EventBus : MonoBehaviour
         }
 
         Type eventType = typeof(T);
-        
+
         if (!_eventSubscribers.ContainsKey(eventType))
         {
             _eventSubscribers[eventType] = new List<Delegate>();
         }
-        
+
         _eventSubscribers[eventType].Add(handler);
     }
 
@@ -68,13 +68,13 @@ public class EventBus : MonoBehaviour
     public void Unsubscribe<T>(Action<T> handler) where T : EventArgs
     {
         Type eventType = typeof(T);
-        
+
         if (!_eventSubscribers.ContainsKey(eventType))
         {
             Debug.LogWarning($"尝试取消未注册的事件订阅: {eventType.Name}");
             return;
         }
-        
+
         _eventSubscribers[eventType].Remove(handler);
     }
 
@@ -86,14 +86,19 @@ public class EventBus : MonoBehaviour
     public void Publish<T>(T eventArgs) where T : EventArgs
     {
         Type eventType = typeof(T);
-        
+
         if (!_eventSubscribers.ContainsKey(eventType) || _eventSubscribers[eventType].Count == 0)
         {
             return;
         }
-        
+        if (!_eventSubscribers.ContainsKey(eventType) || _eventSubscribers[eventType] == null)
+        {
+            return;
+        }
         foreach (var handler in _eventSubscribers[eventType])
         {
+
+
             try
             {
                 handler.DynamicInvoke(eventArgs);

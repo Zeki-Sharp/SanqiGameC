@@ -20,7 +20,7 @@ public class Tower : MonoBehaviour
     [SerializeField] private Vector3Int cellPosition; // 塔在Tilemap中的cell坐标位置
     [Header("绑定")] 
     [SerializeField] private SpriteRenderer spriteRenderer;
-    [SerializeField] private TextMeshPro text;
+    // [SerializeField] private TextMeshPro text;
     [SerializeField] private Block block;
 
     [Header("攻击相关")] 
@@ -40,7 +40,7 @@ public class Tower : MonoBehaviour
     
     // 缓存常用组件
     private SpriteRenderer cachedSpriteRenderer;
-    private TextMeshPro cachedText;
+    // private TextMeshPro cachedText;
     private Block cachedBlock;
     private BulletManager cachedBulletManager;
 
@@ -134,7 +134,7 @@ public class Tower : MonoBehaviour
         raySensor = GetComponentInChildren<BezierRay2D>();
         bulletCaster = GetComponent<BasicCaster2D>();
         cachedSpriteRenderer = GetComponentInChildren<SpriteRenderer>();
-        cachedText = GetComponentInChildren<TextMeshPro>();
+        // cachedText = GetComponentInChildren<TextMeshPro>();
         cachedBlock = GetComponentInParent<Block>();
         cachedBulletManager = GameManager.Instance?.GetSystem<BulletManager>();
         
@@ -179,8 +179,8 @@ public class Tower : MonoBehaviour
     public void SetOrder(int order)
     {
         spriteRenderer.sortingOrder = order;
-        MeshRenderer renderer = GetComponentInChildren<MeshRenderer>();
-        renderer.sortingOrder = order;
+        // MeshRenderer renderer = GetComponentInChildren<MeshRenderer>();
+        // renderer.sortingOrder = order;
     }
     
     /// <summary>
@@ -233,15 +233,15 @@ public void Initialize(TowerData data, Vector3Int pos, bool hasCheck = false, bo
         }
     }
 
-    if (text == null)
-    {
-        text = GetComponentInChildren<TextMeshPro>();
-        if (text == null)
-        {
-            Debug.LogError("TextMeshPro 未找到，初始化失败");
-            return;
-        }
-    }
+    // if (text == null)
+    // {
+    //     text = GetComponentInChildren<TextMeshPro>();
+    //     if (text == null)
+    //     {
+    //         Debug.LogError("TextMeshPro 未找到，初始化失败");
+    //         return;
+    //     }
+    // }
 
     if (data == null)
     {
@@ -264,7 +264,7 @@ public void Initialize(TowerData data, Vector3Int pos, bool hasCheck = false, bo
     }
     block = GetComponentInParent<Block>();
     // 优化的字符串拼接
-    text.text = $"塔名：{towerData.TowerName} \n 等级：{level+1}/{towerData.MaxLevel}";
+    // text.text = $"塔名：{towerData.TowerName} \n 等级：{level+1}/{towerData.MaxLevel}";
     // 设置是否为展示区域塔
     SetAsShowAreaTower(isShowArea);
 
@@ -478,10 +478,10 @@ public void Initialize(TowerData data, Vector3Int pos, bool hasCheck = false, bo
         {
             level++;
         }
-        if (cachedText != null && towerData != null)
-        {
-            cachedText.text = $"塔名：{towerData.TowerName} \n 等级：{level+1}/{towerData.MaxLevel}";
-        }
+        // if (cachedText != null && towerData != null)
+        // {
+        //     cachedText.text = $"塔名：{towerData.TowerName} \n 等级：{level+1}/{towerData.MaxLevel}";
+        // }
         if (towerData.TowerSprite != null)
         {
             spriteRenderer.sprite = towerData.GetTowerSprite(level);

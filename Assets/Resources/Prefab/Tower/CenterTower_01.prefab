@@ -457,7 +457,6 @@ MonoBehaviour:
   level: 0
   cellPosition: {x: 0, y: 0, z: 0}
   spriteRenderer: {fileID: 0}
-  text: {fileID: 0}
   block: {fileID: 0}
   towerLayerMask:
     serializedVersion: 2
