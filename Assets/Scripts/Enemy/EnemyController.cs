@@ -58,6 +58,12 @@ public class EnemyController : MonoBehaviour
             position.z = 0f;
             transform.position = position;
         }
+        
+        // 订阅DamageTaker的死亡事件
+        if (damageTaker != null)
+        {
+            damageTaker.onDeath += Die;
+        }
     }
     void OnBullet(Bullet bullet) =>  damageTaker.TakeDamage(bullet.damage);
     private void Start()
@@ -193,6 +199,15 @@ public class EnemyController : MonoBehaviour
     private void Die()
     {
         Debug.Log($"{name} 死亡");
+        
+        // 发布敌人死亡事件
+        if (EventBus.Instance != null)
+        {
+            // 获取敌人配置中的金币奖励
+            int goldReward = data != null ? data.GoldReward : 10;
+            EventBus.Instance.Publish(new EnemyDeathEventArgs(gameObject, goldReward, transform.position));
+        }
+        
         // TODO: 播放死亡动画、音效等
         Destroy(gameObject);
     }

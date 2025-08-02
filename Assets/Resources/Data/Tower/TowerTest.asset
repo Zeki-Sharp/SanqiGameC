@@ -14,24 +14,25 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   id: 100
   towerName: TestTower
+  towerDescription: 
   towerSprite: {fileID: -7673397646812646561, guid: 71b0af98a7e318a49bf35499b9276410, type: 3}
   levels:
   - towerSprite: {fileID: -7673397646812646561, guid: 71b0af98a7e318a49bf35499b9276410, type: 3}
     health: 100
     physicAttack: 100
     attackRange: 5
-    attackInterval: 100
+    attackInterval: 40
     attackSpeed: 1
   - towerSprite: {fileID: 8809870166033487863, guid: 71b0af98a7e318a49bf35499b9276410, type: 3}
-    health: 0
-    physicAttack: 0
-    attackRange: 0
-    attackInterval: 0
-    attackSpeed: 0
+    health: 100
+    physicAttack: 100
+    attackRange: 5
+    attackInterval: 40
+    attackSpeed: 1
   - towerSprite: {fileID: -1453434289248300501, guid: 71b0af98a7e318a49bf35499b9276410, type: 3}
-    health: 0
-    physicAttack: 0
-    attackRange: 0
-    attackInterval: 0
-    attackSpeed: 0
+    health: 100
+    physicAttack: 100
+    attackRange: 5
+    attackInterval: 40
+    attackSpeed: 1
   bulletConfig: {fileID: 11400000, guid: 834d67b011e3c7144ad4ed8ac70e5225, type: 2}

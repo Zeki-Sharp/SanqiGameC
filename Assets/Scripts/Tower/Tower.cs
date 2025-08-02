@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using Plugins.RaycastPro.Demo.Scripts;
@@ -61,7 +62,49 @@ public class Tower : MonoBehaviour
     { 
         rangeDetector.onDetectCollider.AddListener(OnDetectCollider); 
         towerLayerMask = LayerMask.GetMask("Tower");
-       
+        
+        // 优化RangeDetector2D配置
+        OptimizeRangeDetector();
+    }
+    
+    /// <summary>
+    /// 优化RangeDetector2D配置
+    /// </summary>
+    private void OptimizeRangeDetector()
+    {
+        if (rangeDetector == null) return;
+        
+        // 设置检测频率（每0.05秒检测一次，提高响应速度）
+        rangeDetector.pulseTime = 0.05f;
+        
+        // 设置检测层为敌人层
+        rangeDetector.detectLayer = LayerMask.GetMask("Enemy");
+        
+        // 设置最小检测半径（避免检测太近的敌人）
+        rangeDetector.minRadius = 0.3f;
+        
+        // 设置最大检测数量限制（避免检测过多敌人）
+        rangeDetector.Limited = true;
+        rangeDetector.LimitCount = 15;
+        
+        Debug.Log($"{this.name} RangeDetector2D 优化配置完成");
+    }
+    
+    /// <summary>
+    /// 动态调整RangeDetector2D的检测范围
+    /// </summary>
+    private void UpdateRangeDetectorRadius()
+    {
+        if (rangeDetector == null) return;
+        
+        float attackRange = towerData?.GetAttackRange(level) ?? 3f;
+        
+        // 只有当攻击范围发生变化时才更新
+        if (Mathf.Abs(rangeDetector.Radius - attackRange) > 0.1f)
+        {
+            rangeDetector.Radius = attackRange;
+            Debug.Log($"{this.name} 更新检测范围到: {attackRange:F1}");
+        }
     } 
     
     protected virtual void OnDetectCollider(Collider2D collider) 
@@ -71,14 +114,28 @@ public class Tower : MonoBehaviour
         if (towerData == null || bulletCaster == null) return;
         if (IsCenterTowerDestroyed()) return;
         
-        float attackSpeed = towerData?.GetAttackSpeed(level) ?? 1f;
-        attackSpeed = attackSpeed > 0 ? attackSpeed : 1f;
-        bulletCaster.ammo.reloadTime = attackSpeed;
-        rangeDetector.Radius = towerData?.GetAttackRange(level) ?? 3f;
+        // 检查攻击冷却
+        if (!IsAttackCooldownReady()) return;
         
-        raySensor.SetStartEnd(this.transform, collider.transform);
-        SetBulletDamage();
-        bulletCaster.Cast(0);
+        // 使用FindNearestEnemyInRange找到最近的目标
+        GameObject nearestEnemy = FindNearestEnemyInRange();
+        if (nearestEnemy == null) return;
+        
+        // 检查是否需要切换目标
+        bool shouldSwitchTarget = targetCache.ShouldSwitchTarget(nearestEnemy, targetCache.CurrentTargetDistance);
+        
+        if (shouldSwitchTarget)
+        {
+            // 更新当前目标
+            currentTarget = nearestEnemy;
+            Debug.Log($"{this.name} 切换目标到: {nearestEnemy.name} (距离: {targetCache.CurrentTargetDistance:F2})");
+        }
+        
+        // 执行攻击
+        ExecuteAttack(nearestEnemy);
+        
+        // 重置攻击冷却
+        ResetAttackCooldown();
     }
     public void SetBulletDamage()
     {
@@ -168,12 +225,39 @@ public class Tower : MonoBehaviour
         {
             SetCenterTowerOrder();
         }
+        
+        // 订阅敌人死亡事件
+        if (EventBus.Instance != null)
+        {
+            EventBus.Instance.Subscribe<EnemyDeathEventArgs>(OnEnemyDeath);
+        }
     }
     
     private void OnDestroy()
     {
         if (rangeDetector != null)
             rangeDetector.onDetectCollider.RemoveListener(OnDetectCollider);
+        
+        // 取消订阅敌人死亡事件
+        if (EventBus.Instance != null)
+        {
+            EventBus.Instance.Unsubscribe<EnemyDeathEventArgs>(OnEnemyDeath);
+        }
+    }
+    
+    /// <summary>
+    /// 处理敌人死亡事件
+    /// </summary>
+    /// <param name="e">敌人死亡事件参数</param>
+    private void OnEnemyDeath(EnemyDeathEventArgs e)
+    {
+        // 如果当前目标死亡，强制重新选择目标
+        if (currentTarget == e.Enemy || targetCache.CurrentTarget == e.Enemy)
+        {
+            currentTarget = null;
+            targetCache.ClearTarget();
+            Debug.Log($"{this.name} 的当前目标 {e.EnemyName} 已死亡，将重新选择目标");
+        }
     }
     
     private void SetInitialAttackRange()
@@ -487,11 +571,6 @@ public void Initialize(TowerData data, Vector3Int pos, bool hasCheck = false, bo
     }
 
 
-    // private void ReplaceTower(TowerData data)
-    // {
-    //     throw new NotImplementedException();
-    // }
-
 
     public bool IsAlive()
     {
@@ -499,24 +578,55 @@ public void Initialize(TowerData data, Vector3Int pos, bool hasCheck = false, bo
     }
 
     private float lastAttackTime;
+    
+    // 当前攻击目标
+    private GameObject currentTarget;
+    
+    // 目标缓存系统
+    private class TowerTargetCache
+    {
+        public GameObject CurrentTarget { get; set; }
+        public float CurrentTargetDistance { get; set; }
+        public bool IsTargetValid { get; set; }
+        
+        public void UpdateTarget(GameObject newTarget, float distance)
+        {
+            CurrentTarget = newTarget;
+            CurrentTargetDistance = distance;
+            IsTargetValid = newTarget != null;
+        }
+        
+        public bool ShouldSwitchTarget(GameObject newTarget, float newDistance)
+        {
+            // 如果当前没有目标，或者新目标更近，则切换
+            return CurrentTarget == null || newDistance < CurrentTargetDistance;
+        }
+        
+        public void ClearTarget()
+        {
+            CurrentTarget = null;
+            CurrentTargetDistance = float.MaxValue;
+            IsTargetValid = false;
+        }
+    }
+    
+    private TowerTargetCache targetCache = new TowerTargetCache();
 
     private void Update()
     {
+        // 展示区域的塔不进行游戏逻辑
         if (isShowAreaTower || towerData == null || rangeDetector == null)
             return;
         
+        // 更新缓存的攻击速度和范围
         if (cachedAttackSpeed <= 0f)
             cachedAttackSpeed = towerData.GetAttackSpeed(level) > 0 ? towerData.GetAttackSpeed(level) : 1f;
         
-        if (Time.unscaledTime - lastAttackTime >= 1f / cachedAttackSpeed)
-        {
-            rangeDetector.Cast();
-            if (cachedAttackRange <= 0f)
-                cachedAttackRange = towerData.GetAttackRange(level);
-
-            rangeDetector.Radius = cachedAttackRange;
-            lastAttackTime = Time.unscaledTime;
-        }
+        if (cachedAttackRange <= 0f)
+            cachedAttackRange = towerData.GetAttackRange(level);
+        
+        // 动态更新检测范围
+        UpdateRangeDetectorRadius();
     }
 
     //塔更新
@@ -559,64 +669,167 @@ public void Initialize(TowerData data, Vector3Int pos, bool hasCheck = false, bo
 
     private GameObject FindNearestEnemyInRange()
     {
-        rangeDetector.Cast();
-        // foreach (var enemy in rangeDetector.de )
-        // {
-        //     
-        //     // var blockHit = rangeDetector.DetectedLOSHits[enemy]; 
-        //     // // if (enemy.TryGetComponent(out GameObject obj)) 
-        //     // // { 
-        //     // //     float dist = Vector3.Distance(transform.position, enemy.transform.position);
-        //     // //     return obj;
-        //     // // }
-        // }
-        // GameObject[] enemies = GameObject.FindGameObjectsWithTag("Enemy");
-        // float minDist = float.MaxValue;
-        // GameObject closest = null;
-        // foreach (var enemy in enemies)
-        // {
-        //     float dist = Vector3.Distance(transform.position, enemy.transform.position);
-        //     if (dist <= towerData.GetAttackRange(level) && dist < minDist)
-        //     {
-        //         minDist = dist;
-        //         closest = enemy;
-        //     }
-    // }
-
-        return null;
+        // 1. 获取检测到的所有敌人（不重新执行Cast，避免无限循环）
+        var detectedColliders = rangeDetector.DetectedColliders;
+        if (detectedColliders == null || detectedColliders.Count == 0)
+        {
+            targetCache.ClearTarget();
+            return null;
+        }
+        
+        // 2. 计算距离并选择最近的敌人
+        GameObject nearestEnemy = null;
+        float minDistance = float.MaxValue;
+        float attackRange = towerData?.GetAttackRange(level) ?? 3f;
+        
+        Debug.Log($"{this.name} 检测到 {detectedColliders.Count} 个敌人，攻击范围: {attackRange:F1}");
+        
+        foreach (var collider in detectedColliders)
+        {
+            // 检查是否为有效的敌人
+            if (collider == null || !IsValidTarget(collider.gameObject))
+            {
+                Debug.Log($"{this.name} 跳过无效敌人: {collider?.name ?? "null"}");
+                continue;
+            }
+            
+            // 计算距离
+            float distance = Vector3.Distance(transform.position, collider.transform.position);
+            
+            Debug.Log($"{this.name} 检查敌人 {collider.gameObject.name}，距离: {distance:F2}");
+            
+            // 检查是否在攻击范围内
+            if (distance <= attackRange && distance < minDistance)
+            {
+                minDistance = distance;
+                nearestEnemy = collider.gameObject;
+                Debug.Log($"{this.name} 更新最近敌人: {nearestEnemy.name}，距离: {minDistance:F2}");
+            }
+        }
+        
+        // 3. 更新目标缓存
+        if (nearestEnemy != null)
+        {
+            targetCache.UpdateTarget(nearestEnemy, minDistance);
+            Debug.Log($"{this.name} 最终选择敌人: {nearestEnemy.name}，距离: {minDistance:F2}");
+        }
+        else
+        {
+            targetCache.ClearTarget();
+            Debug.Log($"{this.name} 没有找到有效敌人");
+        }
+        
+        return nearestEnemy;
+    }
+    
+    /// <summary>
+    /// 检查目标是否为有效的敌人
+    /// </summary>
+    /// <param name="target">要检查的目标</param>
+    /// <returns>是否为有效目标</returns>
+    private bool IsValidTarget(GameObject target)
+    {
+        if (target == null)
+        {
+            return false;
+        }
+        
+        // 检查是否为敌人标签
+        if (!target.CompareTag("Enemy"))
+        {
+            return false;
+        }
+        
+        // 检查敌人是否还活着
+        var damageTaker = target.GetComponent<DamageTaker>();
+        if (damageTaker != null && damageTaker.currentHealth <= 0)
+        {
+            return false;
+        }
+        
+        return true;
+    }
+    
+    /// <summary>
+    /// 检查攻击冷却是否就绪
+    /// </summary>
+    /// <returns>是否可以攻击</returns>
+    private bool IsAttackCooldownReady()
+    {
+        if (cachedAttackSpeed <= 0f)
+        {
+            cachedAttackSpeed = towerData?.GetAttackSpeed(level) ?? 1f;
+            cachedAttackSpeed = cachedAttackSpeed > 0 ? cachedAttackSpeed : 1f;
+        }
+        
+        return Time.unscaledTime - lastAttackTime >= 1f / cachedAttackSpeed;
+    }
+    
+    /// <summary>
+    /// 重置攻击冷却时间
+    /// </summary>
+    private void ResetAttackCooldown()
+    {
+        lastAttackTime = Time.unscaledTime;
+    }
+    
+    /// <summary>
+    /// 执行攻击
+    /// </summary>
+    /// <param name="target">攻击目标</param>
+    private void ExecuteAttack(GameObject target)
+    {
+        if (target == null || bulletCaster == null || raySensor == null)
+        {
+            return;
+        }
+        
+        // 设置攻击范围
+        float attackRange = towerData?.GetAttackRange(level) ?? 3f;
+        rangeDetector.Radius = attackRange;
+        
+        // 重新设置射线传感器指向目标（确保路径更新）
+        raySensor.SetStartEnd(this.transform, target.transform);
+        
+        // 强制更新贝塞尔射线的路径
+        if (raySensor is BezierRay2D bezierRay)
+        {
+            // 手动触发路径更新
+            bezierRay.enabled = false;
+            bezierRay.enabled = true;
+            
+            // 等待一帧确保路径更新完成
+            StartCoroutine(UpdateRayPathAndAttack());
+            return;
+        }
+        
+        // 设置子弹伤害
+        SetBulletDamage();
+        
+        // 使用RaycastPro系统发射子弹
+        bulletCaster.Cast(0);
+        
+        Debug.Log($"{this.name} 攻击目标: {target.name}");
+    }
+    
+    /// <summary>
+    /// 更新射线路径并执行攻击的协程
+    /// </summary>
+    /// <returns></returns>
+    private IEnumerator UpdateRayPathAndAttack()
+    {
+        // 等待一帧确保路径更新完成
+        yield return null;
+        
+        // 设置子弹伤害
+        SetBulletDamage();
+        
+        // 使用RaycastPro系统发射子弹
+        bulletCaster.Cast(0);
+        
+        Debug.Log($"{this.name} 贝塞尔射线攻击目标完成");
     }
 
-    private void FireAt(GameObject target)
-    { 
-        // // 使用新的子弹系统
-        // var bulletConfig = towerData?.GetBulletConfig();
-        // if (bulletConfig != null)
-        // {
-        //     var bulletManager = GameManager.Instance?.GetSystem<BulletManager>();
-        //     if (bulletManager != null)
-        //     {
-        //         GameObject bullet = bulletManager.GetBullet(bulletConfig.BulletName, transform.position, Quaternion.identity);
-        //         var bulletScript = bullet.GetComponent<IBullet>();
-        //         if (bulletScript != null)
-        //         {
-        //             Vector3 direction = (target.transform.position - transform.position).normalized;
-        //             bulletScript.Initialize(direction, 0, gameObject, target, bulletConfig.TargetTags, towerData.GetPhysicAttack(level));
-        //         }
-        //         else
-        //         {
-        //             Debug.LogWarning("子弹预制体未挂载IBullet实现脚本！");
-        //         }
-        //     }
-        //     else
-        //     {
-        //         Debug.LogWarning("BulletManager未找到！");
-        //     }
-        // }
-        // else
-        // {
-        //     Debug.LogWarning("塔没有配置子弹配置！请在TowerData中设置BulletConfig。");
-        // }
-    }
     private void OnDrawGizmos()
     {
         // 在Scene视图中显示调试信息
