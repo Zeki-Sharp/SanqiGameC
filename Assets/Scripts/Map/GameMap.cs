@@ -126,6 +126,13 @@ public class GameMap : MonoBehaviour
         GameObject centerTower = Instantiate(mapConfig.centerTower, towerArea);
         Vector3Int centerCell = CoordinateUtility.GetCenterCell(mapWidth, mapHeight); // 新增方法，返回cell坐标
         PlaceBlock(centerCell, centerTower.GetComponent<Block>());
+        
+        // 设置中心塔的层级，使其与其他塔采用相同的层级遮挡关系
+        Tower centerTowerComponent = centerTower.GetComponent<Tower>();
+        if (centerTowerComponent != null)
+        {
+            centerTowerComponent.SetCenterTowerOrder();
+        }
     }
 
     /// <summary>

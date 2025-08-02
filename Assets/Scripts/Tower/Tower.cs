@@ -162,6 +162,12 @@ public class Tower : MonoBehaviour
         }
         
         SetInitialAttackRange();
+        
+        // 如果是中心塔，设置正确的层级
+        if (CompareTag("CenterTower"))
+        {
+            SetCenterTowerOrder();
+        }
     }
     
     private void OnDestroy()
@@ -178,9 +184,41 @@ public class Tower : MonoBehaviour
 
     public void SetOrder(int order)
     {
-        spriteRenderer.sortingOrder = order;
-        // MeshRenderer renderer = GetComponentInChildren<MeshRenderer>();
-        // renderer.sortingOrder = order;
+        // 设置所有渲染器的层级
+        Renderer[] renderers = GetComponentsInChildren<Renderer>();
+        foreach (var renderer in renderers)
+        {
+            renderer.sortingOrder = order;
+        }
+        
+        // 保持向后兼容
+        if (spriteRenderer != null)
+        {
+            spriteRenderer.sortingOrder = order;
+        }
+    }
+    
+    /// <summary>
+    /// 设置中心塔的层级，使其与其他塔采用相同的层级遮挡关系
+    /// </summary>
+    public void SetCenterTowerOrder()
+    {
+        if (CompareTag("CenterTower"))
+        {
+            const int BaseOrder = 1000;
+            const int VerticalOffsetMultiplier = 10;
+            int verticalOffset = Mathf.RoundToInt(-transform.position.y * VerticalOffsetMultiplier);
+            int finalOrder = BaseOrder + verticalOffset;
+            
+            // 设置所有渲染器的层级
+            Renderer[] renderers = GetComponentsInChildren<Renderer>();
+            foreach (var renderer in renderers)
+            {
+                renderer.sortingOrder = finalOrder;
+            }
+            
+            Debug.Log($"中心塔层级设置为: {finalOrder} (位置: {transform.position})");
+        }
     }
     
     /// <summary>
