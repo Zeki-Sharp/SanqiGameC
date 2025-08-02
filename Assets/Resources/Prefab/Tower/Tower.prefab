@@ -185,7 +185,7 @@ MonoBehaviour:
   PathPoints: []
   startRadius: 0
   startTransform: {fileID: 0}
-  hight: 7
+  hight: 3
   middenVector: {x: 0, y: 0, z: 0}
   endTransform: {fileID: 0}
   resolution: 42
@@ -615,8 +615,6 @@ MonoBehaviour:
   - {fileID: -4261691411315826384, guid: 2fb7abf005420a1429b21a013ddbccb1, type: 3}
   cloneBullets:
   - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
   ignoreColliders: []
   ammo:
     infiniteAmmo: 1
@@ -635,7 +633,7 @@ MonoBehaviour:
   cloneIndex: 0
   usingAmmo: 1
   arrayCasting: 1
-  arrayCapacity: 3
+  arrayCapacity: 1
   onCast:
     m_PersistentCalls:
       m_Calls: []

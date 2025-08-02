@@ -378,7 +378,7 @@ MonoBehaviour:
   PathPoints: []
   startRadius: 0
   startTransform: {fileID: 5965266069931466106}
-  hight: 2
+  hight: 1
   middenVector: {x: 0, y: 0, z: 0}
   endTransform: {fileID: 0}
   resolution: 42
