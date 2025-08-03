@@ -48,5 +48,20 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
+  - name: BackGround
+    uniqueID: 401218379
+    locked: 0
+  - name: BuildArea
+    uniqueID: 4173271641
+    locked: 0
+  - name: Tower
+    uniqueID: 4185030347
+    locked: 0
+  - name: Enemy
+    uniqueID: 2321738241
+    locked: 0
+  - name: Bullet
+    uniqueID: 2293587141
+    locked: 0
   m_RenderingLayers:
   - Default

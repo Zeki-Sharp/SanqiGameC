@@ -15,21 +15,21 @@ MonoBehaviour:
   id: 100
   towerName: TestTower
   towerDescription: 
-  towerSprite: {fileID: -7673397646812646561, guid: 71b0af98a7e318a49bf35499b9276410, type: 3}
+  towerSprite: {fileID: -5464077396065136346, guid: c2369870105537a469793649e2aa17d8, type: 3}
   levels:
-  - towerSprite: {fileID: -7673397646812646561, guid: 71b0af98a7e318a49bf35499b9276410, type: 3}
+  - towerSprite: {fileID: -5464077396065136346, guid: c2369870105537a469793649e2aa17d8, type: 3}
     health: 100
     physicAttack: 200
     attackRange: 3
     attackInterval: 40
     attackSpeed: 1
-  - towerSprite: {fileID: 8809870166033487863, guid: 71b0af98a7e318a49bf35499b9276410, type: 3}
+  - towerSprite: {fileID: -1962419941787149128, guid: c2369870105537a469793649e2aa17d8, type: 3}
     health: 100
     physicAttack: 200
     attackRange: 3
     attackInterval: 40
     attackSpeed: 1
-  - towerSprite: {fileID: -1453434289248300501, guid: 71b0af98a7e318a49bf35499b9276410, type: 3}
+  - towerSprite: {fileID: -1775164781102749175, guid: c2369870105537a469793649e2aa17d8, type: 3}
     health: 100
     physicAttack: 200
     attackRange: 3
