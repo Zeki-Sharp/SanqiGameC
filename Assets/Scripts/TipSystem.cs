@@ -17,18 +17,25 @@ public class TowerMenuSystem : MonoBehaviour
     private void OnEnable()
     {
         EventBus.Instance.Subscribe<TowerMenuEventArgs>(OnShow);
+        EventBus.Instance.Subscribe<TowerMenuEventArgs>(OnHide);
     }
     private void OnShow(TowerMenuEventArgs obj)
     {
+        towerMenu.SetActive(true);
         nameText.text = obj.NameText;
         gardeText.text = obj.GradeText;
         infoText.text = obj.InfoText;
-        
+    }
+    private void OnHide(TowerMenuEventArgs obj)
+    {
+        towerMenu.SetActive(false);
     }
     private void OnDisable()
     {
         EventBus.Instance.Unsubscribe<TowerMenuEventArgs>(OnShow);
+        EventBus.Instance.Unsubscribe<TowerMenuEventArgs>(OnHide);
     }
+    
 }
 internal class TowerMenuEventArgs : EventArgs
 {
