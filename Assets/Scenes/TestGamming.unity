@@ -413,7 +413,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d23e0ae584fbd8740a606598f437f5ff, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Tip: {fileID: 2029707543}
+  towerMenu: {fileID: 0}
+  nameText: {fileID: 0}
+  gardeText: {fileID: 0}
+  infoText: {fileID: 0}
 --- !u!114 &378793956 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 1521612213511819119, guid: 200a80d6137f03844863fdfed25d9d94, type: 3}
@@ -1373,7 +1376,7 @@ GameObject:
   - component: {fileID: 1257080870}
   - component: {fileID: 1257080869}
   m_Layer: 0
-  m_Name: Text (TMP)
+  m_Name: NameText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1540,7 +1543,7 @@ GameObject:
   - component: {fileID: 1294659631}
   - component: {fileID: 1294659630}
   m_Layer: 0
-  m_Name: Text (TMP)
+  m_Name: GradeText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2104,7 +2107,7 @@ GameObject:
   - component: {fileID: 1600780934}
   - component: {fileID: 1600780933}
   m_Layer: 0
-  m_Name: Text (TMP)
+  m_Name: InfoText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
