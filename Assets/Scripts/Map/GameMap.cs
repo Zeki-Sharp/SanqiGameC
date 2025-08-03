@@ -11,10 +11,6 @@ public class GameMap : MonoBehaviour
     [SerializeField] private MapConfig mapConfig;
 
     [SerializeField] private DifficultyLevel difficultyLevel = DifficultyLevel.Easy;
-    // 移除tilemapOrigin
-    // 所有API、判定、放置、Gizmos等全部用Tilemap的cell坐标(Vector3Int/x,y,z)
-    // occupiedCells、placedBlocks等用cell坐标为key
-    // WorldToCellPosition/ CellToWorldPosition现在通过TileMapUtility进行转换
 
     // 以cell坐标为key的占用字典
     [ShowInInspector] private OccupiedCellSet occupiedCells = new OccupiedCellSet();
@@ -22,6 +18,10 @@ public class GameMap : MonoBehaviour
 
     [Header("Tilemap可视化")] public Tilemap tilemap; // 拖拽赋值
     public TileBase groundTile; // 拖拽你的grass瓦片
+    [Header("交错地砖配置")]
+    [SerializeField] private Tile groundTile1; // 地砖1
+    [SerializeField] private Tile groundTile2; // 地砖2
+    [SerializeField] private bool useAlternatingTiles = true; // 是否使用交错地砖
 
     [Header("预制体生成区域")] [SerializeField, LabelText("塔的生成区域物体名")]
     private string towerAreaName = "TowerArea";
@@ -111,14 +111,21 @@ public class GameMap : MonoBehaviour
             tilemap.ClearAllTiles();
 
         // 填充Tilemap
-        if (tilemap != null && groundTile != null)
+        if (tilemap != null)
         {
-            for (int x = 0; x < mapWidth; x++)
+            if (useAlternatingTiles && groundTile1 != null && groundTile2 != null)
             {
-                for (int y = 0; y < mapHeight; y++)
-                {
-                    tilemap.SetTile(new Vector3Int(x, y, 0), groundTile);
-                }
+                // 使用交错地砖模式
+                FillMapWithAlternatingTiles();
+            }
+            else if (groundTile != null)
+            {
+                // 使用单一地砖模式（保持原有逻辑）
+                FillMapWithSingleTile();
+            }
+            else
+            {
+                Debug.LogWarning("未分配地砖资源，无法初始化地图");
             }
         }
 
@@ -132,6 +139,36 @@ public class GameMap : MonoBehaviour
         if (centerTowerComponent != null)
         {
             centerTowerComponent.SetCenterTowerOrder();
+        }
+    }
+
+    /// <summary>
+    /// 使用单一地砖填充地图
+    /// </summary>
+    private void FillMapWithSingleTile()
+    {
+        for (int x = 0; x < mapWidth; x++)
+        {
+            for (int y = 0; y < mapHeight; y++)
+            {
+                tilemap.SetTile(new Vector3Int(x, y, 0), groundTile);
+            }
+        }
+    }
+
+    /// <summary>
+    /// 使用交错地砖填充地图
+    /// </summary>
+    private void FillMapWithAlternatingTiles()
+    {
+        for (int x = 0; x < mapWidth; x++)
+        {
+            for (int y = 0; y < mapHeight; y++)
+            {
+                // 交错排列：棋盘格模式，相邻格子使用不同地砖
+                TileBase tileToUse = ((x + y) % 2 == 0) ? groundTile1 : groundTile2;
+                tilemap.SetTile(new Vector3Int(x, y, 0), tileToUse);
+            }
         }
     }
 

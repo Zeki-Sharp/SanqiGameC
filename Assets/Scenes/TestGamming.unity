@@ -440,6 +440,9 @@ MonoBehaviour:
   difficultyLevel: 0
   tilemap: {fileID: 850465150}
   groundTile: {fileID: 11400000, guid: acf57d632270e594b9a9a1afe67d5c1d, type: 2}
+  groundTile1: {fileID: 11400000, guid: 6727c874d9d829146ad1c449e1908a12, type: 2}
+  groundTile2: {fileID: 11400000, guid: a77f90c913dacbd47b796898b628546b, type: 2}
+  useAlternatingTiles: 1
   towerAreaName: TowerArea
 --- !u!4 &410750876
 Transform:
@@ -1000,14 +1003,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 291653651}
     m_Modifications:
-    - target: {fileID: 1651067754945615724, guid: 9a878b98588b3b24db154df79efd4473, type: 3}
-      propertyPath: m_text
-      value: "\u56DE\u54080\u901A\u8FC7"
-      objectReference: {fileID: 0}
-    - target: {fileID: 1651067754945615724, guid: 9a878b98588b3b24db154df79efd4473, type: 3}
-      propertyPath: m_margin.z
-      value: -177.14355
-      objectReference: {fileID: 0}
     - target: {fileID: 2564132941037826452, guid: 9a878b98588b3b24db154df79efd4473, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
@@ -1027,14 +1022,6 @@ PrefabInstance:
     - target: {fileID: 2564132941037826452, guid: 9a878b98588b3b24db154df79efd4473, type: 3}
       propertyPath: m_AnchoredPosition.y
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2673769255081422010, guid: 9a878b98588b3b24db154df79efd4473, type: 3}
-      propertyPath: canvasGroup
-      value: 
-      objectReference: {fileID: 975528926}
-    - target: {fileID: 5955727770014334149, guid: 9a878b98588b3b24db154df79efd4473, type: 3}
-      propertyPath: m_AnchoredPosition.x
-      value: -62
       objectReference: {fileID: 0}
     - target: {fileID: 7012983402587026586, guid: 9a878b98588b3b24db154df79efd4473, type: 3}
       propertyPath: m_Name
@@ -1141,11 +1128,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9df1366abebccb14b9297c2250b5d183, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!225 &975528926 stripped
-CanvasGroup:
-  m_CorrespondingSourceObject: {fileID: 446295623282383051, guid: 9a878b98588b3b24db154df79efd4473, type: 3}
-  m_PrefabInstance: {fileID: 975528915}
-  m_PrefabAsset: {fileID: 0}
 --- !u!114 &998809263 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 1778148193957393398, guid: df809271d5c54964d909c4a2966737f0, type: 3}
@@ -1202,17 +1184,6 @@ Grid:
   m_CellGap: {x: 0, y: 0, z: 0}
   m_CellLayout: 2
   m_CellSwizzle: 0
---- !u!114 &1091341873 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 270830898308099935, guid: 200a80d6137f03844863fdfed25d9d94, type: 3}
-  m_PrefabInstance: {fileID: 211338963174270581}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &1120459143 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 2356640279098018910, guid: 200a80d6137f03844863fdfed25d9d94, type: 3}
@@ -3140,7 +3111,7 @@ Camera:
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 3
+  orthographic size: 3.5
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -3290,7 +3261,7 @@ PrefabInstance:
     - target: {fileID: 5580627359133281812, guid: 200a80d6137f03844863fdfed25d9d94, type: 3}
       propertyPath: nextLevelButton
       value: 
-      objectReference: {fileID: 1091341873}
+      objectReference: {fileID: 0}
     - target: {fileID: 5580627359133281812, guid: 200a80d6137f03844863fdfed25d9d94, type: 3}
       propertyPath: victoryTitleText
       value: 
