@@ -306,7 +306,7 @@ Transform:
   m_GameObject: {fileID: 6221814315126884827}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0.642, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -582,8 +582,8 @@ MonoBehaviour:
   ignoreColliders: []
   ammo:
     infiniteAmmo: 1
-    amount: 1
-    magazineCapacity: 1
+    amount: 12
+    magazineCapacity: 6
     magazineAmount: 6
     reloadTime: 2
     rateTime: 0.1
@@ -595,7 +595,7 @@ MonoBehaviour:
   trackTarget: {fileID: 0}
   bulletIndex: 0
   cloneIndex: 0
-  usingAmmo: 1
+  usingAmmo: 0
   arrayCasting: 0
   arrayCapacity: 20
   onCast:
