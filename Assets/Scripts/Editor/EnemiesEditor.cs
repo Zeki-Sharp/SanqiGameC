@@ -7,8 +7,8 @@ public class EnemiesEditor : OdinMenuEditorWindow
     [MenuItem("Window/编辑器/敌人配置及路径编辑器")]
     private static void OpenWindow()
     {
-        GetWindow<BlockConfigManagerEditor>().Show();
-        GetWindow<BlockConfigManagerEditor>().titleContent = new GUIContent("敌人配置及路径编辑器");
+        GetWindow<EnemiesEditor>().Show();
+        GetWindow<EnemiesEditor>().titleContent = new GUIContent("敌人配置及路径编辑器");
     }
 
     protected override OdinMenuTree BuildMenuTree()
