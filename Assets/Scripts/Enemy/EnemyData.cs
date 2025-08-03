@@ -1,3 +1,4 @@
+using Sirenix.OdinInspector;
 using UnityEngine;
 
 /// <summary>
@@ -15,7 +16,7 @@ public class EnemyData : ScriptableObject
     [SerializeField] private float moveSpeed = 2f;
     [SerializeField] private float attackRange = 1.5f;
     
-    [Header("攻击配置")]
+    [Header("攻击配置"),InlineEditor(InlineEditorModes.GUIOnly,InlineEditorObjectFieldModes.Boxed,DrawHeader = false)]
     [SerializeField] private ScriptableObject attackBehavior;
 
     

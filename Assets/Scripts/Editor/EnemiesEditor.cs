@@ -28,6 +28,14 @@ public class EnemiesEditor : OdinMenuEditorWindow
         }
         tree.Add("设置", enemySettingConfig);
         tree.Add("新建", new EnemyDataComboView(enemySettingConfig));
+        string enemyPath = enemySettingConfig.savePath;
+        string[] guids = AssetDatabase.FindAssets("t:EnemyData", new string[] { enemyPath });
+        foreach (string guid in guids)
+        {
+            string path = AssetDatabase.GUIDToAssetPath(guid);
+            EnemyData enemyData = AssetDatabase.LoadAssetAtPath<EnemyData>(path);
+            tree.Add($"敌人数据/{enemyData.EnemyName}", enemyData);
+        }
         return tree;
     }
     
