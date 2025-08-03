@@ -797,7 +797,7 @@ public void Initialize(TowerData data, Vector3Int pos, bool hasCheck = false, bo
         // 强制更新贝塞尔射线的路径
         if (raySensor is BezierRay2D bezierRay)
         {
-            // 手动触发路径更新
+            // 强制触发路径更新
             bezierRay.enabled = false;
             bezierRay.enabled = true;
             
@@ -823,6 +823,32 @@ public void Initialize(TowerData data, Vector3Int pos, bool hasCheck = false, bo
     {
         // 等待一帧确保路径更新完成
         yield return null;
+        
+        // 验证贝塞尔射线路径是否有效
+        if (raySensor is BezierRay2D bezierRay)
+        {
+            if (bezierRay.PathPoints == null || bezierRay.PathPoints.Count < 2)
+            {
+                Debug.LogWarning($"{this.name} 贝塞尔射线路径无效，跳过攻击。路径点数: {bezierRay.PathPoints?.Count ?? 0}");
+                yield break;
+            }
+            
+            // 计算路径长度
+            float pathLength = 0f;
+            for (int i = 0; i < bezierRay.PathPoints.Count - 1; i++)
+            {
+                pathLength += Vector2.Distance(bezierRay.PathPoints[i], bezierRay.PathPoints[i + 1]);
+            }
+            
+            Debug.Log($"{this.name} 贝塞尔射线路径有效，路径点数: {bezierRay.PathPoints.Count}，路径长度: {pathLength:F2}");
+            
+            // 如果路径长度过短，跳过攻击
+            if (pathLength < 0.1f)
+            {
+                Debug.LogWarning($"{this.name} 贝塞尔射线路径长度过短: {pathLength:F2}，跳过攻击");
+                yield break;
+            }
+        }
         
         // 设置子弹伤害
         SetBulletDamage();

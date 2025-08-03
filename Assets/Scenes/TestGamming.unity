@@ -1539,7 +1539,7 @@ Grid:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1479333734}
   m_Enabled: 1
-  m_CellSize: {x: 1, y: 0.56, z: 1}
+  m_CellSize: {x: 1, y: 0.578, z: 1}
   m_CellGap: {x: 0, y: 0, z: 0}
   m_CellLayout: 3
   m_CellSwizzle: 0
