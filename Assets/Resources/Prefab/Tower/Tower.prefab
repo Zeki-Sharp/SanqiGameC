@@ -447,7 +447,7 @@ MonoBehaviour:
   ignoreList: []
   boundsSolver: 1
   boundsCenter: 0
-  collectLOS: 1
+  collectLOS: 0
   radius: 2
   local: 1
   minRadius: 0.4
@@ -636,10 +636,10 @@ MonoBehaviour:
   - {fileID: 0}
   ignoreColliders: []
   ammo:
-    infiniteAmmo: 0
-    amount: 0
-    magazineCapacity: 1
-    magazineAmount: 0
+    infiniteAmmo: 1
+    amount: 12
+    magazineCapacity: 6
+    magazineAmount: 6
     reloadTime: 2
     rateTime: 0.1
     randomness: 0
@@ -650,8 +650,8 @@ MonoBehaviour:
   trackTarget: {fileID: 0}
   bulletIndex: 0
   cloneIndex: 2
-  usingAmmo: 1
-  arrayCasting: 1
+  usingAmmo: 0
+  arrayCasting: 0
   arrayCapacity: 20
   onCast:
     m_PersistentCalls:

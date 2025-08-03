@@ -6,13 +6,13 @@ using UnityEngine;
 public struct TowerLevel
 {
     [PreviewField(150)]
-    [SerializeField] private Sprite towerSprite;
-    [SerializeField] private float health;
-    [SerializeField] private float physicAttack;
-    [SerializeField] private float attackRange;
+    [SerializeField,LabelText("塔图片")] private Sprite towerSprite;
+    [SerializeField,LabelText("生命值")] private float health;
+    [SerializeField,LabelText("物理攻击")] private float physicAttack;
+    [SerializeField,LabelText("攻击范围")] private float attackRange;
     [SerializeField] private float attackInterval;
     // [SerializeField] private float magicAttack;
-    [SerializeField] private float attackSpeed;
+    [SerializeField,LabelText("攻击速度")] private float attackSpeed;
     // [SerializeField] private float physicDefense;
     // [SerializeField] private float magicDefense;
 

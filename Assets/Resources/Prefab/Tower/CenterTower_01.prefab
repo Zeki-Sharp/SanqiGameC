@@ -596,7 +596,7 @@ MonoBehaviour:
   bulletIndex: 0
   cloneIndex: 0
   usingAmmo: 1
-  arrayCasting: 1
+  arrayCasting: 0
   arrayCapacity: 20
   onCast:
     m_PersistentCalls:

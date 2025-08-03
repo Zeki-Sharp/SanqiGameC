@@ -259,7 +259,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 66da190bf5271794a8260a0bb901174b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  bulletConfig: {fileID: 0}
+  bulletConfig: {fileID: 11400000, guid: 834d67b011e3c7144ad4ed8ac70e5225, type: 2}
   owner: {fileID: 0}
   targetTags:
   - Enemy
@@ -296,7 +296,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   influence: 1
-  triggerInteraction: 2
+  triggerInteraction: 0
   detectLayer:
     serializedVersion: 2
     m_Bits: 1
@@ -318,7 +318,7 @@ MonoBehaviour:
   onPlanar:
     m_PersistentCalls:
       m_Calls: []
-  moveType: 2
+  moveType: 0
   callMethod: OnBullet
   messageUpward: 1
   ownerReference: {fileID: 0}
@@ -330,7 +330,7 @@ MonoBehaviour:
   endOnCollide: 0
   caster: {fileID: 0}
   raySource: {fileID: 0}
-  collisionRay: {fileID: 0}
+  collisionRay: {fileID: 1022687090493798512}
   duration: 0.5
   curve:
     serializedVersion: 2
