@@ -287,7 +287,8 @@ public enum GamePhase
     BuildingPhase,  // 建设阶段
     CombatPhase,    // 战斗阶段
     PassPhase,      // 通过阶段（新增）
-    VictoryPhase    // 胜利阶段
+    VictoryPhase,   // 胜利阶段
+    DefeatPhase     // 失败阶段
 }
 
 /// <summary>

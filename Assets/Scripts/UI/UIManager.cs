@@ -29,6 +29,7 @@ public class UIManager : MonoBehaviour
     [SerializeField] private PassUIPanel passUIPanel;
     [SerializeField] private VictoryUIPanel victoryUIPanel;
     [SerializeField] private PauseUIPanel pauseUIPanel;
+    [SerializeField] private DefeatUIPanel defeatUIPanel;
 
     // 当前显示的面板
     private UIPanel currentPanel;
@@ -79,6 +80,8 @@ public class UIManager : MonoBehaviour
             victoryUIPanel = FindFirstObjectByType<VictoryUIPanel>();
         if (pauseUIPanel == null)
             pauseUIPanel = FindFirstObjectByType<PauseUIPanel>();
+        if (defeatUIPanel == null)
+            defeatUIPanel = FindFirstObjectByType<DefeatUIPanel>();
 
         // 先隐藏所有面板
         if (buildingUIPanel != null) buildingUIPanel.Hide();
@@ -86,6 +89,7 @@ public class UIManager : MonoBehaviour
         if (passUIPanel != null) passUIPanel.Hide();
         if (victoryUIPanel != null) victoryUIPanel.Hide();
         if (pauseUIPanel != null) pauseUIPanel.Hide();
+        if (defeatUIPanel != null) defeatUIPanel.Hide();
 
         // 注册面板到字典
         if (buildingUIPanel != null)
@@ -113,6 +117,12 @@ public class UIManager : MonoBehaviour
             panels[PanelType.Pause] = pauseUIPanel; 
             pauseUIPanel.Initialize();
         }
+        if (defeatUIPanel != null)
+        {
+            panels[PanelType.Defeat] = defeatUIPanel;
+            defeatUIPanel.Initialize();
+        }
+        
 
         // 默认显示建设阶段UI
         if (panels.ContainsKey(PanelType.Building))
@@ -187,6 +197,9 @@ public class UIManager : MonoBehaviour
             case GamePhase.VictoryPhase:
                 ShowPanel(PanelType.Victory);
                 break;
+            case GamePhase.DefeatPhase:
+                ShowPanel(PanelType.Defeat);
+                break;
             default:
                 Debug.LogWarning($"未知的游戏阶段：{gamePhase}");
                 break;
@@ -255,5 +268,6 @@ public enum PanelType
     Combat,    // 战斗阶段UI
     Pass,      // 通过阶段UI（新增）
     Victory,   // 胜利阶段UI
-    Pause      // 暂停界面UI
+    Pause,     // 暂停界面UI
+    Defeat     // 失败阶段UI
 } 

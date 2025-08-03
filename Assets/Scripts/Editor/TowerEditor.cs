@@ -13,7 +13,7 @@ public class TowerEditor : OdinMenuEditorWindow
     {
         GetWindow<BlockConfigManagerEditor>().titleContent = new GUIContent("塔编辑器");
     }
-    [MenuItem("Tools/塔编辑器")]
+    [MenuItem("windows/编辑器/塔编辑器")]
     public static void OpenWindow()
     {
         GetWindow<TowerEditor>().Show();

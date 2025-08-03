@@ -52,6 +52,7 @@ namespace RaycastPro
 
         #endregion
 
+       
         protected static void CopyBullet<T>(T to, T from)
         {
             var fields = to.GetType().GetFields();

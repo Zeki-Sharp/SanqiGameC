@@ -562,6 +562,23 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
   ignoreColliders: []
   ammo:
     infiniteAmmo: 1
@@ -580,7 +597,7 @@ MonoBehaviour:
   cloneIndex: 0
   usingAmmo: 1
   arrayCasting: 1
-  arrayCapacity: 3
+  arrayCapacity: 20
   onCast:
     m_PersistentCalls:
       m_Calls: []

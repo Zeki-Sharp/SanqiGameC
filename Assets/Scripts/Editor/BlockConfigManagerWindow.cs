@@ -7,7 +7,7 @@ using UnityEngine;
 public class BlockConfigManagerEditor : OdinMenuEditorWindow
 {
     public BlockSetting Setting;
-    [MenuItem("Tools/方块配置管理器")]
+    [MenuItem("windows/编辑器/方块配置管理器")]
     private static void OpenWindow()
     {
         GetWindow<BlockConfigManagerEditor>().Show();

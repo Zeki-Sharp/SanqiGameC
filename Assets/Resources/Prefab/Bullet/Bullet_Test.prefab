@@ -303,7 +303,7 @@ MonoBehaviour:
   autoUpdate: 1
   colorProfile: {fileID: 0}
   gizmosUpdate: 0
-  timeMode: 1
+  timeMode: 2
   baseIgnoreTime: 0.1
   bulletID: Tower_Path
   onCast:
@@ -318,7 +318,7 @@ MonoBehaviour:
   onPlanar:
     m_PersistentCalls:
       m_Calls: []
-  moveType: 0
+  moveType: 2
   callMethod: OnBullet
   messageUpward: 1
   ownerReference: {fileID: 0}
@@ -331,15 +331,15 @@ MonoBehaviour:
   caster: {fileID: 0}
   raySource: {fileID: 0}
   collisionRay: {fileID: 0}
-  duration: 1
+  duration: 0.5
   curve:
     serializedVersion: 2
     m_Curve:
     - serializedVersion: 3
       time: 0
       value: 0
-      inSlope: 0
-      outSlope: 1
+      inSlope: 2
+      outSlope: 2
       tangentMode: 0
       weightedMode: 0
       inWeight: 0
@@ -347,7 +347,7 @@ MonoBehaviour:
     - serializedVersion: 3
       time: 1
       value: 1
-      inSlope: 1
+      inSlope: 0
       outSlope: 0
       tangentMode: 0
       weightedMode: 0

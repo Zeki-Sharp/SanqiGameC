@@ -1,5 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
+using RaycastPro.Bullets2D;
+using RaycastPro.Casters2D;
 using Sirenix.OdinInspector;
 using UnityEngine.Tilemaps;
 
@@ -27,6 +29,7 @@ public class GameMap : MonoBehaviour
     private string towerAreaName = "TowerArea";
 
     private Transform towerArea;
+    private BulletManager bulletManager;
 
     // 移除传统单例模式，改为通过GameManager注册
 
@@ -42,7 +45,7 @@ public class GameMap : MonoBehaviour
         {
             GameManager.Instance.RegisterSystem(this);
         }
-
+        bulletManager = GameManager.Instance.GetSystem<BulletManager>();
         if (!InitializeScene())
             return;
 
@@ -133,7 +136,7 @@ public class GameMap : MonoBehaviour
         GameObject centerTower = Instantiate(mapConfig.centerTower, towerArea);
         Vector3Int centerCell = CoordinateUtility.GetCenterCell(mapWidth, mapHeight); // 新增方法，返回cell坐标
         PlaceBlock(centerCell, centerTower.GetComponent<Block>());
-        
+        centerTower.GetComponent<BasicCaster2D>().poolManager = bulletManager.GetPoolManager();
         // 设置中心塔的层级，使其与其他塔采用相同的层级遮挡关系
         Tower centerTowerComponent = centerTower.GetComponent<Tower>();
         if (centerTowerComponent != null)

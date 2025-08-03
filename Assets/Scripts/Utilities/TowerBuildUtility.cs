@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using RaycastPro.Casters2D;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
@@ -43,6 +44,11 @@ public static class TowerBuildUtility
             // 预览塔和展示区域塔都不进行游戏逻辑
             bool isShowArea = isPreview;
             towerComponent.Initialize(towerData, cell, hasCheck, isShowArea);
+            if (!isShowArea)
+            {
+                var bulletManager = GameManager.Instance.GetSystem<BulletManager>();
+                towerComponent.GetComponent<BasicCaster2D>().poolManager = bulletManager.GetPoolManager();
+            }
             const int BaseOrder = 1000;
             const int VerticalOffsetMultiplier = 10;
             int verticalOffset = Mathf.RoundToInt(-worldPos.y * VerticalOffsetMultiplier);

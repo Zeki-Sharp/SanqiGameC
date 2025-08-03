@@ -19,9 +19,9 @@ public class BulletManager : MonoBehaviour
 
     [SerializeField]private GameObject poolManager;
 
-    public GameObject GetPoolManager()
+    public Transform GetPoolManager()
     {
-        return poolManager;
+        return poolManager.transform;
     }
     private void Awake()
     {

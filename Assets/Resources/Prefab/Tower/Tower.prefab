@@ -615,12 +615,31 @@ MonoBehaviour:
   - {fileID: -4261691411315826384, guid: 2fb7abf005420a1429b21a013ddbccb1, type: 3}
   cloneBullets:
   - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
   ignoreColliders: []
   ammo:
-    infiniteAmmo: 1
-    amount: 1
+    infiniteAmmo: 0
+    amount: 0
     magazineCapacity: 1
-    magazineAmount: 1
+    magazineAmount: 0
     reloadTime: 2
     rateTime: 0.1
     randomness: 0
@@ -630,10 +649,10 @@ MonoBehaviour:
   autoShoot: 0
   trackTarget: {fileID: 0}
   bulletIndex: 0
-  cloneIndex: 0
+  cloneIndex: 2
   usingAmmo: 1
   arrayCasting: 1
-  arrayCapacity: 1
+  arrayCapacity: 20
   onCast:
     m_PersistentCalls:
       m_Calls: []
