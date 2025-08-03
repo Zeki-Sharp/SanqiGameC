@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class EnemiesEditor : OdinMenuEditorWindow
 {
-    [MenuItem("windows/编辑器/方块配置管理器")]
+    [MenuItem("Windows/编辑器/敌人配置及路径管理器")]
     private static void OpenWindow()
     {
         GetWindow<BlockConfigManagerEditor>().Show();
