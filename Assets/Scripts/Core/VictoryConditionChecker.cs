@@ -62,8 +62,7 @@ public class VictoryConditionChecker : MonoBehaviour
             GameManager.Instance.RegisterSystem(this);
         }
         
-        // 订阅事件
-        EventBus.Instance.Subscribe<RoundCompletedEventArgs>(OnRoundCompleted);
+        // 注意：不再订阅RoundCompletedEventArgs，因为我们在Round完成之前就检查胜利条件
     }
     
     private void Start()
@@ -104,14 +103,22 @@ public class VictoryConditionChecker : MonoBehaviour
     /// </summary>
     public void CheckVictoryConditions()
     {
+        Debug.Log("VictoryConditionChecker: 开始检查胜利条件");
+        
+        // 注意：在Round完成之前检查胜利条件时，允许重复检查
+        // 只有在已经触发胜利事件后才阻止重复检查
         if (hasCheckedVictory)
+        {
+            Debug.Log("VictoryConditionChecker: 已经检查过胜利条件，跳过");
             return;
+        }
             
         Dictionary<string, object> statistics = CollectGameStatistics();
         
         // 首先检查失败条件（中心塔血量 ≤ 0）
         if (CheckDefeatCondition(statistics))
         {
+            Debug.Log("VictoryConditionChecker: 触发失败条件");
             TriggerDefeat(statistics);
             return;
         }
@@ -119,18 +126,23 @@ public class VictoryConditionChecker : MonoBehaviour
         // 检查Round胜利条件（所有敌人被消灭 或 达到时间上限）
         if (CheckRoundVictory(statistics))
         {
+            Debug.Log("VictoryConditionChecker: Round胜利条件满足，检查最终胜利");
+            
             // 检查是否达到最终胜利条件
             if (CheckFinalVictory(statistics))
             {
+                Debug.Log("VictoryConditionChecker: 触发最终胜利");
                 TriggerVictory(VictoryType.FinalVictory, statistics);
             }
             else
             {
+                Debug.Log("VictoryConditionChecker: 触发Round胜利");
                 TriggerVictory(VictoryType.RoundVictory, statistics);
             }
             return;
         }
         
+        Debug.Log("VictoryConditionChecker: 没有满足任何胜利条件");
         // 如果没有满足任何条件，不进行状态切换，等待其他条件
     }
     
@@ -149,12 +161,44 @@ public class VictoryConditionChecker : MonoBehaviour
     /// </summary>
     private bool CheckRoundVictory(Dictionary<string, object> statistics)
     {
-        if (RoundManager == null || !RoundManager.IsRoundInProgress)
+        Debug.Log($"VictoryConditionChecker: 开始检查Round胜利条件");
+        Debug.Log($"VictoryConditionChecker: RoundManager为null? {RoundManager == null}");
+        
+        if (RoundManager == null)
+        {
+            Debug.Log("VictoryConditionChecker: RoundManager为null，无法检查Round胜利");
             return false;
+        }
+        
+        Debug.Log($"VictoryConditionChecker: IsRoundInProgress = {RoundManager.IsRoundInProgress}");
+        
+        if (!RoundManager.IsRoundInProgress)
+        {
+            Debug.Log("VictoryConditionChecker: Round不在进行中，无法检查Round胜利");
+            return false;
+        }
             
-        // 检查所有敌人是否被消灭
-        GameObject[] enemies = GameObject.FindGameObjectsWithTag("Enemy");
-        bool allEnemiesDefeated = enemies.Length == 0;
+        // 使用RoundManager检查敌人状态，而不是直接查找GameObject
+        bool allEnemiesDefeated = false;
+        int remainingEnemies = 0;
+        
+        var enemySpawner = RoundManager.GetEnemySpawner();
+        Debug.Log($"VictoryConditionChecker: EnemySpawner为null? {enemySpawner == null}");
+        
+        if (enemySpawner != null)
+        {
+            remainingEnemies = enemySpawner.GetCurrentEnemyCount();
+            allEnemiesDefeated = enemySpawner.AreAllEnemiesDefeated();
+            Debug.Log($"VictoryConditionChecker: EnemySpawner检查 - 剩余敌人: {remainingEnemies}, 全部消灭: {allEnemiesDefeated}");
+        }
+        else
+        {
+            // 备用方案：直接查找敌人
+            GameObject[] enemies = GameObject.FindGameObjectsWithTag("Enemy");
+            remainingEnemies = enemies.Length;
+            allEnemiesDefeated = enemies.Length == 0;
+            Debug.Log($"VictoryConditionChecker: 直接查找敌人 - 剩余敌人: {remainingEnemies}, 全部消灭: {allEnemiesDefeated}");
+        }
         
         // 检查是否达到时间上限
         bool timeLimitReached = false;
@@ -165,13 +209,21 @@ public class VictoryConditionChecker : MonoBehaviour
             timeLimitReached = elapsedTime >= victoryConfig.roundTimeLimit;
             statistics["RoundElapsedTime"] = elapsedTime;
             statistics["RoundTimeLimit"] = victoryConfig.roundTimeLimit;
+            Debug.Log($"VictoryConditionChecker: 时间检查 - 经过时间: {elapsedTime:F1}s, 时间限制: {victoryConfig.roundTimeLimit}s, 达到限制: {timeLimitReached}");
+        }
+        else
+        {
+            Debug.Log("VictoryConditionChecker: 没有设置时间限制或时间限制为0");
         }
         
         statistics["AllEnemiesDefeated"] = allEnemiesDefeated;
         statistics["TimeLimitReached"] = timeLimitReached;
-        statistics["RemainingEnemies"] = enemies.Length;
+        statistics["RemainingEnemies"] = remainingEnemies;
         
-        return allEnemiesDefeated || timeLimitReached;
+        bool victoryCondition = allEnemiesDefeated || timeLimitReached;
+        Debug.Log($"VictoryConditionChecker: Round胜利条件检查结果 - 全部消灭: {allEnemiesDefeated}, 时间限制: {timeLimitReached}, 最终结果: {victoryCondition}");
+        
+        return victoryCondition;
     }
     
     /// <summary>
@@ -293,12 +345,12 @@ public class VictoryConditionChecker : MonoBehaviour
     }
     
     /// <summary>
-    /// 处理Round完成事件
+    /// 处理Round完成事件（已废弃，现在在Round完成之前检查胜利条件）
     /// </summary>
     private void OnRoundCompleted(RoundCompletedEventArgs e)
     {
-        // 在Round完成后检查胜利条件
-        CheckVictoryConditions();
+        Debug.Log($"VictoryConditionChecker: 收到Round完成事件 - Round {e.RoundNumber}, 奖励金钱: {e.RewardMoney}");
+        // 不再在这里检查胜利条件，因为已经在Round完成之前检查过了
     }
     
     /// <summary>
@@ -308,7 +360,18 @@ public class VictoryConditionChecker : MonoBehaviour
     {
         hasCheckedVictory = false;
         gameStartTime = Time.time;
+        roundStartTime = Time.time;
         Debug.Log("胜利条件检查器已重置");
+    }
+    
+    /// <summary>
+    /// 重置Round胜利状态（用于开始新Round时）
+    /// </summary>
+    public void ResetRoundVictory()
+    {
+        hasCheckedVictory = false;
+        roundStartTime = Time.time;
+        Debug.Log("Round胜利状态已重置");
     }
     
     /// <summary>
@@ -323,11 +386,7 @@ public class VictoryConditionChecker : MonoBehaviour
     
     private void OnDestroy()
     {
-        // 取消订阅事件
-        if (EventBus.Instance != null)
-        {
-            EventBus.Instance.Unsubscribe<RoundCompletedEventArgs>(OnRoundCompleted);
-        }
+        // 不再需要取消订阅事件，因为我们不再订阅RoundCompletedEventArgs
     }
 }
 

@@ -13,7 +13,6 @@ public class VictoryUIPanel : UIPanel
     [SerializeField] private Button nextLevelButton;
     [SerializeField] private Button restartButton;
     [SerializeField] private Button mainMenuButton;
-    [SerializeField] private GameObject victoryUI;
 
     protected override void Awake()
     {
@@ -22,6 +21,8 @@ public class VictoryUIPanel : UIPanel
         // 自动获取组件引用
         if (victoryTitleText == null)
             victoryTitleText = GetComponentInChildren<TextMeshProUGUI>();
+        
+        Debug.Log("VictoryUIPanel Awake - 初始化完成");
     }
 
     protected override void OnShow()
@@ -33,9 +34,6 @@ public class VictoryUIPanel : UIPanel
         
         // 更新UI显示
         UpdateUI();
-        
-        // 显示胜利相关UI
-        ShowVictoryUI();
     }
 
     protected override void OnHide()
@@ -44,9 +42,6 @@ public class VictoryUIPanel : UIPanel
         
         // 解绑按钮事件
         UnbindButtonEvents();
-        
-        // 隐藏胜利相关UI
-        HideVictoryUI();
     }
 
     protected override void OnReset()
@@ -100,14 +95,14 @@ public class VictoryUIPanel : UIPanel
     }
 
     /// <summary>
-    /// 下一关按钮点击事件
+    /// 下一关按钮点击事件（已废弃，最终胜利不需要下一关）
     /// </summary>
     private void OnNextLevelClicked()
     {
-        Debug.Log("下一关按钮被点击");
+        Debug.Log("下一关按钮被点击（最终胜利模式）");
         
-        // TODO: 实现下一关逻辑
-        // 暂时重新开始游戏
+        // 最终胜利时，下一关按钮应该被隐藏
+        // 这里保留以防万一，但实际不应该被调用
         RestartGame();
     }
 
@@ -175,23 +170,8 @@ public class VictoryUIPanel : UIPanel
     {
         if (victoryTitleText == null) return;
 
-        var roundManager = GameManager.Instance.GetSystem<RoundManager>();
-        if (roundManager != null)
-        {
-            int currentRound = roundManager.CurrentRoundNumber;
-            
-            // 检查是否是最终胜利
-            var victoryChecker = GameManager.Instance.GetSystem<VictoryConditionChecker>();
-            if (victoryChecker != null)
-            {
-                // TODO: 从VictoryConditionChecker获取胜利类型
-                victoryTitleText.text = $"回合 {currentRound} 胜利！";
-            }
-            else
-            {
-                victoryTitleText.text = $"回合 {currentRound} 胜利！";
-            }
-        }
+        // 最终胜利显示固定文本
+        victoryTitleText.text = "最终胜利！";
     }
 
     /// <summary>
@@ -227,23 +207,7 @@ public class VictoryUIPanel : UIPanel
         statisticsText.text = stats;
     }
 
-    /// <summary>
-    /// 显示胜利相关UI
-    /// </summary>
-    private void ShowVictoryUI()
-    {
-        if (victoryUI != null)
-            victoryUI.SetActive(true);
-    }
 
-    /// <summary>
-    /// 隐藏胜利相关UI
-    /// </summary>
-    private void HideVictoryUI()
-    {
-        if (victoryUI != null)
-            victoryUI.SetActive(false);
-    }
 
     /// <summary>
     /// 公共方法：更新UI（供外部调用）
@@ -282,6 +246,16 @@ public class VictoryUIPanel : UIPanel
         if (nextLevelButton != null)
         {
             nextLevelButton.gameObject.SetActive(false);
+        }
+        
+        // 确保重新开始和主菜单按钮可见
+        if (restartButton != null)
+        {
+            restartButton.gameObject.SetActive(true);
+        }
+        if (mainMenuButton != null)
+        {
+            mainMenuButton.gameObject.SetActive(true);
         }
     }
 } 

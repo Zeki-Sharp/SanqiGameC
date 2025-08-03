@@ -26,6 +26,7 @@ public class UIManager : MonoBehaviour
     [Header("UI面板引用")]
     [SerializeField] private BuildingUIPanel buildingUIPanel;
     [SerializeField] private CombatUIPanel combatUIPanel;
+    [SerializeField] private PassUIPanel passUIPanel;
     [SerializeField] private VictoryUIPanel victoryUIPanel;
     [SerializeField] private PauseUIPanel pauseUIPanel;
 
@@ -72,10 +73,19 @@ public class UIManager : MonoBehaviour
             buildingUIPanel = FindFirstObjectByType<BuildingUIPanel>();
         if (combatUIPanel == null)
             combatUIPanel = FindFirstObjectByType<CombatUIPanel>();
+        if (passUIPanel == null)
+            passUIPanel = FindFirstObjectByType<PassUIPanel>();
         if (victoryUIPanel == null)
             victoryUIPanel = FindFirstObjectByType<VictoryUIPanel>();
         if (pauseUIPanel == null)
             pauseUIPanel = FindFirstObjectByType<PauseUIPanel>();
+
+        // 先隐藏所有面板
+        if (buildingUIPanel != null) buildingUIPanel.Hide();
+        if (combatUIPanel != null) combatUIPanel.Hide();
+        if (passUIPanel != null) passUIPanel.Hide();
+        if (victoryUIPanel != null) victoryUIPanel.Hide();
+        if (pauseUIPanel != null) pauseUIPanel.Hide();
 
         // 注册面板到字典
         if (buildingUIPanel != null)
@@ -87,6 +97,11 @@ public class UIManager : MonoBehaviour
         {
             panels[PanelType.Combat] = combatUIPanel;
             combatUIPanel.Initialize();
+        }
+        if (passUIPanel != null)
+        {
+            panels[PanelType.Pass] = passUIPanel;
+            passUIPanel.Initialize();
         }
         if (victoryUIPanel != null)
         {
@@ -114,19 +129,27 @@ public class UIManager : MonoBehaviour
     /// <param name="panelType">面板类型</param>
     public void ShowPanel(PanelType panelType)
     {
+        Debug.Log($"UIManager.ShowPanel: 尝试显示面板 {panelType}");
+        
         if (panels.TryGetValue(panelType, out UIPanel panel))
         {
-            // 隐藏当前面板
-            if (currentPanel != null && currentPanel != panel)
+            Debug.Log($"UIManager.ShowPanel: 找到面板 {panelType}, 当前状态: {panel.IsVisible}");
+            
+            // 隐藏所有其他面板
+            foreach (var kvp in panels)
             {
-                currentPanel.Hide();
+                if (kvp.Value != panel && kvp.Value.IsVisible)
+                {
+                    kvp.Value.Hide();
+                    Debug.Log($"隐藏面板：{kvp.Key}");
+                }
             }
 
             // 显示新面板
             panel.Show();
             currentPanel = panel;
             
-            Debug.Log($"显示面板：{panelType}");
+            Debug.Log($"显示面板：{panelType} 完成");
         }
         else
         {
@@ -158,6 +181,11 @@ public class UIManager : MonoBehaviour
     /// <param name="gamePhase">游戏阶段</param>
     public void SwitchToPhase(GamePhase gamePhase)
     {
+        Debug.Log($"UIManager: 切换到游戏阶段 {gamePhase}");
+        
+        // 先隐藏所有面板
+        HideAllPanels();
+        
         switch (gamePhase)
         {
             case GamePhase.BuildingPhase:
@@ -165,6 +193,9 @@ public class UIManager : MonoBehaviour
                 break;
             case GamePhase.CombatPhase:
                 ShowPanel(PanelType.Combat);
+                break;
+            case GamePhase.PassPhase:
+                ShowPanel(PanelType.Pass);
                 break;
             case GamePhase.VictoryPhase:
                 ShowPanel(PanelType.Victory);
@@ -237,6 +268,7 @@ public enum PanelType
 {
     Building,  // 建设阶段UI
     Combat,    // 战斗阶段UI
-    Victory,    // 胜利阶段UI
-    Pause //暂停界面UI
+    Pass,      // 通过阶段UI（新增）
+    Victory,   // 胜利阶段UI
+    Pause      // 暂停界面UI
 } 

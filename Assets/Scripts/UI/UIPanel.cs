@@ -22,6 +22,10 @@ public abstract class UIPanel : MonoBehaviour
             canvasGroup = GetComponent<CanvasGroup>();
         if (panelRoot == null)
             panelRoot = gameObject;
+            
+        // 确保面板一开始是隐藏的
+        if (panelRoot != null)
+            panelRoot.SetActive(false);
     }
 
     /// <summary>
@@ -41,11 +45,20 @@ public abstract class UIPanel : MonoBehaviour
     {
         if (isVisible) return;
 
+        Debug.Log($"{GetType().Name}.Show: 开始显示, panelRoot: {panelRoot}");
+        
         isVisible = true;
         
         // 显示面板根对象
         if (panelRoot != null)
+        {
             panelRoot.SetActive(true);
+            Debug.Log($"{GetType().Name}.Show: 设置panelRoot.SetActive(true)");
+        }
+        else
+        {
+            Debug.LogWarning($"{GetType().Name}.Show: panelRoot为null");
+        }
         
         // 设置CanvasGroup
         if (canvasGroup != null)
@@ -56,7 +69,7 @@ public abstract class UIPanel : MonoBehaviour
         }
 
         OnShow();
-        Debug.Log($"{GetType().Name} 显示");
+        Debug.Log($"{GetType().Name} 显示完成");
     }
 
     /// <summary>
@@ -66,11 +79,20 @@ public abstract class UIPanel : MonoBehaviour
     {
         if (!isVisible) return;
 
+        Debug.Log($"{GetType().Name}.Hide: 开始隐藏, panelRoot: {panelRoot}");
+        
         isVisible = false;
         
         // 隐藏面板根对象
         if (panelRoot != null)
+        {
             panelRoot.SetActive(false);
+            Debug.Log($"{GetType().Name}.Hide: 设置panelRoot.SetActive(false)");
+        }
+        else
+        {
+            Debug.LogWarning($"{GetType().Name}.Hide: panelRoot为null");
+        }
         
         // 设置CanvasGroup
         if (canvasGroup != null)
@@ -81,7 +103,7 @@ public abstract class UIPanel : MonoBehaviour
         }
 
         OnHide();
-        Debug.Log($"{GetType().Name} 隐藏");
+        Debug.Log($"{GetType().Name} 隐藏完成");
     }
 
     /// <summary>

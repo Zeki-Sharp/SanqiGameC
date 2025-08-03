@@ -151,6 +151,9 @@ public class GameManager : MonoBehaviour
                 case GamePhase.CombatPhase:
                     gameStateManager.SwitchToCombatPhase();
                     break;
+                case GamePhase.PassPhase:
+                    gameStateManager.SwitchToPassPhase();
+                    break;
                 case GamePhase.VictoryPhase:
                     gameStateManager.SwitchToVictoryPhase();
                     break;

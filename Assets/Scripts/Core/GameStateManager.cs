@@ -18,6 +18,7 @@ public class GameStateManager : MonoBehaviour
     public GamePhase CurrentPhase => currentPhase;
     public bool IsInCombatPhase => currentPhase == GamePhase.CombatPhase;
     public bool IsInBuildingPhase => currentPhase == GamePhase.BuildingPhase;
+    public bool IsInPassPhase => currentPhase == GamePhase.PassPhase;
     public bool IsInVictoryPhase => currentPhase == GamePhase.VictoryPhase;
     
     // 单例模式
@@ -68,6 +69,15 @@ public class GameStateManager : MonoBehaviour
     
     private void Start()
     {
+        // 延迟初始化，确保UIManager已经初始化完成
+        StartCoroutine(DelayedInitialize());
+    }
+    
+    private System.Collections.IEnumerator DelayedInitialize()
+    {
+        // 等待一帧，确保UIManager已经初始化
+        yield return null;
+        
         // 初始化游戏状态，引用通过属性自动获取
         InitializeGameState();
     }
@@ -83,6 +93,12 @@ public class GameStateManager : MonoBehaviour
             OldPhase = GamePhase.BuildingPhase, 
             NewPhase = GamePhase.BuildingPhase 
         });
+        
+        // 确保UI显示正确的阶段
+        if (UIManager != null)
+        {
+            UIManager.SwitchToPhase(GamePhase.BuildingPhase);
+        }
         
         Debug.Log("游戏状态管理器初始化完成，当前状态：建设阶段");
     }
@@ -139,6 +155,31 @@ public class GameStateManager : MonoBehaviour
             UIManager.SwitchToPhase(GamePhase.CombatPhase);
             
         Debug.Log($"游戏状态切换：{oldPhase} → 战斗阶段");
+    }
+    
+    /// <summary>
+    /// 切换到通过阶段
+    /// </summary>
+    public void SwitchToPassPhase()
+    {
+        if (currentPhase == GamePhase.PassPhase)
+            return;
+            
+        GamePhase oldPhase = currentPhase;
+        currentPhase = GamePhase.PassPhase;
+        
+        // 发布状态变化事件
+        EventBus.Instance.Publish(new GamePhaseChangedEventArgs 
+        { 
+            OldPhase = oldPhase, 
+            NewPhase = GamePhase.PassPhase 
+        });
+        
+        // 更新UI
+        if (UIManager != null)
+            UIManager.SwitchToPhase(GamePhase.PassPhase);
+            
+        Debug.Log($"游戏状态切换：{oldPhase} → 通过阶段");
     }
     
     /// <summary>
@@ -199,8 +240,8 @@ public class GameStateManager : MonoBehaviour
         }
         else
         {
-            // Round胜利，切换回建设阶段
-            SwitchToBuildingPhase();
+            // Round胜利，切换到通过阶段
+            SwitchToPassPhase();
         }
     }
     
@@ -249,6 +290,7 @@ public enum GamePhase
 {
     BuildingPhase,  // 建设阶段
     CombatPhase,    // 战斗阶段
+    PassPhase,      // 通过阶段（新增）
     VictoryPhase    // 胜利阶段
 }
 

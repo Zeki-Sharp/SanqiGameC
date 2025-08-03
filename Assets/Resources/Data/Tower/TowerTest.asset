@@ -19,19 +19,19 @@ MonoBehaviour:
   levels:
   - towerSprite: {fileID: -7673397646812646561, guid: 71b0af98a7e318a49bf35499b9276410, type: 3}
     health: 100
-    physicAttack: 100
+    physicAttack: 200
     attackRange: 5
     attackInterval: 40
     attackSpeed: 1
   - towerSprite: {fileID: 8809870166033487863, guid: 71b0af98a7e318a49bf35499b9276410, type: 3}
     health: 100
-    physicAttack: 100
+    physicAttack: 200
     attackRange: 5
     attackInterval: 40
     attackSpeed: 1
   - towerSprite: {fileID: -1453434289248300501, guid: 71b0af98a7e318a49bf35499b9276410, type: 3}
     health: 100
-    physicAttack: 100
+    physicAttack: 200
     attackRange: 5
     attackInterval: 40
     attackSpeed: 1
