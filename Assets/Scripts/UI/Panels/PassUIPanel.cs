@@ -19,14 +19,9 @@ public class PassUIPanel : UIPanel
         // 自动获取组件引用
         if (passTitleText == null)
             passTitleText = GetComponentInChildren<TextMeshProUGUI>();
-        
-        // 调试信息
-        Debug.Log($"PassUIPanel Awake - panelRoot: {panelRoot}, gameObject: {gameObject.name}");
-        
-        Debug.Log("PassUIPanel Awake - 初始化完成");
     }
 
-    protected override void OnShow()
+        protected override void OnShow()
     {
         base.OnShow();
         
@@ -35,18 +30,14 @@ public class PassUIPanel : UIPanel
         
         // 更新UI显示
         UpdateUI();
-        
-        Debug.Log("PassUIPanel显示：Round通过界面");
     }
-
+    
     protected override void OnHide()
     {
         base.OnHide();
         
         // 解绑按钮事件
         UnbindButtonEvents();
-        
-        Debug.Log("PassUIPanel隐藏");
     }
 
     protected override void OnReset()
@@ -86,8 +77,6 @@ public class PassUIPanel : UIPanel
     /// </summary>
     private void OnStartBuildingClicked()
     {
-        Debug.Log("开始建设按钮被点击");
-        
         // 切换到建设阶段，准备开始下一个Round
         if (GameManager.Instance != null)
         {

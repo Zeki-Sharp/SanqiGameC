@@ -187,8 +187,6 @@ public class RoundManager : MonoBehaviour
     /// </summary>
     public void StartNextRound()
     {
-        Debug.Log("RoundManager.StartNextRound() 被调用");
-        
         if (isRoundInProgress)
         {
             Debug.LogWarning("当前Round正在进行中，无法开始新Round");
@@ -204,8 +202,6 @@ public class RoundManager : MonoBehaviour
             Debug.LogError($"未找到Round {currentRoundNumber} 的配置");
             return;
         }
-        
-        Debug.Log($"Round {currentRoundNumber} 配置: {config.waves.Count} 个Wave");
         
         // 重置胜利检查器的Round状态
         if (VictoryChecker != null)
@@ -223,9 +219,7 @@ public class RoundManager : MonoBehaviour
         // 开始生成敌人
         if (EnemySpawner != null)
         {
-            Debug.Log("设置EnemySpawner的Waves配置");
             EnemySpawner.SetWaves(config.waves);
-            Debug.Log("开始EnemySpawner的Wave生成");
             EnemySpawner.StartWaves();
         }
         else
@@ -238,8 +232,6 @@ public class RoundManager : MonoBehaviour
         {
             VictoryChecker.SetRoundStartTime(Time.time);
         }
-        
-        Debug.Log($"开始Round {currentRoundNumber}，包含 {config.waves.Count} 个Wave");
     }
     
     /// <summary>
@@ -275,11 +267,6 @@ public class RoundManager : MonoBehaviour
             RewardMoney = config.rewardMoney,
             RewardExperience = config.rewardExperience
         });
-        
-        Debug.Log($"Round {currentRoundNumber} 完成，奖励金钱：{config.rewardMoney}");
-        
-        // 注意：不在这里直接检查胜利条件，让VictoryConditionChecker来处理
-        // VictoryConditionChecker会监听RoundCompletedEventArgs事件
     }
     
     /// <summary>
@@ -324,8 +311,6 @@ public class RoundManager : MonoBehaviour
         // 使用EnemySpawner提供的方法检查是否所有敌人都被消灭
         if (EnemySpawner.AreAllEnemiesDefeated() && isRoundInProgress)
         {
-            Debug.Log($"Round {currentRoundNumber} 所有敌人已被消灭，检查胜利条件");
-            
             // 在完成Round之前先检查胜利条件
             if (VictoryChecker != null)
             {

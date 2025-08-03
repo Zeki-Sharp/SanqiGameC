@@ -21,8 +21,6 @@ public class VictoryUIPanel : UIPanel
         // 自动获取组件引用
         if (victoryTitleText == null)
             victoryTitleText = GetComponentInChildren<TextMeshProUGUI>();
-        
-        Debug.Log("VictoryUIPanel Awake - 初始化完成");
     }
 
     protected override void OnShow()

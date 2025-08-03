@@ -212,8 +212,6 @@ public class GameStateManager : MonoBehaviour
     /// </summary>
     private void OnRoundCompleted(RoundCompletedEventArgs e)
     {
-        Debug.Log($"Round {e.RoundNumber} 完成，奖励金钱：{e.RewardMoney}");
-        
         // 检查是否满足胜利条件
         if (VictoryChecker != null)
         {
@@ -231,8 +229,6 @@ public class GameStateManager : MonoBehaviour
     /// </summary>
     private void OnVictoryConditionMet(VictoryConditionMetEventArgs e)
     {
-        Debug.Log($"胜利条件满足：{e.VictoryType}");
-        
         if (e.VictoryType == VictoryType.FinalVictory)
         {
             // 最终胜利，切换到胜利阶段

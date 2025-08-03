@@ -35,7 +35,6 @@ public abstract class UIPanel : MonoBehaviour
     {
         // 默认隐藏面板
         Hide();
-        Debug.Log($"{GetType().Name} 初始化完成");
     }
 
     /// <summary>
@@ -44,8 +43,6 @@ public abstract class UIPanel : MonoBehaviour
     public virtual void Show()
     {
         if (isVisible) return;
-
-        Debug.Log($"{GetType().Name}.Show: 开始显示, panelRoot: {panelRoot}");
         
         isVisible = true;
         
@@ -53,7 +50,6 @@ public abstract class UIPanel : MonoBehaviour
         if (panelRoot != null)
         {
             panelRoot.SetActive(true);
-            Debug.Log($"{GetType().Name}.Show: 设置panelRoot.SetActive(true)");
         }
         else
         {
@@ -69,7 +65,6 @@ public abstract class UIPanel : MonoBehaviour
         }
 
         OnShow();
-        Debug.Log($"{GetType().Name} 显示完成");
     }
 
     /// <summary>
@@ -78,8 +73,6 @@ public abstract class UIPanel : MonoBehaviour
     public virtual void Hide()
     {
         if (!isVisible) return;
-
-        Debug.Log($"{GetType().Name}.Hide: 开始隐藏, panelRoot: {panelRoot}");
         
         isVisible = false;
         
@@ -87,7 +80,6 @@ public abstract class UIPanel : MonoBehaviour
         if (panelRoot != null)
         {
             panelRoot.SetActive(false);
-            Debug.Log($"{GetType().Name}.Hide: 设置panelRoot.SetActive(false)");
         }
         else
         {
@@ -103,7 +95,6 @@ public abstract class UIPanel : MonoBehaviour
         }
 
         OnHide();
-        Debug.Log($"{GetType().Name} 隐藏完成");
     }
 
     /// <summary>
@@ -112,7 +103,6 @@ public abstract class UIPanel : MonoBehaviour
     public virtual void Reset()
     {
         OnReset();
-        Debug.Log($"{GetType().Name} 重置");
     }
 
     /// <summary>

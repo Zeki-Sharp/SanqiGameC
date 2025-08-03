@@ -114,8 +114,6 @@ public class UIManager : MonoBehaviour
             pauseUIPanel.Initialize();
         }
 
-        Debug.Log($"UIManager初始化完成，共找到{panels.Count}个面板");
-        
         // 默认显示建设阶段UI
         if (panels.ContainsKey(PanelType.Building))
         {
@@ -129,27 +127,20 @@ public class UIManager : MonoBehaviour
     /// <param name="panelType">面板类型</param>
     public void ShowPanel(PanelType panelType)
     {
-        Debug.Log($"UIManager.ShowPanel: 尝试显示面板 {panelType}");
-        
         if (panels.TryGetValue(panelType, out UIPanel panel))
         {
-            Debug.Log($"UIManager.ShowPanel: 找到面板 {panelType}, 当前状态: {panel.IsVisible}");
-            
             // 隐藏所有其他面板
             foreach (var kvp in panels)
             {
                 if (kvp.Value != panel && kvp.Value.IsVisible)
                 {
                     kvp.Value.Hide();
-                    Debug.Log($"隐藏面板：{kvp.Key}");
                 }
             }
 
             // 显示新面板
             panel.Show();
             currentPanel = panel;
-            
-            Debug.Log($"显示面板：{panelType} 完成");
         }
         else
         {
@@ -170,8 +161,6 @@ public class UIManager : MonoBehaviour
             {
                 currentPanel = null;
             }
-            
-            Debug.Log($"隐藏面板：{panelType}");
         }
     }
 
@@ -181,8 +170,6 @@ public class UIManager : MonoBehaviour
     /// <param name="gamePhase">游戏阶段</param>
     public void SwitchToPhase(GamePhase gamePhase)
     {
-        Debug.Log($"UIManager: 切换到游戏阶段 {gamePhase}");
-        
         // 先隐藏所有面板
         HideAllPanels();
         
@@ -233,7 +220,6 @@ public class UIManager : MonoBehaviour
             panel.Hide();
         }
         currentPanel = null;
-        Debug.Log("隐藏所有面板");
     }
 
     /// <summary>
@@ -245,7 +231,6 @@ public class UIManager : MonoBehaviour
         {
             panel.Reset();
         }
-        Debug.Log("重置所有面板");
     }
 
     public void ShowPausePanel()
