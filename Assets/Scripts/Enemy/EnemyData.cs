@@ -23,11 +23,16 @@ public class EnemyData : ScriptableObject
     [Header("奖励")]
     [SerializeField] private int goldReward = 10;
     
+    [Header("配置")]
+    [SerializeField] private GameObject enemyPrefab;
+    
     // 公共属性
     public string EnemyName => enemyName;
+    public Sprite EnemySprite => enemySprite;
     public float MaxHealth => maxHealth;
     public float MoveSpeed => moveSpeed;
     public float AttackRange => attackRange;
     public IAttackBehavior AttackBehavior => attackBehavior as IAttackBehavior;
     public int GoldReward => goldReward;
+    public GameObject EnemyPrefab => enemyPrefab;
 } 

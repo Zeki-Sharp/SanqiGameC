@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Enemy Data 2
   m_EditorClassIdentifier: 
   enemyName: Enemy
+  enemySprite: {fileID: -1777775615664477507, guid: dc1519f39c42dff46a9f6ffe73744617, type: 3}
   maxHealth: 500
   moveSpeed: 1
   attackRange: 1

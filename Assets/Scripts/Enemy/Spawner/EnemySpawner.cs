@@ -65,7 +65,7 @@ public class EnemySpawner : MonoBehaviour
             {
                 for (int i = 0; i < enemyInfo.count; i++)
                 {
-                    SpawnEnemy(enemyInfo.enemyPrefab);
+                    SpawnEnemy(wave,enemyInfo.enemyData);
                     yield return new WaitForSeconds(unitSpawnDelay);
                 }
             }
@@ -77,15 +77,23 @@ public class EnemySpawner : MonoBehaviour
     /// <summary>
     /// 生成单个敌人
     /// </summary>
-    public void SpawnEnemy(GameObject enemyPrefab)
+    public void SpawnEnemy(Wave wave, EnemyData enemyData)
     {
-        if (enemyPrefab == null)
+        if (enemyData == null)
         {
-            Debug.LogError("EnemySpawner: 未设置敌人Prefab！");
+            Debug.LogError("EnemySpawner: 未设置敌人Data！");
             return;
         }
         Vector3 spawnPosition = CalculateSpawnPositionInAreas();
+        GameObject enemyPrefab = wave.enemyPrefab;
+        if (enemyData.EnemyPrefab !=  null)
+        {
+            enemyPrefab = enemyData.EnemyPrefab;
+        }
         GameObject enemyObject = Instantiate(enemyPrefab, spawnPosition, Quaternion.identity);
+        
+        enemyObject.GetComponent<EnemyController>().SetEnemyData(enemyData);
+        enemyObject.name = enemyData.EnemyName + FindObjectsByType<EnemyController>(sortMode: FindObjectsSortMode.InstanceID).Length;
         
         // 设置敌人朝向
         SetEnemyDirection(enemyObject, spawnPosition);

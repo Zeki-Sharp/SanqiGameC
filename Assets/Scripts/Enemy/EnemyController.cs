@@ -87,7 +87,19 @@ public class EnemyController : MonoBehaviour
             currentState.CheckTransitions();
         }
     }
-    
+    public bool SetEnemyData(EnemyData newData)
+    {
+        if (newData == null)
+        {
+            Debug.LogError("EnemyData不能为空");
+            return false;
+        }
+        data = newData;
+        damageTaker.maxHealth = newData.MaxHealth;
+        damageTaker.currentHealth = newData.MaxHealth;
+        spriteRenderer.sprite = newData.EnemySprite;
+        return true;
+    }
     /// <summary>
     /// 切换状态
     /// </summary>

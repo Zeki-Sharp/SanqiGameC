@@ -16,15 +16,18 @@ MonoBehaviour:
   waves:
   - delayBeforeWave: 1
     enemies:
-    - enemyPrefab: {fileID: 9133360019857942620, guid: 8e19af0d194bc28419cddd955b2b213c, type: 3}
+    - enemyData: {fileID: 11400000, guid: 7aaf533f3d8c502498b868e1d33eb75f, type: 2}
       count: 3
-    - enemyPrefab: {fileID: 9133360019857942620, guid: 574b4a79a34cc9b46b98197181e2a3fe, type: 3}
+    - enemyData: {fileID: 11400000, guid: 918a523174ab5624bbebdfd9c7404e9f, type: 2}
       count: 3
+    enemyPrefab: {fileID: 0}
   - delayBeforeWave: 1
     enemies:
-    - enemyPrefab: {fileID: 9133360019857942620, guid: 8e19af0d194bc28419cddd955b2b213c, type: 3}
+    - enemyData: {fileID: 11400000, guid: 7aaf533f3d8c502498b868e1d33eb75f, type: 2}
       count: 3
-    - enemyPrefab: {fileID: 9133360019857942620, guid: 574b4a79a34cc9b46b98197181e2a3fe, type: 3}
+    - enemyData: {fileID: 11400000, guid: 918a523174ab5624bbebdfd9c7404e9f, type: 2}
       count: 3
+    enemyPrefab: {fileID: 0}
+  enemyPrefab: {fileID: 0}
   rewardMoney: 100
   rewardExperience: 20

@@ -41,7 +41,7 @@ public class TowerData : ScriptableObject
     [Header("等级数据")]
 [SerializeField] private TowerLevel[] levels = new TowerLevel[0];
 
-[Header("子弹配置")]
+[Header("子弹配置"),InlineEditor(InlineEditorModes.GUIOnly,InlineEditorObjectFieldModes.Hidden)]
 [SerializeField] private BulletConfig bulletConfig;
 
     // 公共属性访问器
