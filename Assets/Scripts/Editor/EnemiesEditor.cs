@@ -34,7 +34,7 @@ public class EnemiesEditor : OdinMenuEditorWindow
         {
             string path = AssetDatabase.GUIDToAssetPath(guid);
             EnemyData enemyData = AssetDatabase.LoadAssetAtPath<EnemyData>(path);
-            tree.Add($"敌人数据/{enemyData.EnemyName}", enemyData);
+            tree.Add($"敌人数据/{enemyData.EnemyName}{enemyData.GetInstanceID()}", enemyData);
         }
         return tree;
     }
