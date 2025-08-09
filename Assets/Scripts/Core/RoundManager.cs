@@ -403,19 +403,7 @@ public class RoundManager : MonoBehaviour
     }
 }
 
-/// <summary>
-/// Round配置 - ScriptableObject
-/// </summary>
-[CreateAssetMenu(fileName = "New Round Config", menuName = "Tower Defense/Round Config")] [Serializable]
-public class RoundConfig : ScriptableObject
-{
-    [Header("Round信息")]
-    public int roundNumber;
-    public List<Wave> waves = new List<Wave>();
 
-    [Header("奖励")]
-    public int rewardMoney = 100;
-}
 
 /// <summary>
 /// Round开始事件参数
