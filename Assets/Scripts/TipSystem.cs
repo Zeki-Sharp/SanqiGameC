@@ -1,52 +1,117 @@
 using System;
+using System.Collections.Generic;
+using NUnit.Framework;
+using Sirenix.OdinInspector;
 using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
-public class TowerMenuSystem : MonoBehaviour
+public class TipSystem : MonoBehaviour
 {
-    public GameObject towerMenu;
-    public TextMeshProUGUI nameText;
-    public TextMeshProUGUI gardeText;
-    public TextMeshProUGUI infoText;
+    [SerializeField] private Camera mainCamera;
+    [SerializeField] private Camera previewCamera;
+    [SerializeField] private GameObject TipMenu;
+    [SerializeField] private TextMeshProUGUI nameText;
+    [SerializeField] private TextMeshProUGUI infoText;
+
+    [SerializeField]   private string PreviewShowName = "Preview_Show";
+   
+    [SerializeField] private Vector3 _lastMousePosition;
+    [SerializeField] private Vector2 previewOffset;
     private void Awake()
     {
-        nameText = transform.Find("NameText").GetComponent<TextMeshProUGUI>();
-        gardeText = transform.Find("GardeText").GetComponent<TextMeshProUGUI>();
-        infoText = transform.Find("InfoText").GetComponent<TextMeshProUGUI>();
-    }
-    private void OnEnable()
-    {
-        EventBus.Instance.Subscribe<TowerMenuEventArgs>(OnShow);
-        EventBus.Instance.Subscribe<TowerMenuEventArgs>(OnHide);
-    }
-    private void OnShow(TowerMenuEventArgs obj)
-    {
-        towerMenu.SetActive(true);
-        nameText.text = obj.NameText;
-        gardeText.text = obj.GradeText;
-        infoText.text = obj.InfoText;
-    }
-    private void OnHide(TowerMenuEventArgs obj)
-    {
-        towerMenu.SetActive(false);
-    }
-    private void OnDisable()
-    {
-        EventBus.Instance.Unsubscribe<TowerMenuEventArgs>(OnShow);
-        EventBus.Instance.Unsubscribe<TowerMenuEventArgs>(OnHide);
+        mainCamera = Camera.main;
+        previewCamera = GameObject.Find("PreviewCamera")?.GetComponent<Camera>();
+        if (previewCamera == null)
+        {
+            Debug.LogError("PreviewCamera not found in the scene!");
+        }
     }
     
-}
-internal class TowerMenuEventArgs : EventArgs
-{
-    public string NameText;
-    public string GradeText;
-    public string InfoText;
-
-    public TowerMenuEventArgs(string nameText, string gradeText, string infoText)
+    private void Update()
     {
-        NameText = nameText;
-        GradeText = gradeText;
-        InfoText = infoText;
+        if (!GameStateManager.Instance.IsInPassPhase || !GameStateManager.Instance.IsInVictoryPhase)
+        { 
+      
+            if (Vector3.Distance(Input.mousePosition,_lastMousePosition) > 5f)
+            { 
+                _lastMousePosition = Input.mousePosition;
+                if (EventSystem.current.IsPointerOverGameObject())
+                {
+                    if ( GetCurrentUI().name == PreviewShowName)
+                    {
+                        GetOtherCameraPosition();
+                    }
+                }
+                else
+                {
+                    // Debug.Log(EventSystem.current.gameObject.name); 
+                }
+                // var ray = mainCamera.ScreenPointToRay(Input.mousePosition); 
+           
+                // if (Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity))
+                // {
+                //  
+                //     
+                //     if (hit.collider.gameObject.TryGetComponent(out EnemyController enemyController))
+                //     {
+                //         // Handle enemy controller logic here
+                //     }
+                //     else if (hit.collider.gameObject.TryGetComponent(out Tower tower))
+                //     {
+                //         // Handle tower logic here
+                //     }
+                //     else if (hit.collider.gameObject.name == PreviewShowName)
+                //     {
+                //         GetOtherCameraPosition();
+                //     }
+                // }
+            }
+        }
+    }
+    public void GetOtherCameraPosition()
+    {
+        if (previewCamera == null)
+        {
+            Debug.LogError("PreviewCamera is not assigned!");
+            return;
+        }
+
+        // 将屏幕坐标转换为世界坐标（z 不影响 2D 检测）
+        Vector3 worldPos = previewCamera.ScreenToWorldPoint(Input.mousePosition);
+        Vector2 origin = new Vector2(worldPos.x, worldPos.y);
+        origin += previewOffset;
+        // 发出一条方向为 zero 的2D射线（点检测）
+        RaycastHit2D hit = Physics2D.Raycast(origin, Vector2.right, 1000f);
+
+        Debug.Log(origin);
+        // 调试显示
+        Debug.DrawLine(origin, origin + Vector2.right * 100f, Color.red, 1f);
+
+        if (hit.collider != null)
+        {
+            Debug.Log($"2D Hit: {hit.collider.gameObject.name} at {hit.point}");
+        }
+        else
+        {
+            Debug.Log("No 2D hit detected");
+        }
+    }
+
+    public GameObject GetCurrentUI()
+    {
+        PointerEventData pointer = new PointerEventData(EventSystem.current);
+        pointer.position = Input.mousePosition;
+        List<RaycastResult> results = new List<RaycastResult>();
+        EventSystem.current.RaycastAll(pointer,results);
+        return results.Count > 0 ? results[0].gameObject : null;
+    }
+    public void HideTip()
+    {
+        
+    }
+    public void ShowTip(string tile, string context, Vector3 position)
+    {
+        
     }
 }

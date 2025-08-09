@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Text;
 using Plugins.RaycastPro.Demo.Scripts;
 using RaycastPro;
+using RaycastPro.Bullets;
 using RaycastPro.Casters2D;
 using RaycastPro.Detectors;
 using RaycastPro.Detectors2D;
@@ -105,7 +106,7 @@ public class Tower : MonoBehaviour
             Debug.Log($"治疗效果激活：治疗量={healAmount}，间隔={healEffectData.healInterval}，范围类型={healEffectData.healRangeType}，效果类型={healEffectData.healEffectType}，持续时间为永久");
         }
     }
-    
+    void OnBullet(Bullet bullet) =>  damageTaker.TakeDamage(bullet.damage);
     /// <summary>
     /// 优化RangeDetector2D配置
     /// </summary>
@@ -904,7 +905,7 @@ public void Initialize(TowerData data, Vector3Int pos, bool hasCheck = false, bo
         // 在Scene视图中显示调试信息
         #if UNITY_EDITOR
         UnityEditor.Handles.Label(transform.position + Vector3.up * 0.5f, 
-            $"塔名: {towerData.TowerName}\n等级: {level :F0}/{ towerData.MaxLevel:F0}");
+            $"塔名: {towerData.TowerName}\n等级: {level :F0}/{ towerData.MaxLevel:F0}\n 生命值: {currentHealth:F0}/{towerData.GetHealth(level):F0}\n攻击力: {towerData.GetPhysicAttack(level):F0}\n攻击间隔: {towerData.GetAttackInterval(level):F2}");
         #endif
     }
 }

@@ -41,10 +41,10 @@ MonoBehaviour:
     skillSlots:
     - skillType: 1
       attackSkill:
-        skillName: "\u7FA4\u4F53\u8FDC\u7A0B2"
+        skillName: "\u65B0\u6280\u80FD"
         skillDescription: 
-        physicAttack: 12
-        attackRange: 1.5
+        physicAttack: 100
+        attackRange: 3
         attackInterval: 1
         attackSpeed: 1
       healSkill:

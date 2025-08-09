@@ -258,10 +258,10 @@ Canvas:
   m_GameObject: {fileID: 291653646}
   m_Enabled: 1
   serializedVersion: 3
-  m_RenderMode: 0
+  m_RenderMode: 1
   m_Camera: {fileID: 2058614372}
   m_PlaneDistance: 100
-  m_PixelPerfect: 0
+  m_PixelPerfect: 1
   m_ReceivesEvents: 1
   m_OverrideSorting: 0
   m_OverridePixelPerfect: 0
@@ -269,7 +269,7 @@ Canvas:
   m_VertexColorAlwaysGammaSpace: 0
   m_AdditionalShaderChannelsFlag: 25
   m_UpdateRectTransformForStandalone: 0
-  m_SortingLayerID: 0
+  m_SortingLayerID: -121695655
   m_SortingOrder: 0
   m_TargetDisplay: 0
 --- !u!224 &291653651
@@ -412,10 +412,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d23e0ae584fbd8740a606598f437f5ff, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  towerMenu: {fileID: 0}
+  mainCamera: {fileID: 0}
+  previewCamera: {fileID: 0}
+  TipMenu: {fileID: 0}
   nameText: {fileID: 0}
-  gardeText: {fileID: 0}
   infoText: {fileID: 0}
+  PreviewShowName: Preview_Show
+  _lastMousePosition: {x: 0, y: 0, z: 0}
+  previewOffset: {x: 0, y: 0}
 --- !u!114 &378793956 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 1521612213511819119, guid: 200a80d6137f03844863fdfed25d9d94, type: 3}

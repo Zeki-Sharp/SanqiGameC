@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using RaycastPro.Casters2D;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
@@ -26,9 +27,11 @@ public class EnemySpawner : MonoBehaviour
     private int currentWaveIndex = 0;
     private int currentEnemyCount = 0;
     private Coroutine spawnRoutine;
-
+    
+    private BulletManager bulletManager;
     private void Start()
     {
+        bulletManager = GameManager.Instance.GetSystem<BulletManager>();
         // 不再自动开始，完全由RoundManager控制
         Debug.Log("EnemySpawner初始化完成，等待RoundManager调用");
     }
@@ -94,10 +97,13 @@ public class EnemySpawner : MonoBehaviour
         Vector3 spawnPosition = CalculateSpawnPositionInAreas();
         GameObject enemyPrefab = enemyData.EnemyPrefab;
         GameObject enemyObject = Instantiate(enemyPrefab, spawnPosition, Quaternion.identity);
-        
+        enemyObject.GetComponent<BasicCaster2D>().poolManager = bulletManager.GetPoolManager();
         enemyObject.GetComponent<EnemyController>().SetEnemyData(enemyData);
         enemyObject.name = enemyData.EnemyName + FindObjectsByType<EnemyController>(sortMode: FindObjectsSortMode.InstanceID).Length;
-        
+        if (enemyData.EnemySprite != null)
+        {
+            enemyObject.GetComponent<SpriteRenderer>().sprite = enemyData.EnemySprite;
+        }
         // 设置敌人朝向
         SetEnemyDirection(enemyObject, spawnPosition);
         
