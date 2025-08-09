@@ -23,16 +23,28 @@ MonoBehaviour:
     attackRange: 3
     attackInterval: 100
     attackSpeed: 1
+    healAmount: 50
+    healInterval: 1
+    healRangeType: 1
+    healEffectType: 0
   - towerSprite: {fileID: -5363679693085979656, guid: c2369870105537a469793649e2aa17d8, type: 3}
     health: 0
     physicAttack: 0
     attackRange: 0
     attackInterval: 0
     attackSpeed: 0
+    healAmount: 0
+    healInterval: 0
+    healRangeType: 0
+    healEffectType: 0
   - towerSprite: {fileID: 9074908732373601645, guid: c2369870105537a469793649e2aa17d8, type: 3}
     health: 0
     physicAttack: 0
     attackRange: 0
     attackInterval: 0
     attackSpeed: 0
+    healAmount: 0
+    healInterval: 0
+    healRangeType: 0
+    healEffectType: 0
   bulletConfig: {fileID: 11400000, guid: 834d67b011e3c7144ad4ed8ac70e5225, type: 2}

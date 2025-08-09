@@ -12,6 +12,7 @@ public class DamageTaker : MonoBehaviour
 
    [ShowInInspector] public System.Action<float> onTakeDamage;
    [ShowInInspector]public System.Action onDeath;
+   [ShowInInspector]public System.Action<float> onHeal; // 新增治疗事件回调
 
     private void Awake()
     {
@@ -32,6 +33,23 @@ public class DamageTaker : MonoBehaviour
             Die();
         }
     }
+
+    /// <summary>
+    /// 接受治疗
+    /// </summary>
+    /// <param name="amount">治疗量</param>
+    public virtual void Heal(float amount)
+    {
+        float oldHealth = currentHealth;
+        currentHealth = Mathf.Min(currentHealth + amount, maxHealth);
+        float actualHeal = currentHealth - oldHealth;
+        
+        if (actualHeal > 0)
+        {
+            onHeal?.Invoke(actualHeal);
+        }
+    }
+
     public void OnBullet(Bullet bullet)
     {
         TakeDamage(bullet.damage);

@@ -58,6 +58,10 @@ public class Tower : MonoBehaviour
     
     private float cachedAttackSpeed = 1f;
     private float cachedAttackRange = 3f;
+
+    // 治疗效果控制器
+    private EffectController effectController;
+    
     private void Start() 
     { 
         rangeDetector.onDetectCollider.AddListener(OnDetectCollider); 
@@ -65,6 +69,41 @@ public class Tower : MonoBehaviour
         
         // 优化RangeDetector2D配置
         OptimizeRangeDetector();
+        
+        // 启动治疗效果（如果是治疗塔）
+        StartHealEffect();
+    }
+    
+    /// <summary>
+    /// 启动治疗效果（如果是治疗塔）
+    /// </summary>
+    private void StartHealEffect()
+    {
+        if (effectController == null || towerData == null) return;
+        
+        // 检查是否为治疗塔（有治疗配置的塔）
+        float healAmount = towerData.GetHealAmount(level);
+        if (healAmount > 0)
+        {
+            // 先移除可能存在的同名效果，避免重复
+            effectController.RemoveEffect("Heal");
+            
+            // 创建治疗效果数据
+            var healEffectData = new EffectData
+            {
+                effectName = "Heal",
+                healAmount = healAmount,
+                healInterval = towerData.GetHealInterval(level),
+                healRangeType = towerData.GetHealRangeType(level),
+                healEffectType = towerData.GetHealEffectType(level),
+                duration = -1f // 永久效果
+            };
+            
+            // 应用治疗效果
+            effectController.AddEffect(healEffectData);
+            
+            Debug.Log($"治疗效果激活：治疗量={healAmount}，间隔={healEffectData.healInterval}，范围类型={healEffectData.healRangeType}，效果类型={healEffectData.healEffectType}，持续时间为永久");
+        }
     }
     
     /// <summary>
@@ -194,6 +233,7 @@ public class Tower : MonoBehaviour
         // cachedText = GetComponentInChildren<TextMeshPro>();
         cachedBlock = GetComponentInParent<Block>();
         cachedBulletManager = GameManager.Instance?.GetSystem<BulletManager>();
+        effectController = GetComponent<EffectController>();
         
         if (damageTaker == null)
             Debug.LogError($"DamageTaker component missing on {name}");
