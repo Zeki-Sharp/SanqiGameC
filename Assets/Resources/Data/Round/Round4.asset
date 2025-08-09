@@ -10,12 +10,16 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: eb0580fe0c2f7be4cab9abea5cbde368, type: 3}
-  m_Name: Round1
+  m_Name: Round4
   m_EditorClassIdentifier: 
-  roundNumber: 1
+  roundNumber: 4
   waves:
   - delayBeforeWave: 1
     enemies:
     - enemyData: {fileID: 11400000, guid: 7aaf533f3d8c502498b868e1d33eb75f, type: 2}
-      count: 12
+      count: 36
+    - enemyData: {fileID: 11400000, guid: ef22f2b1ea93b9b4f9b809722a515c38, type: 2}
+      count: 8
+    - enemyData: {fileID: 11400000, guid: 918a523174ab5624bbebdfd9c7404e9f, type: 2}
+      count: 16
   rewardMoney: 100
