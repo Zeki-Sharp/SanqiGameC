@@ -12,9 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f31d169b0100ab144965420b556efbdd, type: 3}
   m_Name: Ranged Attack
   m_EditorClassIdentifier: 
-  damage: 15
-  attackCooldown: 1.5
-  attackRange: 2
+  damage: 5
+  attackCooldown: 1
   bulletSpeed: 8
   attackAnimationTrigger: Attack
   bulletConfig: {fileID: 11400000, guid: ec8e31838e4c8e242a930307cc159f5d, type: 2}
