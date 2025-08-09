@@ -9,7 +9,6 @@ public class EnemyData : ScriptableObject
 {
     [Header("基础信息")]
     [SerializeField] private string enemyName = "Enemy";
-    [SerializeField] private Sprite enemySprite;
     
     [Header("属性")]
     [SerializeField] private float maxHealth = 100f;
@@ -28,7 +27,6 @@ public class EnemyData : ScriptableObject
     
     // 公共属性
     public string EnemyName => enemyName;
-    public Sprite EnemySprite => enemySprite;
     public float MaxHealth => maxHealth;
     public float MoveSpeed => moveSpeed;
     public float AttackRange => attackRange;

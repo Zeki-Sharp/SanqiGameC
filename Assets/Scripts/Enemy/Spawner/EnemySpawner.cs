@@ -84,12 +84,15 @@ public class EnemySpawner : MonoBehaviour
             Debug.LogError("EnemySpawner: 未设置敌人Data！");
             return;
         }
-        Vector3 spawnPosition = CalculateSpawnPositionInAreas();
-        GameObject enemyPrefab = wave.enemyPrefab;
-        if (enemyData.EnemyPrefab !=  null)
+        
+        if (enemyData.EnemyPrefab == null)
         {
-            enemyPrefab = enemyData.EnemyPrefab;
+            Debug.LogError($"EnemySpawner: EnemyData '{enemyData.EnemyName}' 的enemyPrefab为空，无法生成敌人！");
+            return;
         }
+        
+        Vector3 spawnPosition = CalculateSpawnPositionInAreas();
+        GameObject enemyPrefab = enemyData.EnemyPrefab;
         GameObject enemyObject = Instantiate(enemyPrefab, spawnPosition, Quaternion.identity);
         
         enemyObject.GetComponent<EnemyController>().SetEnemyData(enemyData);

@@ -99,10 +99,7 @@ public class RoundManager : MonoBehaviour
                     for (int j = 0; j < config.waves.Count; j++)
                     {
                         var wave = config.waves[j];
-                        if (roundConfigs[i].enemyPrefab != null)
-                        {
-                            config.waves[j].enemyPrefab = roundConfigs[i].enemyPrefab;
-                        }
+                        
                         Debug.Log($"  Wave {j + 1}: {wave.enemies.Count} 种敌人");
                         for (int k = 0; k < wave.enemies.Count; k++)
                         {
@@ -133,7 +130,6 @@ public class RoundManager : MonoBehaviour
             config.roundNumber = i;
             config.waves = CreateDefaultWaves(i);
             config.rewardMoney = 50 + i * 10;
-            config.rewardExperience = 10 + i * 2;
             roundConfigs.Add(config);
         }
     }
@@ -152,47 +148,70 @@ public class RoundManager : MonoBehaviour
         {
             Wave wave = new Wave();
             wave.delayBeforeWave = 2f + i * 1f;
+            
+            // 获取可用的EnemyData（只使用有预制体的）
             EnemyData[] enemyDatas = GetDefaultEnemyPrefabFromData();
+            List<EnemyData> validEnemyDatas = new List<EnemyData>();
+            
             foreach (var enemyData in enemyDatas)
             {
-                // 创建敌人信息
+                if (enemyData != null && enemyData.EnemyPrefab != null)
+                {
+                    validEnemyDatas.Add(enemyData);
+                }
+            }
+            
+            // 如果没有有效的EnemyData，创建一个默认的Wave
+            if (validEnemyDatas.Count == 0)
+            {
+                Debug.LogWarning($"Round {roundNumber} Wave {i + 1}: 没有找到有效的EnemyData，跳过此Wave");
+                continue;
+            }
+            
+            // 为每个有效的EnemyData创建敌人信息
+            foreach (var enemyData in validEnemyDatas)
+            {
                 EnemySpawnInfo enemyInfo = new EnemySpawnInfo();
                 enemyInfo.enemyData = enemyData;
                 enemyInfo.count = 3 + roundNumber + i * 2;
                 wave.enemies.Add(enemyInfo);
             }
-            wave.enemyPrefab = GetDefaultEnemyPrefab();
+            
             waves.Add(wave);
         }
 
         return waves;
     }
 
-    /// <summary>
-    /// 获取默认敌人预制体
-    /// </summary>
-    private GameObject GetDefaultEnemyPrefab()
-    {
-        // 从Resources加载默认敌人预制体
-        GameObject enemyPrefab = Resources.Load<GameObject>("Prefab/Enemy/Enemy_test");
-        if (enemyPrefab == null)
-        {
-            // 尝试加载备用预制体
-            enemyPrefab = Resources.Load<GameObject>("Prefab/Enemy/Enemy_test_2");
-        }
-        if (enemyPrefab == null)
-        {
-            Debug.LogError("未找到任何敌人预制体，请检查Resources/Prefab/Enemy/目录");
-        }
-        else
-        {
-            Debug.Log($"成功加载敌人预制体: {enemyPrefab.name}");
-        }
-        return enemyPrefab;
-    }
+
     public EnemyData[] GetDefaultEnemyPrefabFromData()
     {
         EnemyData[] enemyData = Resources.LoadAll<EnemyData>("Data/Enemy");
+        
+        if (enemyData == null || enemyData.Length == 0)
+        {
+            Debug.LogWarning("没有找到任何EnemyData文件");
+            return new EnemyData[0];
+        }
+        
+        Debug.Log($"找到 {enemyData.Length} 个EnemyData文件");
+        
+        // 检查每个EnemyData的有效性
+        int validCount = 0;
+        foreach (var data in enemyData)
+        {
+            if (data != null && data.EnemyPrefab != null)
+            {
+                validCount++;
+            }
+            else
+            {
+                Debug.LogWarning($"EnemyData '{data?.name ?? "null"}' 的enemyPrefab为空");
+            }
+        }
+        
+        Debug.Log($"其中 {validCount} 个EnemyData有有效的enemyPrefab");
+        
         return enemyData;
     }
     /// <summary>
@@ -277,8 +296,7 @@ public class RoundManager : MonoBehaviour
         EventBus.Instance.Publish(new RoundCompletedEventArgs
         {
             RoundNumber = currentRoundNumber,
-            RewardMoney = config.rewardMoney,
-            RewardExperience = config.rewardExperience
+            RewardMoney = config.rewardMoney
         });
     }
 
@@ -395,12 +413,8 @@ public class RoundConfig : ScriptableObject
     public int roundNumber;
     public List<Wave> waves = new List<Wave>();
 
-    [Header("配置")]
-    public GameObject enemyPrefab;
-
     [Header("奖励")]
     public int rewardMoney = 100;
-    public int rewardExperience = 20;
 }
 
 /// <summary>
@@ -419,5 +433,4 @@ public class RoundCompletedEventArgs : EventArgs
 {
     public int RoundNumber;
     public int RewardMoney;
-    public int RewardExperience;
 }

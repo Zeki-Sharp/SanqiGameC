@@ -18,7 +18,4 @@ MonoBehaviour:
     enemies:
     - enemyData: {fileID: 11400000, guid: 7aaf533f3d8c502498b868e1d33eb75f, type: 2}
       count: 12
-    enemyPrefab: {fileID: 9133360019857942620, guid: f53476b6d080e0b4eaa696973f645afb, type: 3}
-  enemyPrefab: {fileID: 0}
   rewardMoney: 100
-  rewardExperience: 20

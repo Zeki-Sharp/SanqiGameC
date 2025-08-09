@@ -152,7 +152,6 @@ MonoBehaviour:
   isRoundInProgress: 0
   roundConfigs:
   - {fileID: 11400000, guid: 1774d027176ade44197ee9a2784731b3, type: 2}
-  - {fileID: 11400000, guid: 3ca4bdd2fc3ced9469a1819d5f5802da, type: 2}
 --- !u!4 &196132498
 Transform:
   m_ObjectHideFlags: 0

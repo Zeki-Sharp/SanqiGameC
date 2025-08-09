@@ -97,7 +97,7 @@ public class EnemyController : MonoBehaviour
         data = newData;
         damageTaker.maxHealth = newData.MaxHealth;
         damageTaker.currentHealth = newData.MaxHealth;
-        spriteRenderer.sprite = newData.EnemySprite;
+        // 不再设置sprite，敌人直接通过prefab显示
         return true;
     }
     /// <summary>
