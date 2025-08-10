@@ -63,5 +63,11 @@ TagManager:
   - name: Bullet
     uniqueID: 2293587141
     locked: 0
+  - name: Effect
+    uniqueID: 1729072845
+    locked: 0
+  - name: Overlay
+    uniqueID: 630144195
+    locked: 0
   m_RenderingLayers:
   - Default
