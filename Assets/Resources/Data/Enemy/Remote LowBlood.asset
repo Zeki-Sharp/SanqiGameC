@@ -19,4 +19,4 @@ MonoBehaviour:
   attackRange: 1
   attackBehavior: {fileID: 11400000, guid: f8e6a5643e2672f47b4f65008aaf27a2, type: 2}
   goldReward: 10
-  enemyPrefab: {fileID: 9133360019857942620, guid: f53476b6d080e0b4eaa696973f645afb, type: 3}
+  enemyPrefab: {fileID: 9133360019857942620, guid: 8e19af0d194bc28419cddd955b2b213c, type: 3}

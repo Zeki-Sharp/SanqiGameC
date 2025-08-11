@@ -32,6 +32,13 @@ public class EnemySpawner : MonoBehaviour
     private void Start()
     {
         bulletManager = GameManager.Instance.GetSystem<BulletManager>();
+        
+        // 订阅敌人死亡事件，用于更新敌人计数
+        if (EventBus.Instance != null)
+        {
+            EventBus.Instance.Subscribe<EnemyDeathEventArgs>(OnEnemyDeath);
+        }
+        
         // 不再自动开始，完全由RoundManager控制
         Debug.Log("EnemySpawner初始化完成，等待RoundManager调用");
     }
@@ -145,13 +152,40 @@ public class EnemySpawner : MonoBehaviour
     }
     
     /// <summary>
+    /// 处理敌人死亡事件，减少敌人计数
+    /// </summary>
+    private void OnEnemyDeath(EnemyDeathEventArgs e)
+    {
+        if (currentEnemyCount > 0)
+        {
+            currentEnemyCount--;
+            if (debugSpawnInfo)
+            {
+                Debug.Log($"EnemySpawner: 敌人 {e.EnemyName} 死亡，当前敌人总数: {currentEnemyCount}");
+            }
+        }
+    }
+    
+    /// <summary>
+    /// 清理事件订阅
+    /// </summary>
+    private void OnDestroy()
+    {
+        if (EventBus.Instance != null)
+        {
+            EventBus.Instance.Unsubscribe<EnemyDeathEventArgs>(OnEnemyDeath);
+        }
+    }
+    
+    /// <summary>
     /// 设置Wave配置（由RoundManager调用）
     /// </summary>
     /// <param name="newWaves">新的Wave列表</param>
     public void SetWaves(List<Wave> newWaves)
     {
         waves = newWaves;
-        Debug.Log($"EnemySpawner: 设置Wave配置，共 {waves?.Count ?? 0} 个Wave");
+        currentEnemyCount = 0; // 重置敌人计数，准备新回合
+        Debug.Log($"EnemySpawner: 设置Wave配置，共 {waves?.Count ?? 0} 个Wave，敌人计数已重置");
     }
     
     /// <summary>
