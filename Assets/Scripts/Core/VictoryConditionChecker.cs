@@ -98,7 +98,7 @@ public class VictoryConditionChecker : MonoBehaviour
     {
         victoryConfig = ScriptableObject.CreateInstance<VictoryConfig>();
         victoryConfig.roundTimeLimit = 300f; // 每个Round 5分钟时间限制
-        victoryConfig.finalVictoryRound = 3; // 完成3个Round获得最终胜利（测试用）
+        victoryConfig.finalVictoryRound = 10; // 完成10个Round获得最终胜利
         victoryConfig.requireCenterTowerAlive = true; // 要求中心塔存活
     }
     
@@ -202,14 +202,17 @@ public class VictoryConditionChecker : MonoBehaviour
         int currentRound = RoundManager.CurrentRoundNumber;
         bool centerTowerAlive = CheckCenterTowerAlive();
         
-        // 检查是否达到最终胜利的Round数量
-        // 注意：当前Round正在进行中，所以需要检查当前Round是否达到最终胜利条件
-        bool roundCondition = currentRound >= victoryConfig.finalVictoryRound;
+        // 检查是否完成了所有可用的Round
+        // 获取RoundManager中的配置总数
+        int totalRounds = RoundManager.GetTotalRoundCount();
+        bool roundCondition = currentRound >= totalRounds;
         bool towerCondition = !victoryConfig.requireCenterTowerAlive || centerTowerAlive;
         
         statistics["CompletedRounds"] = currentRound;
-        statistics["FinalVictoryRounds"] = victoryConfig.finalVictoryRound;
+        statistics["TotalRounds"] = totalRounds;
         statistics["CenterTowerAlive"] = centerTowerAlive;
+        
+        Debug.Log($"CheckFinalVictory: 当前回合 {currentRound}, 总回合数 {totalRounds}, 回合条件 {roundCondition}, 塔条件 {towerCondition}");
         
         return roundCondition && towerCondition;
     }
@@ -328,8 +331,9 @@ public class VictoryConditionChecker : MonoBehaviour
     /// </summary>
     public void ResetRoundVictory()
     {
-        hasCheckedVictory = false;
+        hasCheckedVictory = false;  // 重置胜利检查标志
         roundStartTime = Time.time;
+        Debug.Log("VictoryConditionChecker: Round胜利状态已重置");
     }
     
     /// <summary>

@@ -70,8 +70,12 @@ public class RoundManager : MonoBehaviour
 
     private void Start()
     {
+        Debug.Log("RoundManager: Start() 开始执行");
+        
         // 初始化Round配置，引用通过属性自动获取
         InitializeRoundConfigs();
+        
+        Debug.Log($"RoundManager Start() 完成，当前回合: {currentRoundNumber}, 配置总数: {roundConfigs.Count}");
     }
 
     /// <summary>
@@ -80,49 +84,118 @@ public class RoundManager : MonoBehaviour
     private void InitializeRoundConfigs()
     {
         Debug.Log($"RoundManager初始化：Inspector中有{roundConfigs.Count}个Round配置");
-
-        // 如果没有配置，创建默认配置
-        if (roundConfigs.Count == 0)
+        
+        // 优先从Resources加载Round配置
+        List<RoundConfig> loadedConfigs = LoadRoundConfigsFromResources();
+        if (loadedConfigs != null && loadedConfigs.Count > 0)
         {
-            Debug.Log("Inspector中没有Round配置，创建默认配置");
-            CreateDefaultRoundConfigs();
-        }
-        else
-        {
-            // 验证现有配置
+            roundConfigs = loadedConfigs;
+            Debug.Log($"从Resources加载了{roundConfigs.Count}个Round配置");
+            
+            // 详细记录每个配置
             for (int i = 0; i < roundConfigs.Count; i++)
             {
                 var config = roundConfigs[i];
-                if (config != null)
+                Debug.Log($"配置 {i + 1}: {config.name}, Round {config.roundNumber}, {config.waves?.Count ?? 0} 个Wave");
+            }
+        }
+        else if (roundConfigs.Count == 0)
+        {
+            // 如果没有找到配置文件，创建默认配置
+            Debug.LogWarning("没有找到Round配置文件，创建默认配置");
+            roundConfigs = CreateDefaultRoundConfigs();
+        }
+        
+        // 验证配置有效性
+        ValidateRoundConfigs();
+        
+        Debug.Log($"RoundManager初始化完成，共有{roundConfigs.Count}个Round配置");
+    }
+    
+    /// <summary>
+    /// 从Resources加载Round配置
+    /// </summary>
+    private List<RoundConfig> LoadRoundConfigsFromResources()
+    {
+        List<RoundConfig> configs = new List<RoundConfig>();
+        
+        // 尝试加载所有Round配置
+        RoundConfig[] loadedConfigs = Resources.LoadAll<RoundConfig>("Data/Round");
+        
+        if (loadedConfigs != null && loadedConfigs.Length > 0)
+        {
+            // 按Round编号排序
+            List<RoundConfig> sortedConfigs = new List<RoundConfig>(loadedConfigs);
+            sortedConfigs.Sort((a, b) => a.roundNumber.CompareTo(b.roundNumber));
+            
+            foreach (var config in sortedConfigs)
+            {
+                if (config != null && config.waves != null && config.waves.Count > 0)
                 {
-                    Debug.Log($"Round {i + 1} 配置: {config.waves.Count} 个Wave");
-                    for (int j = 0; j < config.waves.Count; j++)
-                    {
-                        var wave = config.waves[j];
-                        
-                        Debug.Log($"  Wave {j + 1}: {wave.enemies.Count} 种敌人");
-                        for (int k = 0; k < wave.enemies.Count; k++)
-                        {
-                            var enemy = wave.enemies[k];
-                            Debug.Log($"    敌人 {k + 1}: {enemy.enemyData?.EnemyName ?? "null"} x {enemy.count}");
-                        }
-                    }
+                    configs.Add(config);
+                    Debug.Log($"加载Round配置: {config.name}, Round {config.roundNumber}, {config.waves.Count}个Wave");
                 }
                 else
                 {
-                    Debug.LogError($"Round {i + 1} 配置为null");
+                    Debug.LogWarning($"Round配置 {config?.name ?? "null"} 无效，跳过");
                 }
             }
         }
-
-        Debug.Log($"Round配置初始化完成，共{roundConfigs.Count}个Round配置");
+        else
+        {
+            Debug.LogWarning("Resources/Data/Round文件夹中没有找到Round配置");
+        }
+        
+        return configs;
+    }
+    
+    /// <summary>
+    /// 验证Round配置的有效性
+    /// </summary>
+    private void ValidateRoundConfigs()
+    {
+        if (roundConfigs == null || roundConfigs.Count == 0)
+        {
+            Debug.LogWarning("Round配置列表为空");
+            return;
+        }
+        
+        for (int i = 0; i < roundConfigs.Count; i++)
+        {
+            var config = roundConfigs[i];
+            if (config != null)
+            {
+                Debug.Log($"Round {config.roundNumber} 配置: {config.waves?.Count ?? 0} 个Wave");
+                if (config.waves != null)
+                {
+                    for (int j = 0; j < config.waves.Count; j++)
+                    {
+                        var wave = config.waves[j];
+                        Debug.Log($"  Wave {j + 1}: {wave.enemies?.Count ?? 0} 种敌人");
+                        if (wave.enemies != null)
+                        {
+                            for (int k = 0; k < wave.enemies.Count; k++)
+                            {
+                                var enemy = wave.enemies[k];
+                                Debug.Log($"    敌人 {k + 1}: {enemy.enemyData?.EnemyName ?? "null"} x {enemy.count}");
+                            }
+                        }
+                    }
+                }
+            }
+            else
+            {
+                Debug.LogError($"Round {i + 1} 配置为null");
+            }
+        }
     }
 
     /// <summary>
     /// 创建默认Round配置
     /// </summary>
-    private void CreateDefaultRoundConfigs()
+    private List<RoundConfig> CreateDefaultRoundConfigs()
     {
+        List<RoundConfig> defaultConfigs = new List<RoundConfig>();
         // 创建前10个Round的默认配置
         for (int i = 1; i <= 10; i++)
         {
@@ -130,8 +203,9 @@ public class RoundManager : MonoBehaviour
             config.roundNumber = i;
             config.waves = CreateDefaultWaves(i);
             config.rewardMoney = 50 + i * 10;
-            roundConfigs.Add(config);
+            defaultConfigs.Add(config);
         }
+        return defaultConfigs;
     }
 
     /// <summary>
@@ -228,12 +302,16 @@ public class RoundManager : MonoBehaviour
         currentRoundNumber++;
         isRoundInProgress = true;
 
+        Debug.Log($"RoundManager: 开始Round {currentRoundNumber}，当前配置总数: {roundConfigs.Count}");
+
         RoundConfig config = GetCurrentRoundConfig();
         if (config == null)
         {
             Debug.LogError($"未找到Round {currentRoundNumber} 的配置");
             return;
         }
+
+        Debug.Log($"RoundManager: 使用配置 {config.name}，包含 {config.waves?.Count ?? 0} 个Wave");
 
         // 重置胜利检查器的Round状态
         if (VictoryChecker != null)
@@ -305,10 +383,17 @@ public class RoundManager : MonoBehaviour
     /// </summary>
     private RoundConfig GetCurrentRoundConfig()
     {
+        Debug.Log($"GetCurrentRoundConfig: 当前回合 {currentRoundNumber}，配置总数 {roundConfigs.Count}");
+        
         if (currentRoundNumber <= 0 || currentRoundNumber > roundConfigs.Count)
+        {
+            Debug.LogError($"Round编号超出范围: {currentRoundNumber}，配置总数: {roundConfigs.Count}");
             return null;
+        }
 
-        return roundConfigs[currentRoundNumber - 1];
+        var config = roundConfigs[currentRoundNumber - 1];
+        Debug.Log($"获取配置: {config?.name ?? "null"}，Round {config?.roundNumber ?? 0}");
+        return config;
     }
 
     /// <summary>
@@ -317,6 +402,14 @@ public class RoundManager : MonoBehaviour
     public EnemySpawner GetEnemySpawner()
     {
         return EnemySpawner;
+    }
+    
+    /// <summary>
+    /// 获取总Round数量（供VictoryConditionChecker使用）
+    /// </summary>
+    public int GetTotalRoundCount()
+    {
+        return roundConfigs.Count;
     }
 
     /// <summary>
@@ -358,6 +451,8 @@ public class RoundManager : MonoBehaviour
     /// </summary>
     public void Reset()
     {
+        Debug.Log($"RoundManager: 重置前 - 当前回合: {currentRoundNumber}, 进行中: {isRoundInProgress}");
+        
         currentRoundNumber = 0;
         isRoundInProgress = false;
 

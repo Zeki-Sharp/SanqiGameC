@@ -18,6 +18,9 @@ public class TipSystem : MonoBehaviour
    
     [SerializeField] private Vector3 _lastMousePosition;
     [SerializeField] private Vector2 previewOffset;
+    
+    // 用于避免重复显示PreviewCamera错误
+    private bool hasLoggedPreviewCameraError = false;
     private void Awake()
     {
         mainCamera = Camera.main;
@@ -40,7 +43,11 @@ public class TipSystem : MonoBehaviour
                 {
                     if ( GetCurrentUI().name == PreviewShowName)
                     {
-                        GetOtherCameraPosition();
+                        // 只有在PreviewCamera存在时才调用
+                        if (previewCamera != null)
+                        {
+                            GetOtherCameraPosition();
+                        }
                     }
                 }
                 else
@@ -73,7 +80,12 @@ public class TipSystem : MonoBehaviour
     {
         if (previewCamera == null)
         {
-            Debug.LogError("PreviewCamera is not assigned!");
+            // 只在第一次调用时显示错误，避免持续产生错误信息
+            if (!hasLoggedPreviewCameraError)
+            {
+                Debug.LogWarning("TipSystem: PreviewCamera未设置，跳过预览功能");
+                hasLoggedPreviewCameraError = true;
+            }
             return;
         }
 
