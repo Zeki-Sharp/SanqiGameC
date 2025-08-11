@@ -14,10 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ItemProbabilities:
   - Config: {fileID: 11400000, guid: 24efaf3b27c7929449b3dd307e812c04, type: 2}
-    Value: 25
-  - Config: {fileID: 11400000, guid: f87e99156addb784380c7c824fe1bb37, type: 2}
-    Value: 25
+    Value: 33.333332
   - Config: {fileID: 11400000, guid: ed81ead72d4bce041bbd2f322e4500e7, type: 2}
-    Value: 25
+    Value: 33.333332
   - Config: {fileID: 11400000, guid: c62f98b8cbb01534bbf6770f1369388b, type: 2}
-    Value: 25
+    Value: 33.333332

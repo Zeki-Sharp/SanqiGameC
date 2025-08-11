@@ -14,9 +14,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   TowerProbabilities:
   - Config: {fileID: 11400000, guid: 2c56d48c1b17cd04e8bfca12c88f6655, type: 2}
-    Value: 50
+    Value: 33.333332
   - Config: {fileID: 11400000, guid: 6f3e3f82a00f30a4984541325bfcbbc0, type: 2}
-    Value: 50
+    Value: 33.333332
+  - Config: {fileID: 11400000, guid: 690df8d23f7d89247971ee730fb07deb, type: 2}
+    Value: 33.333332
   Towerprobability: 100
   BlockProbabilities:
   - Config: {fileID: 11400000, guid: 8264c32692b608a47b699ace1e7aec1e, type: 2}

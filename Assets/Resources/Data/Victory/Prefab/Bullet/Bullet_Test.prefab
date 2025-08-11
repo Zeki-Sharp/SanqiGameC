@@ -284,10 +284,6 @@ MonoBehaviour:
     effectFx: {fileID: 0}
     effectFxDuration: 0
     sfx: {fileID: 0}
-    healAmount: 0
-    healInterval: 0
-    healRangeType: 0
-    healEffectType: 0
 --- !u!114 &-4261691411315826384
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -444,7 +440,7 @@ TrailRenderer:
   m_SortingLayerID: -2001380155
   m_SortingLayer: 5
   m_SortingOrder: 0
-  m_Time: 1
+  m_Time: 2
   m_PreviewTimeScale: 1
   m_Parameters:
     serializedVersion: 3

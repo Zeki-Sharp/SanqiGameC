@@ -77,7 +77,7 @@ TrailRenderer:
   m_SortingLayerID: -2001380155
   m_SortingLayer: 5
   m_SortingOrder: 0
-  m_Time: 1
+  m_Time: 2
   m_PreviewTimeScale: 1
   m_Parameters:
     serializedVersion: 3
@@ -87,21 +87,21 @@ TrailRenderer:
       m_Curve:
       - serializedVersion: 3
         time: 0
-        value: 0.040001884
-        inSlope: 0.033755995
-        outSlope: 0.033755995
+        value: 0.048423767
+        inSlope: 0.06307964
+        outSlope: 0.06307964
         tangentMode: 0
         weightedMode: 0
         inWeight: 0.33333334
-        outWeight: 0.15586273
+        outWeight: 0.150143
       - serializedVersion: 3
         time: 1
         value: 0
-        inSlope: -0.07768283
-        outSlope: -0.07768283
+        inSlope: -0.20902792
+        outSlope: -0.20902792
         tangentMode: 0
         weightedMode: 0
-        inWeight: 0.09485221
+        inWeight: 0.11582452
         outWeight: 0
       m_PreInfinity: 2
       m_PostInfinity: 2
@@ -162,7 +162,6 @@ GameObject:
   - component: {fileID: 4032237375440005743}
   - component: {fileID: 3921739120260228092}
   - component: {fileID: 2576541543726750905}
-  - component: {fileID: 2873428749166641044}
   m_Layer: 0
   m_Name: Bullet_Test_straight
   m_TagString: Bullet
@@ -372,20 +371,3 @@ MonoBehaviour:
   caster: {fileID: 0}
   raySource: {fileID: 0}
   collisionRay: {fileID: 0}
---- !u!114 &2873428749166641044
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3447451743312656527}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 66da190bf5271794a8260a0bb901174b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  bulletConfig: {fileID: 11400000, guid: ec8e31838e4c8e242a930307cc159f5d, type: 2}
-  owner: {fileID: 0}
-  targetTags:
-  - Enemy
-  bullet: {fileID: 0}

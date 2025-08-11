@@ -15,7 +15,7 @@ MonoBehaviour:
   id: 0
   towerName: 
   towerDescription: 
-  towerSprite: {fileID: 0}
+  towerSprite: {fileID: 21300000, guid: 42bc4d23bd1164c4c835fc68642f15f2, type: 3}
   levels:
   - towerSprite: {fileID: 0}
     health: 30

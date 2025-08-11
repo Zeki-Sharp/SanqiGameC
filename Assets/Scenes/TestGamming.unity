@@ -235,10 +235,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 56618eb7d6e03fc46b05ffbe70090e15, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  currentRoundNumber: 0
+  currentRoundNumber: 1
   isRoundInProgress: 0
   roundConfigs:
   - {fileID: 11400000, guid: 1774d027176ade44197ee9a2784731b3, type: 2}
+  - {fileID: 11400000, guid: 7c96723ea9f76494c9f36d917fbdf471, type: 2}
+  - {fileID: 11400000, guid: ee8e805adfa4f0044b437e3f2c53ddf1, type: 2}
+  - {fileID: 11400000, guid: aa3e66756f21a1e45a42779b066436c8, type: 2}
 --- !u!4 &196132498
 Transform:
   m_ObjectHideFlags: 0
@@ -500,7 +503,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   mainCamera: {fileID: 0}
-  previewCamera: {fileID: 0}
+  previewCamera: {fileID: 1986145379}
   TipMenu: {fileID: 0}
   nameText: {fileID: 0}
   infoText: {fileID: 0}
@@ -1432,7 +1435,7 @@ MonoBehaviour:
   passUIPanel: {fileID: 975528922}
   victoryUIPanel: {fileID: 819367323}
   pauseUIPanel: {fileID: 498730992}
-  defeatUIPanel: {fileID: 0}
+  defeatUIPanel: {fileID: 2624325498018362879}
 --- !u!4 &922622671
 Transform:
   m_ObjectHideFlags: 0
@@ -5182,6 +5185,17 @@ CanvasGroup:
   m_Interactable: 1
   m_BlocksRaycasts: 1
   m_IgnoreParentGroups: 0
+--- !u!114 &2624325498018362879 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2455455811386765430, guid: 8beaaea1ab70ea34493920f1d856b849, type: 3}
+  m_PrefabInstance: {fileID: 2624325498018362871}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 216655531}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 95440f6bcbb2daf4a97a9c368d18f912, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &5731569247834218679
 PrefabInstance:
   m_ObjectHideFlags: 0

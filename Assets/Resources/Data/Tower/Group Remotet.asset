@@ -43,8 +43,8 @@ MonoBehaviour:
       attackSkill:
         skillName: "\u65B0\u6280\u80FD"
         skillDescription: 
-        physicAttack: 100
-        attackRange: 3
+        physicAttack: 12
+        attackRange: 1.5
         attackInterval: 1
         attackSpeed: 1
       healSkill:

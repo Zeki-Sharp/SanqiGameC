@@ -59,7 +59,7 @@ MonoBehaviour:
   linerEndPosition: 1
   linerBasePosition: 0
   stamp: {fileID: 0}
-  local: 0
+  local: 1
   scalable: 0
   stampOnHit: 0
   stampAutoHide: 0
@@ -93,7 +93,7 @@ MonoBehaviour:
   minAngle: 0
   maxAngle: 90
   hitBackside: 0
-  direction: {x: 1.02, y: 0}
+  direction: {x: 1.35, y: 0}
 --- !u!1 &8559457369934319985
 GameObject:
   m_ObjectHideFlags: 0
@@ -149,7 +149,7 @@ MonoBehaviour:
   blockLayer:
     serializedVersion: 2
     m_Bits: 0
-  solverType: 0
+  solverType: 1
   checkLineOfSight: 1
   usingTagFilter: 0
   tagFilter: CenterTower
@@ -175,7 +175,7 @@ MonoBehaviour:
   ignoreList: []
   boundsSolver: 0
   boundsCenter: 0
-  collectLOS: 1
+  collectLOS: 0
   radius: 2
   local: 1
   minRadius: 0.4
@@ -216,7 +216,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 5.8514805, y: 2.4299805, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.25, y: 0.25, z: 0.25}
   m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 255052302067381285}
@@ -329,9 +329,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   data: {fileID: 11400000, guid: 7aaf533f3d8c502498b868e1d33eb75f, type: 2}
-  rangeDetector: {fileID: 1684933707277979267}
-  raySensor: {fileID: 8998331275780622846}
-  bulletCaster: {fileID: 5642779683472572973}
 --- !u!50 &8774455131177754429
 Rigidbody2D:
   serializedVersion: 5
@@ -437,7 +434,7 @@ MonoBehaviour:
   trackTarget: {fileID: 0}
   bulletIndex: 0
   cloneIndex: 0
-  usingAmmo: 0
+  usingAmmo: 1
   arrayCasting: 0
   arrayCapacity: 5
   onCast:
