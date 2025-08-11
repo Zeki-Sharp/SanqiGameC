@@ -284,7 +284,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 56618eb7d6e03fc46b05ffbe70090e15, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  currentRoundNumber: 1
+  currentRoundNumber: 0
   isRoundInProgress: 0
   roundConfigs:
   - {fileID: 11400000, guid: 1774d027176ade44197ee9a2784731b3, type: 2}

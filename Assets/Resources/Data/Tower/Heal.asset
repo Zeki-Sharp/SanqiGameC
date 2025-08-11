@@ -15,9 +15,9 @@ MonoBehaviour:
   id: 0
   towerName: 
   towerDescription: 
-  towerSprite: {fileID: 21300000, guid: 42bc4d23bd1164c4c835fc68642f15f2, type: 3}
+  towerSprite: {fileID: 21300000, guid: 0e839f0458eee0048bfb70d395c8cbf9, type: 3}
   levels:
-  - towerSprite: {fileID: 0}
+  - towerSprite: {fileID: 4293587053738703087, guid: b4bf0700b3c507e48b3075acc47fefb1, type: 3}
     health: 30
     skillSlots:
     - skillType: 2
@@ -36,7 +36,7 @@ MonoBehaviour:
         healRangeType: 1
         healEffectType: 0
         maxHealTargets: 4
-  - towerSprite: {fileID: 0}
+  - towerSprite: {fileID: 4293587053738703087, guid: b4bf0700b3c507e48b3075acc47fefb1, type: 3}
     health: 36
     skillSlots:
     - skillType: 2
@@ -55,7 +55,7 @@ MonoBehaviour:
         healRangeType: 1
         healEffectType: 0
         maxHealTargets: 4
-  - towerSprite: {fileID: 0}
+  - towerSprite: {fileID: 4293587053738703087, guid: b4bf0700b3c507e48b3075acc47fefb1, type: 3}
     health: 42
     skillSlots:
     - skillType: 2
