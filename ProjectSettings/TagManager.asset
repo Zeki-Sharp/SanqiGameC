@@ -8,9 +8,9 @@ TagManager:
   - CenterTower
   - Tower
   - Bullet
-  - centerTower
   - PreviewTower
   - Block
+  - SceneObject
   layers:
   - Default
   - TransparentFX
@@ -54,6 +54,9 @@ TagManager:
   - name: BuildArea
     uniqueID: 4173271641
     locked: 0
+  - name: SceneObject
+    uniqueID: 1874870717
+    locked: 0
   - name: Tower
     uniqueID: 4185030347
     locked: 0
@@ -68,6 +71,9 @@ TagManager:
     locked: 0
   - name: Overlay
     uniqueID: 630144195
+    locked: 0
+  - name: UI
+    uniqueID: 1644925797
     locked: 0
   m_RenderingLayers:
   - Default

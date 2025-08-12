@@ -49,11 +49,8 @@ public static class TowerBuildUtility
                 var bulletManager = GameManager.Instance.GetSystem<BulletManager>();
                 towerComponent.GetComponent<BasicCaster2D>().poolManager = bulletManager.GetPoolManager();
             }
-            const int BaseOrder = 1000;
-            const int VerticalOffsetMultiplier = 10;
-            int verticalOffset = Mathf.RoundToInt(-worldPos.y * VerticalOffsetMultiplier);
-            int finalOrder = BaseOrder + verticalOffset;
-            towerComponent.SetOrder(finalOrder);
+            // 注意：塔的层级现在由SceneLayerManager统一管理
+            // 不再需要手动设置sortingOrder
         }
         // 设置颜色
         SpriteRenderer[] renderers = towerObj.GetComponentsInChildren<SpriteRenderer>(true);

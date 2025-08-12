@@ -261,11 +261,8 @@ public class Tower : MonoBehaviour
         
         SetInitialAttackRange();
         
-        // 如果是中心塔，设置正确的层级
-        if (CompareTag("CenterTower"))
-        {
-            SetCenterTowerOrder();
-        }
+        // 注意：中心塔的层级现在由SceneLayerManager统一管理
+        // 不再需要手动设置
         
         // 订阅敌人死亡事件
         if (EventBus.Instance != null)
@@ -307,44 +304,8 @@ public class Tower : MonoBehaviour
             rangeDetector.Radius = towerData?.GetAttackRange(level) ?? 3f;
     }
 
-    public void SetOrder(int order)
-    {
-        // 设置所有渲染器的层级
-        Renderer[] renderers = GetComponentsInChildren<Renderer>();
-        foreach (var renderer in renderers)
-        {
-            renderer.sortingOrder = order;
-        }
-        
-        // 保持向后兼容
-        if (spriteRenderer != null)
-        {
-            spriteRenderer.sortingOrder = order;
-        }
-    }
-    
-    /// <summary>
-    /// 设置中心塔的层级，使其与其他塔采用相同的层级遮挡关系
-    /// </summary>
-    public void SetCenterTowerOrder()
-    {
-        if (CompareTag("CenterTower"))
-        {
-            const int BaseOrder = 1000;
-            const int VerticalOffsetMultiplier = 10;
-            int verticalOffset = Mathf.RoundToInt(-transform.position.y * VerticalOffsetMultiplier);
-            int finalOrder = BaseOrder + verticalOffset;
-            
-            // 设置所有渲染器的层级
-            Renderer[] renderers = GetComponentsInChildren<Renderer>();
-            foreach (var renderer in renderers)
-            {
-                renderer.sortingOrder = finalOrder;
-            }
-            
-            Debug.Log($"中心塔层级设置为: {finalOrder} (位置: {transform.position})");
-        }
-    }
+    // 注意：SetOrder和SetCenterTowerOrder方法已被删除
+    // 现在由SceneLayerManager统一管理层级
     
     /// <summary>
     /// 设置为展示区域塔

@@ -137,12 +137,8 @@ public class GameMap : MonoBehaviour
         Vector3Int centerCell = CoordinateUtility.GetCenterCell(mapWidth, mapHeight); // 新增方法，返回cell坐标
         PlaceBlock(centerCell, centerTower.GetComponent<Block>());
         centerTower.GetComponent<BasicCaster2D>().poolManager = bulletManager.GetPoolManager();
-        // 设置中心塔的层级，使其与其他塔采用相同的层级遮挡关系
-        Tower centerTowerComponent = centerTower.GetComponent<Tower>();
-        if (centerTowerComponent != null)
-        {
-            centerTowerComponent.SetCenterTowerOrder();
-        }
+        // 注意：中心塔的层级现在由SceneLayerManager统一管理
+        // 不再需要手动设置
     }
 
     /// <summary>
