@@ -267,6 +267,10 @@ public class BlockPreviewSystem : MonoBehaviour
     private void GeneratePreviewTowers()
     {
         if (towerPrefab == null || currentBlockConfig == null || currentTowerDatas == null) return;
+        
+        // 获取展示区域塔的层级顺序作为参考
+        int[] showAreaOrders = GetShowAreaTowerOrders();
+        
         for (int i = 0; i < currentBlockConfig.Coordinates.Length; i++)
         {
             var towerObj = TowerBuildUtility.GenerateTower(
@@ -283,7 +287,78 @@ public class BlockPreviewSystem : MonoBehaviour
             {
                 towerObj.gameObject.name = $"PreviewTower_{i}";
                 towerObj.gameObject.tag = "PreviewTower";
+                
+                // 确保预览塔被正确标记为预览模式（不是展示区域塔）
+                towerObj.SetAsShowAreaTower(false);
+                
+                // 设置预览塔的层级：继承展示区域塔的层级顺序，但设置到UI层
+                if (showAreaOrders != null && i < showAreaOrders.Length)
+                {
+                    SetPreviewTowerLayer(towerObj.gameObject, showAreaOrders[i]);
+                }
+                
                 previewTowers.Add(towerObj.gameObject);
+            }
+        }
+    }
+    
+    /// <summary>
+    /// 获取展示区域塔的层级顺序
+    /// </summary>
+    private int[] GetShowAreaTowerOrders()
+    {
+        // 查找展示区域控制器
+        var previewAreaController = GameManager.Instance?.GetSystem<PreviewAreaController>();
+        if (previewAreaController == null) return null;
+        
+        // 通过反射获取prefabShowArea字段（因为它是私有的）
+        var prefabShowAreaField = typeof(PreviewAreaController).GetField("prefabShowArea", 
+            System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+        
+        if (prefabShowAreaField == null) return null;
+        
+        var prefabShowArea = prefabShowAreaField.GetValue(previewAreaController) as GameObject;
+        if (prefabShowArea == null) return null;
+        
+        // 获取所有展示区域塔的层级顺序
+        var showAreaTowers = prefabShowArea.GetComponentsInChildren<Tower>();
+        if (showAreaTowers == null || showAreaTowers.Length == 0) return null;
+        
+        int[] orders = new int[showAreaTowers.Length];
+        for (int i = 0; i < showAreaTowers.Length; i++)
+        {
+            var renderer = showAreaTowers[i].GetComponentInChildren<SpriteRenderer>();
+            if (renderer != null)
+            {
+                orders[i] = renderer.sortingOrder;
+            }
+            else
+            {
+                orders[i] = 0;
+            }
+        }
+        
+        return orders;
+    }
+    
+    /// <summary>
+    /// 设置预览塔的层级（继承展示区域塔的层级顺序，但设置到UI层）
+    /// </summary>
+    private void SetPreviewTowerLayer(GameObject previewTower, int inheritedOrder)
+    {
+        if (previewTower == null) return;
+        
+        SpriteRenderer[] renderers = previewTower.GetComponentsInChildren<SpriteRenderer>(true);
+        if (renderers != null && renderers.Length > 0)
+        {
+            foreach (var renderer in renderers)
+            {
+                if (renderer != null)
+                {
+                    // 设置到UI层，保持继承的层级顺序
+                    renderer.sortingLayerName = "UI";
+                    renderer.sortingOrder = inheritedOrder;
+                }
             }
         }
     }

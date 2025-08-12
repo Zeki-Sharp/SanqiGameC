@@ -212,7 +212,7 @@ public class SceneLayerManager : MonoBehaviour
                 
                 foreach (Renderer renderer in renderers)
                 {
-                    if (renderer != null && (renderer.sortingLayerName != "UI" || renderer.sortingOrder != 1000))
+                    if (renderer != null && (renderer.sortingLayerName != "UI"))
                     {
                         needsUpdate = true;
                         break;
@@ -284,10 +284,6 @@ public class SceneLayerManager : MonoBehaviour
                     if (renderer.sortingLayerName == "UI")
                     {
                         Log($"✅ 预览塔 {previewTower.name} 成功设置到UI层");
-                        
-                        // 预览塔的Order in Layer设置为最大值，确保显示在最前面
-                        renderer.sortingOrder = 1000;
-                        Log($"✅ 预览塔 {previewTower.name} 设置Order in Layer: {oldOrder} -> 1000");
                     }
                     else
                     {
@@ -296,8 +292,8 @@ public class SceneLayerManager : MonoBehaviour
                         // 如果UI层设置失败，尝试使用"Default"层但设置很高的Order
                         Log($"尝试使用Default层 + 高Order作为备选方案");
                         renderer.sortingLayerName = "Default";
-                        renderer.sortingOrder = 9999;
-                        Log($"备选方案: 设置到Default层，Order=9999");
+                        renderer.sortingOrder += 1000;
+                        Log($"备选方案: 设置到Default层，Order={renderer.sortingOrder}");
                     }
                 }
                 catch (System.Exception e)
@@ -617,6 +613,8 @@ public class SceneLayerManager : MonoBehaviour
     {
         // 公式：sortingOrder = -Y坐标值 * 10（Y越大，值越小，越靠后）
         // 乘以10增加层级差异，避免Y坐标相近时层级相同
+        // 所有游戏对象（场景物体、敌人、塔、子弹）都使用相同的计算方式
+        // 这样可以保持正确的空间遮挡关系
         return Mathf.RoundToInt(-position.y * 10);
     }
     
