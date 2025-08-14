@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 8843846803455779220}
   - component: {fileID: 8821581819827495070}
   - component: {fileID: 9081182979500157578}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Text (TMP)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -201,7 +201,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4973969986473549173}
   - component: {fileID: 8770933655847664012}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Range Detector2D
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -239,16 +239,16 @@ MonoBehaviour:
   triggerInteraction: 0
   detectLayer:
     serializedVersion: 2
-    m_Bits: 129
+    m_Bits: 128
   autoUpdate: 1
   colorProfile: {fileID: 0}
   gizmosUpdate: 0
   blockLayer:
     serializedVersion: 2
     m_Bits: 0
-  solverType: 0
-  checkLineOfSight: 1
-  usingTagFilter: 1
+  solverType: 1
+  checkLineOfSight: 0
+  usingTagFilter: 0
   tagFilter: Enemy
   onCast:
     m_PersistentCalls:
@@ -270,7 +270,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   ignoreList: []
-  boundsSolver: 1
+  boundsSolver: 0
   boundsCenter: 0
   collectLOS: 1
   radius: 2
@@ -290,7 +290,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5009774707390689449}
   - component: {fileID: 4185971873869370229}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Bezier Ray2D
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -398,7 +398,7 @@ GameObject:
   - component: {fileID: 8938938391962000119}
   - component: {fileID: 669885837155348704}
   - component: {fileID: 5405798796694162524}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: CenterTower_01
   m_TagString: CenterTower
   m_Icon: {fileID: 0}
@@ -495,7 +495,7 @@ CapsuleCollider2D:
   m_CallbackLayers:
     serializedVersion: 2
     m_Bits: 4294967295
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
@@ -612,7 +612,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1476786037466647404}
   - component: {fileID: 2411843169461286548}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: PSD_Tower01
   m_TagString: Untagged
   m_Icon: {fileID: 0}

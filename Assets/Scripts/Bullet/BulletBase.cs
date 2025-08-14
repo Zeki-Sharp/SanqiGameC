@@ -126,24 +126,24 @@ public abstract class BulletBase : MonoBehaviour, IBullet
         
         Debug.Log($"子弹 {name} 返回对象池，位置: {transform.position}");
         
-        if (isFromPool && !string.IsNullOrEmpty(poolKey))
-        {
-            var bulletManager = GameManager.Instance?.GetSystem<BulletManager>();
-            if (bulletManager != null)
-            {
-                bulletManager.ReturnBullet(this);
-            }
-            else
-            {
-                Debug.LogWarning($"子弹 {name} BulletManager未找到，直接销毁");
-                Destroy(gameObject);
-            }
-        }
-        else
-        {
-            Debug.LogWarning($"子弹 {name} 不是从对象池获取，直接销毁");
-            Destroy(gameObject);
-        }
+        // if (isFromPool && !string.IsNullOrEmpty(poolKey))
+        // {
+        //     var bulletManager = GameManager.Instance?.GetSystem<BulletManager>();
+        //     if (bulletManager != null)
+        //     {
+        //         bulletManager.ReturnBullet(this);
+        //     }
+        //     else
+        //     {
+        //         Debug.LogWarning($"子弹 {name} BulletManager未找到，直接销毁");
+        //         Destroy(gameObject);
+        //     }
+        // }
+        // else
+        // {
+        //     Debug.LogWarning($"子弹 {name} 不是从对象池获取，直接销毁");
+        //     Destroy(gameObject);
+        // }
     }
     
     /// <summary>

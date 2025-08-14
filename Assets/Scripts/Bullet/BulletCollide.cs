@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using RaycastPro.Bullets2D;
+using Sirenix.OdinInspector;
 using UnityEngine;
 
 public class BulletCollide : MonoBehaviour
@@ -9,9 +10,9 @@ public class BulletCollide : MonoBehaviour
     [SerializeField] protected BulletConfig bulletConfig;
     [SerializeField] protected GameObject owner;
     [SerializeField] protected string[] targetTags;
-    [SerializeField] protected PathBullet2D bullet;
+    [SerializeField] protected Bullet2D bullet;
     
-    private HashSet<string> validTargetTags = new HashSet<string>();
+    [ShowInInspector] private HashSet<string> validTargetTags = new HashSet<string>();
 
     public void Initial( BulletConfig _bulletConfig,GameObject _owner)
     {
@@ -20,9 +21,9 @@ public class BulletCollide : MonoBehaviour
     }
     private void Awake()
     {
-        bullet = GetComponent<PathBullet2D>();
+        bullet = GetComponent<Bullet2D>();
         if (bullet == null)
-            Debug.LogError($"PathBullet2D component missing on {name}");
+            Debug.LogError($"Bullet2D component missing on {name}");
             
         // 初始化目标标签集合
         if (targetTags != null && targetTags.Length > 0)
@@ -56,6 +57,10 @@ public class BulletCollide : MonoBehaviour
             case TargetType.Chain:
                 ProcessChainTarget(hitObject);
                 break;
+        }
+        if (this.gameObject.activeInHierarchy)
+        {
+            Destroy(this.gameObject);
         }
     }
     

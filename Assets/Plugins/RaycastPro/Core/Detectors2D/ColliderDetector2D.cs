@@ -1,4 +1,4 @@
-﻿namespace RaycastPro.Detectors2D
+namespace RaycastPro.Detectors2D
 {
     using System;
     using System.Collections.Generic;
@@ -98,15 +98,30 @@
         {
             if (onDetectCollider != null)
             {
-                foreach (var c in DetectedColliders) onDetectCollider.Invoke(c);
+                foreach (var c in DetectedColliders) 
+                {
+                    // Check if the collider is still valid before invoking the event
+                    if (c != null && c.gameObject != null && c.gameObject.activeInHierarchy)
+                        onDetectCollider.Invoke(c);
+                }
             }
             if (onNewCollider != null)
             {
-                foreach (var c in DetectedColliders.Except(PreviousColliders)) onNewCollider.Invoke(c);
+                foreach (var c in DetectedColliders.Except(PreviousColliders)) 
+                {
+                    // Check if the collider is still valid before invoking the event
+                    if (c != null && c.gameObject != null && c.gameObject.activeInHierarchy)
+                        onNewCollider.Invoke(c);
+                }
             }
             if (onLostCollider != null)
             {
-                foreach (var c in PreviousColliders.Except(DetectedColliders)) onLostCollider.Invoke(c);
+                foreach (var c in PreviousColliders.Except(DetectedColliders)) 
+                {
+                    // Check if the collider is still valid before invoking the event
+                    if (c != null && c.gameObject != null && c.gameObject.activeInHierarchy)
+                        onLostCollider.Invoke(c);
+                }
             }
         }
 

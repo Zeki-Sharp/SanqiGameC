@@ -77,7 +77,7 @@ TrailRenderer:
   m_SortingLayerID: -2001380155
   m_SortingLayer: 5
   m_SortingOrder: 0
-  m_Time: 2
+  m_Time: 1
   m_PreviewTimeScale: 1
   m_Parameters:
     serializedVersion: 3
@@ -87,21 +87,21 @@ TrailRenderer:
       m_Curve:
       - serializedVersion: 3
         time: 0
-        value: 0.048423767
-        inSlope: 0.06307964
-        outSlope: 0.06307964
+        value: 0.040001884
+        inSlope: 0.033755995
+        outSlope: 0.033755995
         tangentMode: 0
         weightedMode: 0
         inWeight: 0.33333334
-        outWeight: 0.150143
+        outWeight: 0.15586273
       - serializedVersion: 3
         time: 1
         value: 0
-        inSlope: -0.20902792
-        outSlope: -0.20902792
+        inSlope: -0.07768283
+        outSlope: -0.07768283
         tangentMode: 0
         weightedMode: 0
-        inWeight: 0.11582452
+        inWeight: 0.09485221
         outWeight: 0
       m_PreInfinity: 2
       m_PostInfinity: 2
@@ -148,6 +148,103 @@ TrailRenderer:
   m_Autodestruct: 0
   m_Emitting: 1
   m_ApplyActiveColorSpace: 1
+--- !u!1 &2778301561187318133
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7012772948299543113}
+  - component: {fileID: 798404991608430874}
+  m_Layer: 0
+  m_Name: Radial Ray2D
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7012772948299543113
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2778301561187318133}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 6364035458975368154}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &798404991608430874
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2778301561187318133}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 495b27bdb60fe3347898250da2aca119, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  influence: 1
+  triggerInteraction: 0
+  detectLayer:
+    serializedVersion: 2
+    m_Bits: 64
+  autoUpdate: 0
+  colorProfile: {fileID: 0}
+  gizmosUpdate: 0
+  liner: {fileID: 0}
+  linerClamped: 0
+  linerCutOnHit: 0
+  linerFixCut: 1
+  linerEndPosition: 1
+  linerBasePosition: 0
+  stamp: {fileID: 0}
+  local: 1
+  scalable: 0
+  stampOnHit: 0
+  stampAutoHide: 0
+  stampOffset: 0
+  syncStamp:
+    axis: 0
+    syncAxis: 0
+    flipAxis: 0
+  planarSensitive: 1
+  _planar: {fileID: 0}
+  planers: []
+  anyPlanar: 1
+  onCast:
+    m_PersistentCalls:
+      m_Calls: []
+  onDetect:
+    m_PersistentCalls:
+      m_Calls: []
+  onChange:
+    m_PersistentCalls:
+      m_Calls: []
+  onBeginDetect:
+    m_PersistentCalls:
+      m_Calls: []
+  onEndDetect:
+    m_PersistentCalls:
+      m_Calls: []
+  minDepth: 0.5
+  maxDepth: 1
+  normalFilter: 0
+  minAngle: 0
+  maxAngle: 90
+  hitBackside: 1
+  direction: {x: 0.13, y: 0}
+  arcAngle: 360
+  value: 0
+  cuts: 0
 --- !u!1 &3447451743312656527
 GameObject:
   m_ObjectHideFlags: 0
@@ -162,6 +259,7 @@ GameObject:
   - component: {fileID: 4032237375440005743}
   - component: {fileID: 3921739120260228092}
   - component: {fileID: 2576541543726750905}
+  - component: {fileID: 2873428749166641044}
   m_Layer: 0
   m_Name: Bullet_Test_straight
   m_TagString: Bullet
@@ -182,6 +280,7 @@ Transform:
   m_LocalScale: {x: 0.25754, y: 0.25754, z: 0.25754}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 7012772948299543113}
   - {fileID: 6380081653194786478}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -371,3 +470,21 @@ MonoBehaviour:
   caster: {fileID: 0}
   raySource: {fileID: 0}
   collisionRay: {fileID: 0}
+--- !u!114 &2873428749166641044
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3447451743312656527}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 66da190bf5271794a8260a0bb901174b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  bulletConfig: {fileID: 11400000, guid: ec8e31838e4c8e242a930307cc159f5d, type: 2}
+  owner: {fileID: 0}
+  targetTags:
+  - Tower
+  - CenterTower
+  bullet: {fileID: 0}

@@ -1,3 +1,6 @@
+using RaycastPro.Casters2D;
+using RaycastPro.Detectors2D;
+using RaycastPro.RaySensors2D;
 using UnityEngine;
 
 /// <summary>
@@ -15,7 +18,7 @@ public abstract class EnemyState
     /// <summary>
     /// 进入状态时调用
     /// </summary>
-    public virtual void Enter() { }
+    public virtual void Enter( RangeDetector2D rangeDetector = null,BasicRay2D raySensor =null,  BasicCaster2D bulletCaster = null) { }
     
     /// <summary>
     /// 状态更新时调用

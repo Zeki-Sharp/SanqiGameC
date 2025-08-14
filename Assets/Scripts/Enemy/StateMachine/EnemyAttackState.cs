@@ -1,163 +1,176 @@
+using RaycastPro.Casters2D;
+using RaycastPro.Detectors2D;
+using RaycastPro.RaySensors2D;
 using UnityEngine;
 
-/// <summary>
-/// 敌人攻击状态 - 使用配置的攻击行为
-/// </summary>
 public class EnemyAttackState : EnemyState
 {
-    private GameObject targetTower;
     private float lastAttackTime;
-    
+    private float attackCoolDown; // seconds per attack
+
+    private RangeDetector2D rangeDetector;
+    public  BasicRay2D      raySensor;
+    private BasicCaster2D   bulletCaster;
+
+    private GameObject currentTarget;
+    private float prevMoveSpeed = -1f; // freeze move during attack
+
     public EnemyAttackState(EnemyController controller) : base(controller) { }
-    
-    public override void Enter()
+
+    public override void Enter(RangeDetector2D rangeDetector, BasicRay2D raySensor, BasicCaster2D bulletCaster)
     {
-        Debug.Log($"{controller.name} 进入攻击状态");
-        FindTargetTower();
-        
-        // 获取攻击冷却时间，允许立即攻击
-        float attackCooldown = controller.AttackBehavior != null ? controller.AttackBehavior.GetAttackCooldown() : 1f;
-        lastAttackTime = -attackCooldown;
-    }
-    
-    public override void Update()
-    {
-        if (targetTower == null)
+        this.rangeDetector = rangeDetector;
+        this.raySensor     = raySensor;
+        this.bulletCaster  = bulletCaster;
+
+        // 不再 AddListener(onDetect)，避免外部事件影响锁定
+        if (this.rangeDetector != null)
         {
-            Debug.Log($"{controller.name} 攻击状态：目标塔为空，重新查找");
-            FindTargetTower();
+            this.rangeDetector.Radius = controller.AttackRange;
+            this.rangeDetector.Cast(); // 若是手动更新，先刷一次
+        }
+
+        Debug.Log($"[Attack] ENTER {controller.name}");
+
+        // 首次锁定（优先中心塔）
+        currentTarget = controller.AcquireBestTargetInRange(preferCenter: true);
+        if (currentTarget == null)
+        {
+            Debug.LogWarning("[Attack] no target in range on enter -> back to Move");
+            controller.ChangeState(new EnemyMoveState(controller));
             return;
         }
-        
-        // 检查目标是否在攻击范围内
-        float distanceToTarget = Vector3.Distance(controller.transform.position, targetTower.transform.position);
-        float attackRange = controller.AttackRange;
-        
-        Debug.Log($"{controller.name} 攻击状态：目标={targetTower.name}，距离={distanceToTarget:F2}，攻击范围={attackRange}");
-        
-        if (distanceToTarget <= attackRange)
+
+        attackCoolDown = controller.AttackBehavior != null ? controller.AttackBehavior.GetAttackCooldown() : 1f;
+        if (attackCoolDown <= 0f) attackCoolDown = 1f;
+        lastAttackTime = Time.unscaledTime - attackCoolDown; // 进来立刻能打一发
+
+        // 冻结移动
+        prevMoveSpeed = controller.MoveSpeed;
+        controller.MoveSpeed = 0f;
+    }
+
+    public override void Exit()
+    {
+        // 无监听可移除
+        if (prevMoveSpeed >= 0f)
+            controller.MoveSpeed = prevMoveSpeed;
+    }
+
+    public override void Update()
+    {
+        if (controller.IsCenterTowerDestroyed())
+            return;
+
+        // 若 detector 是手动更新，低频刷新一次集合（不用于切换，仅供死亡后再找新目标）
+        if (rangeDetector != null && (Time.frameCount % 10 == 0))
+            rangeDetector.Cast();
+
+        // —— 只看存活/有效，不看距离 ——（硬锁定）
+        bool targetAliveAndValid = IsAliveAndValid(currentTarget);
+        if (!targetAliveAndValid)
         {
-            // 执行攻击
-            float attackCooldown = controller.AttackBehavior != null ? controller.AttackBehavior.GetAttackCooldown() : 1f;
-            if (Time.time - lastAttackTime >= attackCooldown)
+            var oldName = currentTarget ? currentTarget.name : "null";
+            currentTarget = controller.AcquireBestTargetInRange(preferCenter: true);
+
+            Debug.Log($"[Attack] target lost/dead: {oldName} -> reacquire: {currentTarget?.name ?? "null"}");
+
+            if (currentTarget == null)
             {
-                Debug.Log($"{controller.name} 执行攻击，目标: {targetTower.name}，距离: {distanceToTarget:F2}");
-                PerformAttack();
-                lastAttackTime = Time.time;
+                controller.ChangeState(new EnemyMoveState(controller));
+                return;
             }
         }
-        else
+
+        if (IsAttackCooldownReady())
         {
-            Debug.Log($"{controller.name} 攻击状态：不在攻击范围内，距离={distanceToTarget:F2} > {attackRange}");
+            ExecuteAttack(currentTarget);
+            ResetAttackCooldown();
         }
     }
-    
+
     public override void CheckTransitions()
     {
-        // 首先检查中心塔是否被摧毁
         if (controller.IsCenterTowerDestroyed())
         {
             controller.ChangeState(new EnemyDefeatState(controller));
             return;
         }
-        
-        // 检查攻击范围内是否还有塔
-        if (!controller.IsTowerInAttackRange())
-        {
-            controller.ChangeState(new EnemyMoveState(controller));
-        }
+        // 其余不在这里切，避免抖动
     }
-    
-    private void FindTargetTower()
+
+    private bool IsAliveAndValid(GameObject go)
     {
-        // 寻找攻击范围内最近的塔（包括中心塔和普通塔）
-        GameObject closestTower = null;
-        float closestDistance = float.MaxValue;
-        
-        // 检查中心塔
-        GameObject centerTower = GameObject.FindGameObjectWithTag("CenterTower");
-        if (centerTower != null && !IsShowAreaTower(centerTower))
-        {
-            float distance = Vector3.Distance(controller.transform.position, centerTower.transform.position);
-            if (distance <= controller.AttackRange && distance < closestDistance)
-            {
-                closestDistance = distance;
-                closestTower = centerTower;
-                Debug.Log($"{controller.name} 中心塔在攻击范围内，距离: {distance:F2}");
-            }
-        }
-        
-        // 检查普通塔
-        GameObject[] towers = GameObject.FindGameObjectsWithTag("Tower");
-        Debug.Log($"{controller.name} 找到 {towers.Length} 个普通塔");
-        
-        foreach (GameObject tower in towers)
-        {
-            // 过滤掉ShowArea塔
-            if (IsShowAreaTower(tower))
-            {
-                Debug.Log($"{controller.name} 跳过ShowArea塔: {tower.name}");
-                continue;
-            }
-                
-            float distance = Vector3.Distance(controller.transform.position, tower.transform.position);
-            Debug.Log($"{controller.name} 检查普通塔 {tower.name}，距离: {distance:F2}，攻击范围: {controller.AttackRange}");
-            
-            // 只考虑攻击范围内的塔
-            if (distance <= controller.AttackRange && distance < closestDistance)
-            {
-                closestDistance = distance;
-                closestTower = tower;
-                Debug.Log($"{controller.name} 找到更近的目标塔: {tower.name}，距离: {distance:F2}");
-            }
-        }
-        
-        if (closestTower != null)
-        {
-            targetTower = closestTower;
-            Debug.Log($"{controller.name} 最终选择目标塔: {closestTower.name}，距离: {closestDistance:F2}");
-        }
-        else
-        {
-            Debug.Log($"{controller.name} 没有找到攻击范围内的塔");
-        }
+        if (go == null || !go.activeInHierarchy) return false;
+        // 若塔没有 DamageTaker，则按“有效”处理；有的话要求 > 0
+        if (go.TryGetComponent<DamageTaker>(out var dt) && dt.currentHealth <= 0) return false;
+        // 其他非法（ShowArea 等）不在这里判，避免误把已锁目标踢掉
+        return true;
     }
-    
-    /// <summary>
-    /// 检查是否为ShowArea塔
-    /// </summary>
-    private bool IsShowAreaTower(GameObject tower)
+
+    private void ExecuteAttack(GameObject target)
     {
-        if (tower == null) return false;
-        
-        // 检查父物体名称是否包含"showarea"
-        Transform parent = tower.transform.parent;
-        while (parent != null)
+        if (target == null || bulletCaster == null)
         {
-            if (parent.name.ToLower().Contains("showarea"))
-            {
-                return true;
-            }
-            parent = parent.parent;
+            Debug.LogWarning("[Attack] skip cast: target or caster is null");
+            return;
         }
-        
-        return false;
+        if (bulletCaster.bullets == null || bulletCaster.bullets.Length == 0)
+        {
+            Debug.LogWarning("[Attack] caster has NO bullets array");
+            return;
+        }
+
+        // 2D: BasicCaster2D 沿 +X(right) 发射，必须对齐
+        Vector2 dir = (target.transform.position - controller.transform.position).normalized;
+        bulletCaster.transform.right = dir;
+
+        if (raySensor != null)
+            raySensor.SetHitPosition(target.transform.position - controller.transform.position);
+
+        SetBulletDamage();
+
+        bulletCaster.Cast(0);
+
+        Debug.Log($"[Attack] CAST -> {target.name}, casterPos={bulletCaster.transform.position}, dir={dir}");
+#if UNITY_EDITOR
+        Debug.DrawLine(bulletCaster.transform.position,
+                       bulletCaster.transform.position + (Vector3)dir * 1.5f, Color.yellow, 0.2f);
+#endif
     }
-    
-    
-    /// <summary>
-    /// 执行攻击 - 使用配置的攻击行为
-    /// </summary>
-    protected virtual void PerformAttack()
+
+    private void SetBulletDamage()
     {
-        if (controller.AttackBehavior != null)
+        if (bulletCaster == null || bulletCaster.bullets == null) return;
+
+        for (int i = 0; i < bulletCaster.bullets.Length; i++)
         {
-            Debug.Log($"{controller.name} 执行攻击，目标: {targetTower?.name ?? "null"}");
-            controller.AttackBehavior.PerformAttack(controller, targetTower);
-        }
-        else
-        {
-            Debug.LogWarning($"{controller.name} 没有配置攻击行为！");
+            var b = bulletCaster.bullets[i];
+            if (b == null) continue;
+
+            if (controller.AttackBehavior is MeleeAttackBehavior melee)
+            {
+                b.damage = melee.Damage;
+            }
+            else if (controller.AttackBehavior is RangedAttackBehavior ranged)
+            {
+                b.damage = ranged.Damage;
+                var collide = b.GetComponent<BulletCollide>();
+                if (collide != null)
+                    collide.Initial(ranged.BulletConfig, controller.gameObject);
+            }
         }
     }
-}   
+
+    private void ResetAttackCooldown() => lastAttackTime = Time.unscaledTime;
+
+    private bool IsAttackCooldownReady()
+    {
+        if (attackCoolDown <= 0f)
+        {
+            attackCoolDown = controller.AttackBehavior != null ? controller.AttackBehavior.GetAttackCooldown() : 1f;
+            if (attackCoolDown <= 0f) attackCoolDown = 1f;
+        }
+        return Time.unscaledTime - lastAttackTime >= attackCoolDown;
+    }
+}

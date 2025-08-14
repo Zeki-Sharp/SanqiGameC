@@ -1,3 +1,6 @@
+using RaycastPro.Casters2D;
+using RaycastPro.Detectors2D;
+using RaycastPro.RaySensors2D;
 using UnityEngine;
 
 /// <summary>
@@ -6,8 +9,8 @@ using UnityEngine;
 public class EnemyDefeatState : EnemyState
 {
     public EnemyDefeatState(EnemyController controller) : base(controller) { }
-    
-    public override void Enter()
+
+    public override void Enter(RangeDetector2D rangeDetector = null, BasicRay2D raySensor = null, BasicCaster2D bulletCaster = null)
     {
         Debug.Log($"{controller.name} 进入失败状态 - 中心塔已被摧毁");
         

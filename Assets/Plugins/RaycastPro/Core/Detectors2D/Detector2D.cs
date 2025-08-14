@@ -53,6 +53,7 @@
         {
             GizmoGate += () =>
             {
+                if (c == null) return;
                 if(blockHit && blockHit.collider != c)
                 {
                     Gizmos.color = BlockColor;
