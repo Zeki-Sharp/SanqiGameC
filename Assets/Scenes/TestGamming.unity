@@ -651,6 +651,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 64
   blockPlacementManager: {fileID: 0}
+  rayMaxDistance: 1000
 --- !u!114 &378793956 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 1521612213511819119, guid: 200a80d6137f03844863fdfed25d9d94, type: 3}
@@ -2428,9 +2429,9 @@ MonoBehaviour:
   m_fontSize: 35
   m_fontSizeBase: 35
   m_fontWeight: 400
-  m_enableAutoSizing: 0
-  m_fontSizeMin: 18
-  m_fontSizeMax: 72
+  m_enableAutoSizing: 1
+  m_fontSizeMin: 15
+  m_fontSizeMax: 35
   m_fontStyle: 0
   m_HorizontalAlignment: 1
   m_VerticalAlignment: 256
