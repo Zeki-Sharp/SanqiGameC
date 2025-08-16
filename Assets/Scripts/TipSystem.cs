@@ -23,6 +23,7 @@ public class TipSystem : MonoBehaviour
     [SerializeField] private LayerMask towerMask; // set to "Tower" layer in Inspector
 
     [SerializeField] private BlockPlacementManager blockPlacementManager;
+    [SerializeField] private float rayMaxDistance = 1000f;
     private void Awake()
     {
         if (mainCamera == null) mainCamera = Camera.main;
@@ -50,19 +51,23 @@ public class TipSystem : MonoBehaviour
 
         // Update only when mouse moves enough
         if (Vector3.Distance(Input.mousePosition, _lastMousePosition) <= 0.1f) return;
+        if (Vector3.Distance(Input.mousePosition, _lastMousePosition) <= 2f) HideTip();
         _lastMousePosition = Input.mousePosition;
         
         if (EventSystem.current != null && EventSystem.current.IsPointerOverGameObject())
         {
             var ui = GetCurrentUI();
             Debug.Log("123");
-            if (ui != null && ui.name == previewShowName && previewCamera != null && previewImage != null)
+            if (ui != null && previewImage != null && (ui == previewImage.gameObject || ui.transform.IsChildOf(previewImage.transform)))
             {
-                GetPositionFromRawImage();
+                if (previewCamera != null)
+                    GetPositionFromRawImage();
+                // else
+                    // HideTip();
             }
             else
             {
-                HideTip();
+                // HideTip();
             }
         }
         else
@@ -136,7 +141,7 @@ public class TipSystem : MonoBehaviour
 #endif
 
         // Intersect with 2D physics using the 3D ray
-        RaycastHit2D hit2D = Physics2D.GetRayIntersection(ray, 0.1f, towerMask);
+        RaycastHit2D hit2D = Physics2D.GetRayIntersection(ray, rayMaxDistance, towerMask);
         Debug.Log(hit2D.collider);
         if (hit2D.collider != null)
         {
@@ -152,36 +157,41 @@ public class TipSystem : MonoBehaviour
     public void GetCameraPosition()
     {
         if (mainCamera == null) return;
-
-        // Screen -> world (2D point)
         Vector2 p = mainCamera.ScreenToWorldPoint(Input.mousePosition);
-
-        // Overlap point on 2D physics
-        RaycastHit2D hit = Physics2D.Raycast(p,Vector2.one,0.1f, towerMask);
 
 #if UNITY_EDITOR
         Debug.DrawLine(p + Vector2.left * 0.1f, p + Vector2.right * 0.1f, Color.red, 0.2f);
         Debug.DrawLine(p + Vector2.down * 0.1f, p + Vector2.up * 0.1f, Color.red, 0.2f);
 #endif
 
-        if (hit.collider != null)
+        // 点检测（命中 2D 碰撞体）
+        Collider2D col = Physics2D.OverlapPoint(p, towerMask);
+        if (col != null)
         {
-            ShowTip(hit.collider.gameObject.name, "Tower", Input.mousePosition);
+            Tower tower = col.GetComponent<Tower>();
+            ShowTip($"<align=\"left\">{tower.TowerData.TowerName}</align><align=\"right\">{tower.Level}</align>", $"", Input.mousePosition);
         }
         else
-        {
             HideTip();
-        }
     }
 
     public GameObject GetCurrentUI()
     {
         if (EventSystem.current == null) return null;
 
-        PointerEventData pointer = new PointerEventData(EventSystem.current);
-        pointer.position = Input.mousePosition;
+        var pointer = new PointerEventData(EventSystem.current){ position = Input.mousePosition };
         List<RaycastResult> results = new List<RaycastResult>();
         EventSystem.current.RaycastAll(pointer, results);
+
+        if (previewImage != null)
+        {
+            var target = previewImage.gameObject;
+            foreach (var r in results)
+            {
+                if (r.gameObject == target || r.gameObject.transform.IsChildOf(target.transform))
+                    return target; // 明确是预览区域
+            }
+        }
         return results.Count > 0 ? results[0].gameObject : null;
     }
 
