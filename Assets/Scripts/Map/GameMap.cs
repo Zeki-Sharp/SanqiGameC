@@ -443,6 +443,29 @@ public class GameMap : MonoBehaviour
             itemManage.ShowItem();
         }
     }
+
+    /// <summary>
+    /// 重置地图到初始状态
+    /// </summary>
+    public void ResetMap()
+    {
+        // 清空并重新初始化地图
+        ClearMap();
+        
+        // 重置预览区域
+        var previewAreaController = GameManager.Instance?.GetSystem<PreviewAreaController>();
+        if (previewAreaController != null)
+        {
+            previewAreaController.RefreshShowArea();
+        }
+        
+        // 重置物品系统
+        var itemManage = GameManager.Instance?.GetSystem<ItemManage>();
+        if (itemManage != null)
+        {
+            itemManage.ShowItem(false);
+        }
+    }
 }
 
 [System.Serializable]

@@ -9,6 +9,23 @@ public class ShopSystem : MonoBehaviour
     [ShowInInspector] public int Money
     {
         get { return money; }
+        set 
+        { 
+            money = value;
+            EventBus.Instance.Publish(new MoneyChangedEventArgs { NewAmount = money });
+        }
+    }
+    
+    public int InitialMoney
+    {
+        get 
+        {
+            if (gameMap != null)
+            {
+                return gameMap.GetMapData().StartingMoney;
+            }
+            return 0;
+        }
     }
     [SerializeField] private TextMeshProUGUI moneyText;
     [SerializeField] private GameMap gameMap;
