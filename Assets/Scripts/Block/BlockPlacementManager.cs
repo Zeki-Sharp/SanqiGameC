@@ -45,28 +45,132 @@ public class BlockPlacementManager : MonoBehaviour
 
     private void Start()
     {
+        InitializeComponents();
+        LoadTowerPrefab();
+        SetupInputHandler();
+        InitializePreviewSystem();
+    }
+
+    private void InitializeComponents()
+    {
         // 自动获取组件引用
         if (gameMap == null)
-            gameMap = FindFirstObjectByType<GameMap>();
-
-        if (mainCamera == null)
-            mainCamera = Camera.main;
-
-        // 缓存塔预制体
-        towerPrefabCache = Resources.Load<GameObject>("Prefab/Tower/Tower");
-
-        if (inputHandler == null)
-            inputHandler = FindFirstObjectByType<BlockPlacementInputHandler>();
-        if (inputHandler != null)
         {
-            inputHandler.OnPlaceBlockRequested += PlaceBlockAtPosition;
-            inputHandler.OnCancelPlacementRequested += StopPlacement;
-            inputHandler.OnPreviewPositionChanged += OnPreviewPositionChanged;
+            gameMap = FindFirstObjectByType<GameMap>();
+            if (gameMap == null)
+                Debug.LogError("找不到GameMap组件");
         }
 
-        // 初始化预览系统
-        if (PreviewSystem != null && gameMap != null && towerPrefabCache != null)
-            PreviewSystem.Init(gameMap, towerPrefabCache);
+        if (mainCamera == null)
+        {
+            mainCamera = Camera.main;
+            if (mainCamera == null)
+                Debug.LogError("找不到主相机");
+        }
+    }
+
+    private void LoadTowerPrefab()
+    {
+        if (towerPrefabCache != null)
+            return;
+
+        // 尝试多个可能的预制体路径
+        string[] possiblePaths = new string[]
+        {
+            "Prefabs/Tower/Tower",
+            "Prefab/Tower/Tower",
+            "Tower/Tower",
+            "Towers/Tower",
+            "Tower",
+            "Prefabs/Tower",
+            "Prefab/Tower",
+            "Towers/BasicTower",
+            "Tower/BasicTower",
+            "Prefabs/Towers/BasicTower",
+            "Prefab/Towers/BasicTower"
+        };
+        
+        Debug.Log("开始搜索塔预制体，可能的路径：\n" + string.Join("\n", possiblePaths));
+
+        Debug.Log("开始尝试加载塔预制体...");
+        foreach (string path in possiblePaths)
+        {
+            Debug.Log($"尝试从路径加载：{path}");
+            towerPrefabCache = Resources.Load<GameObject>(path);
+            if (towerPrefabCache != null)
+            {
+                var tower = towerPrefabCache.GetComponent<Tower>();
+                if (tower != null)
+                {
+                    Debug.Log($"成功加载塔预制体：{path}");
+                    return;
+                }
+                else
+                {
+                    Debug.LogWarning($"在路径 {path} 找到预制体，但缺少Tower组件");
+                    towerPrefabCache = null;
+                }
+            }
+        }
+
+        string errorMsg = "无法加载塔预制体！\n" +
+            "请检查以下内容：\n" +
+            "1. 确保塔预制体已经放在Resources文件夹下的某个位置\n" +
+            "2. 预制体的名字是否正确（可能的路径）：\n" + 
+            string.Join("\n", possiblePaths) + "\n" +
+            "3. 预制体上是否有Tower组件\n" +
+            "4. 如果路径或名字不同，请修改BlockPlacementManager中的possiblePaths数组";
+        
+        Debug.LogError(errorMsg);
+        
+#if UNITY_EDITOR
+        // 在编辑器中显示更详细的信息
+        UnityEditor.EditorUtility.DisplayDialog(
+            "错误：找不到塔预制体",
+            errorMsg,
+            "确定");
+#endif
+    }
+
+    private void SetupInputHandler()
+    {
+        if (inputHandler == null)
+        {
+            inputHandler = FindFirstObjectByType<BlockPlacementInputHandler>();
+            if (inputHandler == null)
+            {
+                Debug.LogError("找不到BlockPlacementInputHandler组件");
+                return;
+            }
+        }
+
+        inputHandler.OnPlaceBlockRequested += PlaceBlockAtPosition;
+        inputHandler.OnCancelPlacementRequested += StopPlacement;
+        inputHandler.OnPreviewPositionChanged += OnPreviewPositionChanged;
+    }
+
+    private void InitializePreviewSystem()
+    {
+        if (PreviewSystem == null)
+        {
+            Debug.LogError("找不到BlockPreviewSystem");
+            return;
+        }
+
+        if (gameMap == null)
+        {
+            Debug.LogError("GameMap未初始化，无法初始化预览系统");
+            return;
+        }
+
+        if (towerPrefabCache == null)
+        {
+            Debug.LogError("塔预制体未加载，无法初始化预览系统");
+            return;
+        }
+
+        PreviewSystem.Init(gameMap, towerPrefabCache);
+        Debug.Log("预览系统初始化完成");
     }
 
     private void OnDestroy()
@@ -319,12 +423,19 @@ public class BlockPlacementManager : MonoBehaviour
         {
             Vector3Int cell = cells[i];
             TowerData data = towerDatas[i];
-            GameObject towerPrefab = towerPrefabCache ?? Resources.Load<GameObject>("Prefab/Tower/Tower");
+            
+            // 检查预制体
+            if (towerPrefabCache == null)
+            {
+                Debug.LogError("塔预制体未加载，无法生成塔");
+                continue;
+            }
+
             // 判断是否为showarea（父物体名包含showarea）
             bool isShowArea = parent != null && parent.name.ToLower().Contains("showarea");
             var tower = TowerBuildUtility.GenerateTower(
                 blockObj.transform,
-                towerPrefab,
+                towerPrefabCache,
                 cell,
                 tilemap,
                 data,

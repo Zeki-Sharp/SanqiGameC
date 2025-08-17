@@ -33,7 +33,14 @@ MonoBehaviour:
     maxEnemy: 2
     enemyHealthMultiplier: 1
     enemyAttackMultiplier: 1
-    startingMoney: 100
-    itemRefreshMoney: 2
+    startingMoney: 40
+    itemRefreshMoney: 3
     blockDestroyMoney: 7
     blockBuildMoney: 2
+    baseRefreshCost: 3
+    maxRefreshCost: 5
+    refreshCostIncrement: 1
+    maxRefreshPerRound: 3
+    itemBaseCost: 15
+    blockBaseCost: 5
+    maxBlockSlots: 20

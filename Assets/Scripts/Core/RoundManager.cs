@@ -9,7 +9,7 @@ using UnityEngine;
 public class RoundManager : MonoBehaviour
 {
     [Header("Round配置")]
-    [SerializeField] private int currentRoundNumber = 0;
+    [SerializeField] private int currentRoundNumber = 1; // 从第一回合开始
     [SerializeField] private bool isRoundInProgress = false;
     [ListDrawerSettings]
     [SerializeField] private List<RoundConfig> roundConfigs = new List<RoundConfig>();
@@ -289,6 +289,37 @@ public class RoundManager : MonoBehaviour
         return enemyData;
     }
     /// <summary>
+    /// 开始当前回合的战斗
+    /// </summary>
+    public void StartCurrentRound()
+    {
+        if (isRoundInProgress)
+        {
+            Debug.LogWarning("当前Round正在进行中，无法重新开始");
+            return;
+        }
+
+        isRoundInProgress = true;
+        Debug.Log($"开始第 {currentRoundNumber} 回合");
+        StartRoundInternal();
+    }
+
+    /// <summary>
+    /// 准备下一个回合（增加回合数，但不开始战斗）
+    /// </summary>
+    public void PrepareNextRound()
+    {
+        if (isRoundInProgress)
+        {
+            Debug.LogWarning("当前Round正在进行中，无法准备新Round");
+            return;
+        }
+
+        currentRoundNumber++;
+        Debug.Log($"准备第 {currentRoundNumber} 回合");
+    }
+
+    /// <summary>
     /// 开始下一个Round
     /// </summary>
     public void StartNextRound()
@@ -299,9 +330,16 @@ public class RoundManager : MonoBehaviour
             return;
         }
 
-        currentRoundNumber++;
         isRoundInProgress = true;
+        Debug.Log($"开始第 {currentRoundNumber} 回合");
+        StartRoundInternal();
+    }
 
+    /// <summary>
+    /// 启动回合的内部逻辑
+    /// </summary>
+    private void StartRoundInternal()
+    {
         Debug.Log($"RoundManager: 开始Round {currentRoundNumber}，当前配置总数: {roundConfigs.Count}");
 
         RoundConfig config = GetCurrentRoundConfig();
@@ -453,7 +491,7 @@ public class RoundManager : MonoBehaviour
     {
         Debug.Log($"RoundManager: 重置前 - 当前回合: {currentRoundNumber}, 进行中: {isRoundInProgress}");
         
-        currentRoundNumber = 0;
+        currentRoundNumber = 1; // 重置为第一回合
         isRoundInProgress = false;
 
         // 清除所有敌人

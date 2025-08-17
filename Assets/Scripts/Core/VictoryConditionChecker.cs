@@ -9,9 +9,8 @@ public class VictoryConditionChecker : MonoBehaviour
 {
     [Header("胜利条件配置")]
     [SerializeField] private VictoryConfig victoryConfig;
-    [SerializeField] private bool enableTimeVictory = true;
-    [SerializeField] private bool enableRoundVictory = true;
-    [SerializeField] private bool enableFinalVictory = true;
+    // 移除这些字段，因为它们目前未被使用
+    // 胜利条件的启用/禁用现在由VictoryConfig控制
     
     // 管理器引用 - 通过GameManager自动获取
     private RoundManager RoundManager => GameManager.Instance?.GetSystem<RoundManager>();

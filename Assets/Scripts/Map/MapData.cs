@@ -33,6 +33,7 @@ public class MapData
     #region 我方防御塔设置
     //对塔的加成
     [SerializeField, Header("防御塔设置"),Range(2, 5)] private int max = 2;
+    public int Max => max; // 添加访问器
 
     [SerializeField, PropertyRange(0, "max")]
     private float towerHealthMultiplier = 1f;
@@ -86,23 +87,49 @@ public class MapData
     #endregion
     #region 敌方加成设置
     [SerializeField, Header("敌方加成设置"),Range(2, 5)] private int maxEnemy = 2;
+    public int MaxEnemy => maxEnemy; // 添加访问器以供将来使用
     [SerializeField, PropertyRange(0, "maxEnemy")]
     private float enemyHealthMultiplier = 1f;
-    [SerializeField, PropertyRange(0, "maxEnemy")]
-    private float enemyAttackMultiplier = 1f;
+    
+    public float GetEnemyHealthMultiplier() => enemyHealthMultiplier;
     #endregion
     #region 金钱设置
-    [Header("金钱设置")]
-    [SerializeField] private int startingMoney;
-    //物品刷新钱数
-    [SerializeField]
-    private int itemRefreshMoney;
-    //Block摧毁钱数
-    [SerializeField]
-    private int blockDestroyMoney;
-    //Block建造钱数
-    [SerializeField]
-    private int blockBuildMoney;
+    [Header("基础金钱设置")]
+    [SerializeField, Tooltip("游戏开始时的初始金币")] 
+    private int startingMoney = 100;
+
+    [SerializeField, Tooltip("刷新物品和道具所需的金币")] 
+    private int itemRefreshMoney = 2;
+
+    [SerializeField, Tooltip("拆除Block时返还的金币")] 
+    private int blockDestroyMoney = 7;
+
+    [SerializeField, Tooltip("建造Block所需的金币")] 
+    private int blockBuildMoney = 2;
+    
+    [Header("刷新系统")]
+    [SerializeField, Tooltip("基础刷新费用")] 
+    private int baseRefreshCost = 3;    
+
+    [SerializeField, Tooltip("最大刷新费用")] 
+    private int maxRefreshCost = 6;     
+
+    [SerializeField, Tooltip("每次刷新费用增加值")] 
+    private int refreshCostIncrement = 1; 
+
+    [SerializeField, Tooltip("每轮最大刷新次数")] 
+    private int maxRefreshPerRound = 3;   
+    
+    [Header("道具系统")]
+    [SerializeField, Tooltip("道具基础价格")] 
+    private int itemBaseCost = 10;      
+    
+    [Header("Block系统")]
+    [SerializeField, Tooltip("Block基础价格")] 
+    private int blockBaseCost = 5;      
+
+    [SerializeField, Tooltip("最大Block槽位数")] 
+    private int maxBlockSlots = 5;
     public int StartingMoney
     {
         get
@@ -132,6 +159,33 @@ public class MapData
         {
             return blockBuildMoney;
         }
+    }
+
+    // 新增的属性访问器
+    public int BaseRefreshCost => baseRefreshCost;
+    public int MaxRefreshCost => maxRefreshCost;
+    public int RefreshCostIncrement => refreshCostIncrement;
+    public int MaxRefreshPerRound => maxRefreshPerRound;
+    public int ItemBaseCost => itemBaseCost;
+    public int BlockBaseCost => blockBaseCost;
+    public int MaxBlockSlots => maxBlockSlots;
+
+    /// <summary>
+    /// 计算Block价格（每个塔位5金币）
+    /// </summary>
+    public int CalculateBlockCost(int towerSlots)
+    {
+        // 每个塔位5金币
+        return towerSlots * 5;
+    }
+
+    /// <summary>
+    /// 计算当前刷新费用
+    /// </summary>
+    public int CalculateRefreshCost(int refreshCount)
+    {
+        int cost = BaseRefreshCost + (refreshCount * RefreshCostIncrement);
+        return Mathf.Min(cost, MaxRefreshCost);
     }
     #endregion
 }

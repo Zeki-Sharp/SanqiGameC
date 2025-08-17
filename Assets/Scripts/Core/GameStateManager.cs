@@ -146,9 +146,11 @@ public class GameStateManager : MonoBehaviour
             NewPhase = GamePhase.CombatPhase 
         });
         
-        // 开始新的Round
+        // 开始当前回合的战斗
         if (RoundManager != null)
+        {
             RoundManager.StartNextRound();
+        }
             
         // 更新UI
         if (UIManager != null)
@@ -180,6 +182,24 @@ public class GameStateManager : MonoBehaviour
             UIManager.SwitchToPhase(GamePhase.PassPhase);
             
         Debug.Log($"游戏状态切换：{oldPhase} → 通过阶段");
+
+        // 延迟一段时间后自动进入建造阶段
+        StartCoroutine(AutoSwitchToBuildingPhase());
+    }
+
+    private System.Collections.IEnumerator AutoSwitchToBuildingPhase()
+    {
+        // 等待2秒，让玩家看到通过界面
+        yield return new WaitForSeconds(2f);
+        
+        // 准备下一回合（只增加回合数，不开始战斗）
+        if (RoundManager != null)
+        {
+            RoundManager.PrepareNextRound();
+        }
+
+        // 切换到建造阶段
+        SwitchToBuildingPhase();
     }
     
     /// <summary>

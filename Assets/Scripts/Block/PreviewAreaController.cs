@@ -21,9 +21,11 @@ public class PreviewAreaController : MonoBehaviour
     [SerializeField] private GameObject prefabShowArea;
     
     [Header("摄像头")]
-    [SerializeField] private Camera camera;
+    [SerializeField] private new Camera camera; // 使用new关键字表明是有意隐藏基类成员
     
-    [SerializeField] private bool hasClick;
+    // 移除未使用的字段
+    private bool hasClick;
+    public bool HasClick => hasClick;
 
     // 公共属性
     public int MapWidth => mapWidth;

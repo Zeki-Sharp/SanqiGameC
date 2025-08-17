@@ -20,4 +20,4 @@ MonoBehaviour:
       count: 24
     - enemyData: {fileID: 11400000, guid: 918a523174ab5624bbebdfd9c7404e9f, type: 2}
       count: 14
-  rewardMoney: 100
+  rewardMoney: 80

@@ -41,7 +41,7 @@ public class PauseUIPanel : UIPanel
         }
     }
 
-    public virtual void Initialize()//默认隐藏面板
+    public override void Initialize()//默认隐藏面板
     {
         Hide();
         Debug.Log($"{GetType().Name} 初始化完成");
@@ -93,7 +93,7 @@ public class PauseUIPanel : UIPanel
             }
 
             // 重置敌人生成器
-            var enemySpawner = GameObject.FindObjectOfType<EnemySpawner>();
+            var enemySpawner = GameObject.FindFirstObjectByType<EnemySpawner>();
             if (enemySpawner != null)
             {
                 enemySpawner.StopAllCoroutines(); // 停止所有生成协程

@@ -8,7 +8,7 @@ using UnityEngine.Pool;
 public class BulletManager : MonoBehaviour
 {
     [Header("调试信息")]
-    [SerializeField] private bool showDebugInfo = true;
+    [SerializeField] private bool showDebugInfo = false; // 默认关闭调试信息
     
     // 对象池管理 - 使用Unity官方ObjectPool
     private Dictionary<string, ObjectPool<BulletBase>> bulletPools = new Dictionary<string, ObjectPool<BulletBase>>();
@@ -48,16 +48,43 @@ public class BulletManager : MonoBehaviour
     /// </summary>
     private void LoadBulletConfigs()
     {
+        Debug.Log("开始加载子弹配置...");
         BulletConfig[] configs = Resources.LoadAll<BulletConfig>("Data/Bullet");
+        
+        if (configs == null || configs.Length == 0)
+        {
+            Debug.LogError("未找到任何子弹配置！请确保配置文件放在 Resources/Data/Bullet 目录下");
+            return;
+        }
+
+        Debug.Log($"找到 {configs.Length} 个子弹配置文件");
+        
         foreach (var config in configs)
         {
+            if (config == null)
+            {
+                Debug.LogError("发现空的子弹配置！");
+                continue;
+            }
+
+            if (config.BulletPrefab == null)
+            {
+                Debug.LogError($"子弹配置 '{config.name}' 没有指定预制体！请在配置文件中设置 BulletPrefab");
+                continue;
+            }
+
+            var bulletComponent = config.BulletPrefab.GetComponent<BulletBase>();
+            if (bulletComponent == null)
+            {
+                Debug.LogError($"子弹预制体 '{config.BulletPrefab.name}' 没有 BulletBase 组件！");
+                continue;
+            }
+
             RegisterBulletConfig(config);
+            Debug.Log($"成功注册子弹配置: {config.BulletName}，预制体: {config.BulletPrefab.name}");
         }
         
-        if (showDebugInfo)
-        {
-            Debug.Log($"BulletManager: 加载了 {bulletConfigs.Count} 个子弹配置");
-        }
+        Debug.Log($"子弹配置加载完成，共注册 {bulletConfigs.Count} 个有效配置");
     }
     
     /// <summary>
@@ -328,13 +355,21 @@ public class BulletManager : MonoBehaviour
     /// </summary>
     public void ClearAllPools()
     {
+        // 清理前销毁所有活跃的子弹
+        foreach (var pool in bulletPools.Values)
+        {
+            while (pool.CountActive > 0)
+            {
+                var bullet = pool.Get();
+                if (bullet != null)
+                {
+                    OnBulletDestroy(bullet);
+                }
+            }
+        }
+        
         bulletPools.Clear();
         poolUsageStats.Clear();
-        
-        if (showDebugInfo)
-        {
-            Debug.Log("BulletManager: 清理所有对象池");
-        }
     }
     
     /// <summary>

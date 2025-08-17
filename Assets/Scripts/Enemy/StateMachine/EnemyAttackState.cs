@@ -43,7 +43,7 @@ public class EnemyAttackState : EnemyState
 
         attackCoolDown = controller.AttackBehavior != null ? controller.AttackBehavior.GetAttackCooldown() : 1f;
         if (attackCoolDown <= 0f) attackCoolDown = 1f;
-        lastAttackTime = Time.unscaledTime - attackCoolDown; // 进来立刻能打一发
+        lastAttackTime = Time.time - attackCoolDown; // 进来立刻能打一发
 
         // 冻结移动
         prevMoveSpeed = controller.MoveSpeed;
@@ -162,7 +162,7 @@ public class EnemyAttackState : EnemyState
         }
     }
 
-    private void ResetAttackCooldown() => lastAttackTime = Time.unscaledTime;
+    private void ResetAttackCooldown() => lastAttackTime = Time.time;
 
     private bool IsAttackCooldownReady()
     {
@@ -171,6 +171,6 @@ public class EnemyAttackState : EnemyState
             attackCoolDown = controller.AttackBehavior != null ? controller.AttackBehavior.GetAttackCooldown() : 1f;
             if (attackCoolDown <= 0f) attackCoolDown = 1f;
         }
-        return Time.unscaledTime - lastAttackTime >= attackCoolDown;
+        return Time.time - lastAttackTime >= attackCoolDown;
     }
 }

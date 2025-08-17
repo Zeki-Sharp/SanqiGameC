@@ -16,7 +16,7 @@ public class ParabolaBullet : BulletBase
     // private float totalTime;
     
     // 碰撞检测 - 移除重复的碰撞检测，使用基类的实现
-    private void OnTriggerEnter2D(Collider2D other)
+    protected override void OnTriggerEnter2D(Collider2D other)
     {
         if (!gameObject.activeInHierarchy) return; // 防止重复处理
         HandleCollision(other.gameObject);

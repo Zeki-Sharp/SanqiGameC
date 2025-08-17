@@ -52,7 +52,7 @@ public class EnemyWarningSystemTester : MonoBehaviour
             Debug.Log($"EnemyWarningSystemTester: systemFound = {systemFound}");
             
             // 尝试查找所有EnemyWarningSystem类型的对象
-            var allSystems = FindObjectsOfType<EnemyWarningSystem>();
+            var allSystems = FindObjectsByType<EnemyWarningSystem>(FindObjectsSortMode.None);
             Debug.Log($"EnemyWarningSystemTester: 场景中找到 {allSystems.Length} 个EnemyWarningSystem对象");
             
             // 如果找到了对象，尝试使用第一个

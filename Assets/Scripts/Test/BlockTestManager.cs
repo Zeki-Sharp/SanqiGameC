@@ -9,7 +9,8 @@ public class BlockTestManager : MonoBehaviour
     [SerializeField] private GameMap gameMap;
     [SerializeField] private PreviewAreaController previewAreaController;
     [SerializeField] private bool runTestsOnStart = true;
-    [SerializeField] private string prefabShowName = "PrefabArea";
+    // 移除未使用的字段
+    // private string prefabShowName = "PrefabArea";
     [SerializeField] private MapConfig mapConfig;
 
     private void Awake()
