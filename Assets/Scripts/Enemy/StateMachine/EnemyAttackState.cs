@@ -44,6 +44,7 @@ public class EnemyAttackState : EnemyState
         attackCoolDown = controller.AttackBehavior != null ? controller.AttackBehavior.GetAttackCooldown() : 1f;
         if (attackCoolDown <= 0f) attackCoolDown = 1f;
         lastAttackTime = Time.time - attackCoolDown; // 进来立刻能打一发
+        Debug.Log($"敌人 {controller.name} 进入攻击状态，冷却时间: {attackCoolDown:F2}s");
 
         // 冻结移动
         prevMoveSpeed = controller.MoveSpeed;
@@ -162,7 +163,11 @@ public class EnemyAttackState : EnemyState
         }
     }
 
-    private void ResetAttackCooldown() => lastAttackTime = Time.time;
+    private void ResetAttackCooldown()
+    {
+        lastAttackTime = Time.time;
+        Debug.Log($"敌人 {controller.name} 重置攻击冷却时间: {lastAttackTime:F2}");
+    }
 
     private bool IsAttackCooldownReady()
     {
@@ -171,6 +176,15 @@ public class EnemyAttackState : EnemyState
             attackCoolDown = controller.AttackBehavior != null ? controller.AttackBehavior.GetAttackCooldown() : 1f;
             if (attackCoolDown <= 0f) attackCoolDown = 1f;
         }
-        return Time.time - lastAttackTime >= attackCoolDown;
+        
+        float timeSinceLastAttack = Time.time - lastAttackTime;
+        bool isReady = timeSinceLastAttack >= attackCoolDown;
+        
+        if (isReady)
+        {
+            Debug.Log($"敌人 {controller.name} 攻击冷却就绪 - 间隔: {timeSinceLastAttack:F2}s，冷却时间: {attackCoolDown:F2}s");
+        }
+        
+        return isReady;
     }
 }

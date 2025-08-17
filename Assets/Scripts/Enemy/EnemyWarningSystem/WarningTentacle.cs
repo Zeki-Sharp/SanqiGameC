@@ -1,175 +1,69 @@
-using System.Collections;
 using UnityEngine;
 
 /// <summary>
-/// 预警触手 - 用简单黑色矩形表示触手，从生成点指向中心塔
+/// 预警触手 - 用于显示敌人生成的预警效果
 /// </summary>
 public class WarningTentacle : MonoBehaviour
 {
-    [Header("触手属性")]
-    [SerializeField] private SpriteRenderer tentacleRenderer;
-    [SerializeField] private float fadeInDuration = 0.3f;
-    [SerializeField] private float fadeOutDuration = 0.3f;
+    [Header("渲染设置")]
+    [SerializeField] private SpriteRenderer spriteRenderer;
+    [SerializeField] private Color startColor = new Color(1f, 0f, 0f, 0.5f);
+    [SerializeField] private Color endColor = new Color(1f, 0f, 0f, 0f);
     
-    // 私有字段
+    [Header("动画设置")]
+    [SerializeField] private float pulseSpeed = 1f;
+    [SerializeField] private float pulseMinAlpha = 0.2f;
+    [SerializeField] private float pulseMaxAlpha = 0.8f;
+    
     private Vector3 startPosition;
     private Vector3 endPosition;
-    private float tentacleLength;
-    private float tentacleWidth;
     private float strength;
-    private bool isVisible = false;
-    
-    private void Awake()
-    {
-        // 如果没有指定渲染器，自动查找
-        if (tentacleRenderer == null)
-        {
-            tentacleRenderer = GetComponent<SpriteRenderer>();
-        }
-        
-        // 确保有SpriteRenderer组件
-        if (tentacleRenderer == null)
-        {
-            tentacleRenderer = gameObject.AddComponent<SpriteRenderer>();
-        }
-        
-        // 设置默认材质和颜色
-        SetupDefaultAppearance();
-    }
+    private float currentPulseTime;
     
     /// <summary>
     /// 初始化触手
     /// </summary>
-    public void Initialize(Vector3 start, Vector3 end, float length, float width, float enemyStrength)
+    public void Initialize(Vector3 start, Vector3 end, float length, float width, float strength)
     {
         startPosition = start;
         endPosition = end;
-        tentacleLength = length;
-        tentacleWidth = width;
-        strength = enemyStrength;
+        this.strength = strength;
         
-        // 设置触手位置和旋转
-        UpdateTentacleTransform();
-        
-        // 设置触手外观
-        UpdateTentacleAppearance();
-        
-        // 显示触手
-        Show();
-    }
-    
-    /// <summary>
-    /// 更新触手的位置和旋转
-    /// </summary>
-    private void UpdateTentacleTransform()
-    {
-        // 计算触手中心位置
-        Vector3 centerPosition = (startPosition + endPosition) / 2f;
-        transform.position = centerPosition;
-        
-        // 计算触手朝向
-        Vector3 direction = (endPosition - startPosition).normalized;
+        // 设置位置和旋转
+        transform.position = start;
+        Vector3 direction = (end - start).normalized;
         float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
-        transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
+        transform.rotation = Quaternion.Euler(0, 0, angle);
         
-        // 设置触手大小
-        transform.localScale = new Vector3(tentacleLength, tentacleWidth, 1f);
-    }
-    
-    /// <summary>
-    /// 更新触手外观
-    /// </summary>
-    private void UpdateTentacleAppearance()
-    {
-        if (tentacleRenderer == null) return;
+        // 设置缩放（长度和宽度）
+        transform.localScale = new Vector3(length, width, 1f);
         
-        // 根据强度设置颜色
-        Color tentacleColor = GetTentacleColorByStrength(strength);
-        tentacleRenderer.color = tentacleColor;
-        
-        // 设置排序层级，确保触手在敌人之上但在UI之下
-        tentacleRenderer.sortingOrder = 5;
-    }
-    
-    /// <summary>
-    /// 根据敌人强度获取触手颜色
-    /// </summary>
-    private Color GetTentacleColorByStrength(float enemyStrength)
-    {
-        // 基础黑色
-        Color baseColor = Color.black;
-        
-        // 根据强度调整透明度
-        float alpha = Mathf.Lerp(0.3f, 0.8f, Mathf.Clamp01(enemyStrength / 1000f));
-        baseColor.a = alpha;
-        
-        // 根据强度添加颜色变化
-        if (enemyStrength > 800f)
+        // 设置初始颜色
+        if (spriteRenderer != null)
         {
-            // 高强度：添加红色
-            baseColor = Color.Lerp(baseColor, Color.red, 0.3f);
-        }
-        else if (enemyStrength > 500f)
-        {
-            // 中强度：添加橙色
-            baseColor = Color.Lerp(baseColor, new Color(1f, 0.5f, 0f), 0.2f);
+            spriteRenderer.color = startColor;
         }
         
-        return baseColor;
+        // 开始脉冲动画
+        currentPulseTime = 0f;
     }
     
-    /// <summary>
-    /// 设置默认外观
-    /// </summary>
-    private void SetupDefaultAppearance()
+    private void Update()
     {
-        if (tentacleRenderer == null) return;
-        
-        // 优先使用预制体自带的Sprite，只有在没有Sprite时才创建默认方块
-        if (tentacleRenderer.sprite == null)
+        if (spriteRenderer != null)
         {
-            tentacleRenderer.sprite = CreateDefaultSprite();
+            // 更新脉冲动画
+            currentPulseTime += Time.deltaTime * pulseSpeed;
+            float pulseAlpha = Mathf.Lerp(pulseMinAlpha, pulseMaxAlpha, 
+                (Mathf.Sin(currentPulseTime) + 1f) * 0.5f);
+            
+            // 根据强度调整颜色
+            float strengthFactor = Mathf.Clamp01(strength / 1000f);
+            Color currentColor = Color.Lerp(startColor, endColor, strengthFactor);
+            currentColor.a = pulseAlpha;
+            
+            spriteRenderer.color = currentColor;
         }
-        
-        tentacleRenderer.color = Color.black;
-        tentacleRenderer.sortingOrder = 5;
-    }
-    
-    /// <summary>
-    /// 创建默认的Sprite
-    /// </summary>
-    private Sprite CreateDefaultSprite()
-    {
-        // 创建一个简单的白色方块纹理
-        Texture2D texture = new Texture2D(32, 32);
-        Color[] pixels = new Color[32 * 32];
-        
-        for (int i = 0; i < pixels.Length; i++)
-        {
-            pixels[i] = Color.white;
-        }
-        
-        texture.SetPixels(pixels);
-        texture.Apply();
-        
-        // 创建Sprite
-        Sprite sprite = Sprite.Create(texture, new Rect(0, 0, 32, 32), new Vector2(0.5f, 0.5f));
-        
-        return sprite;
-    }
-    
-    /// <summary>
-    /// 显示触手
-    /// </summary>
-    public void Show()
-    {
-        if (isVisible) return;
-        
-        isVisible = true;
-        gameObject.SetActive(true);
-        
-        // 淡入效果
-        StartCoroutine(FadeIn());
     }
     
     /// <summary>
@@ -177,101 +71,10 @@ public class WarningTentacle : MonoBehaviour
     /// </summary>
     public void Hide()
     {
-        if (!isVisible) return;
-        
-        isVisible = false;
-        
-        // 淡出效果
-        StartCoroutine(FadeOut());
-    }
-    
-    /// <summary>
-    /// 淡入效果
-    /// </summary>
-    private IEnumerator FadeIn()
-    {
-        if (tentacleRenderer == null) yield break;
-        
-        Color startColor = tentacleRenderer.color;
-        startColor.a = 0f;
-        Color endColor = tentacleRenderer.color;
-        
-        float elapsed = 0f;
-        while (elapsed < fadeInDuration)
+        // 渐隐动画
+        if (gameObject != null)
         {
-            elapsed += Time.deltaTime;
-            float t = elapsed / fadeInDuration;
-            
-            tentacleRenderer.color = Color.Lerp(startColor, endColor, t);
-            yield return null;
-        }
-        
-        tentacleRenderer.color = endColor;
-    }
-    
-    /// <summary>
-    /// 淡出效果
-    /// </summary>
-    private IEnumerator FadeOut()
-    {
-        if (tentacleRenderer == null) yield break;
-        
-        Color startColor = tentacleRenderer.color;
-        Color endColor = startColor;
-        endColor.a = 0f;
-        
-        float elapsed = 0f;
-        while (elapsed < fadeOutDuration)
-        {
-            elapsed += Time.deltaTime;
-            float t = elapsed / fadeOutDuration;
-            
-            tentacleRenderer.color = Color.Lerp(startColor, endColor, t);
-            yield return null;
-        }
-        
-        tentacleRenderer.color = endColor;
-        
-        // 完全隐藏后销毁
-        Destroy(gameObject);
-    }
-    
-    /// <summary>
-    /// 获取触手强度（用于调试）
-    /// </summary>
-    public float GetStrength()
-    {
-        return strength;
-    }
-    
-    /// <summary>
-    /// 获取触手长度（用于调试）
-    /// </summary>
-    public float GetLength()
-    {
-        return tentacleLength;
-    }
-    
-    /// <summary>
-    /// 获取触手宽度（用于调试）
-    /// </summary>
-    public float GetWidth()
-    {
-        return tentacleWidth;
-    }
-    
-    private void OnDrawGizmos()
-    {
-        // 在Scene视图中绘制触手路径
-        if (Application.isPlaying && isVisible)
-        {
-            Gizmos.color = Color.red;
-            Gizmos.DrawLine(startPosition, endPosition);
-            
-            // 绘制触手起点和终点
-            Gizmos.color = Color.yellow;
-            Gizmos.DrawWireSphere(startPosition, 0.1f);
-            Gizmos.DrawWireSphere(endPosition, 0.1f);
+            Destroy(gameObject);
         }
     }
 }

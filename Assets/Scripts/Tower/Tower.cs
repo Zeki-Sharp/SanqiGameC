@@ -65,14 +65,32 @@ public class Tower : MonoBehaviour
     
     private void Start() 
     { 
-        rangeDetector.onDetectCollider.AddListener(OnDetectCollider); 
-        towerLayerMask = LayerMask.GetMask("Tower");
-        
-        // 优化RangeDetector2D配置
-        OptimizeRangeDetector();
-        
-        // 启动治疗效果（如果是治疗塔）
-        StartHealEffect();
+        try
+        {
+            if (rangeDetector != null)
+            {
+                rangeDetector.onDetectCollider.AddListener(OnDetectCollider);
+                Debug.Log($"塔 {this.name} 已注册攻击检测监听器");
+                
+                // 优化RangeDetector2D配置
+                OptimizeRangeDetector();
+            }
+            else
+            {
+                Debug.LogError($"塔 {this.name} 的 RangeDetector 为空");
+            }
+            
+            towerLayerMask = LayerMask.GetMask("Tower");
+            
+            // 启动治疗效果（如果是治疗塔）
+            StartHealEffect();
+            
+            Debug.Log($"塔 {this.name} 初始化完成，攻击范围: {AttackRange:F1}，攻击间隔: {AttackInterval:F2}，攻击力: {AttackDamage:F1}");
+        }
+        catch (System.Exception e)
+        {
+            Debug.LogError($"塔 {this.name} 在 Start 中发生错误: {e.Message}\n{e.StackTrace}");
+        }
     }
     
     /// <summary>
@@ -149,33 +167,66 @@ public class Tower : MonoBehaviour
     
     protected virtual void OnDetectCollider(Collider2D collider) 
     {
-        // 展示区域的塔不进行游戏逻辑
-        if (isShowAreaTower) return;
-        if (towerData == null || bulletCaster == null) return;
-        if (IsCenterTowerDestroyed()) return;
-        
-        // 检查攻击冷却
-        if (!IsAttackCooldownReady()) return;
-        
-        // 使用FindNearestEnemyInRange找到最近的目标
-        GameObject nearestEnemy = FindNearestEnemyInRange();
-        if (nearestEnemy == null) return;
-        
-        // 检查是否需要切换目标
-        bool shouldSwitchTarget = targetCache.ShouldSwitchTarget(nearestEnemy, targetCache.CurrentTargetDistance);
-        
-        if (shouldSwitchTarget)
+        try
         {
-            // 更新当前目标
-            currentTarget = nearestEnemy;
-            Debug.Log($"{this.name} 切换目标到: {nearestEnemy.name} (距离: {targetCache.CurrentTargetDistance:F2})");
+            // 展示区域的塔不进行游戏逻辑
+            if (isShowAreaTower)
+            {
+                Debug.Log($"塔 {this.name} 是展示区域塔，跳过攻击逻辑");
+                return;
+            }
+
+            if (towerData == null)
+            {
+                Debug.LogWarning($"塔 {this.name} 的 TowerData 为空");
+                return;
+            }
+
+            if (bulletCaster == null)
+            {
+                Debug.LogWarning($"塔 {this.name} 的 BulletCaster 为空");
+                return;
+            }
+
+            if (IsCenterTowerDestroyed())
+            {
+                Debug.Log($"塔 {this.name} 检测到中心塔已被摧毁，停止攻击");
+                return;
+            }
+
+            // 检查攻击冷却
+            if (!IsAttackCooldownReady())
+            {
+                return;
+            }
+
+            // 使用FindNearestEnemyInRange找到最近的目标
+            GameObject nearestEnemy = FindNearestEnemyInRange();
+            if (nearestEnemy == null)
+            {
+                Debug.Log($"塔 {this.name} 没有找到有效目标");
+                return;
+            }
+
+            // 检查是否需要切换目标
+            bool shouldSwitchTarget = targetCache.ShouldSwitchTarget(nearestEnemy, targetCache.CurrentTargetDistance);
+            if (shouldSwitchTarget)
+            {
+                // 更新当前目标
+                currentTarget = nearestEnemy;
+                Debug.Log($"塔 {this.name} 切换目标到: {nearestEnemy.name} (距离: {targetCache.CurrentTargetDistance:F2})");
+            }
+
+            // 执行攻击
+            ExecuteAttack(nearestEnemy);
+
+            // 重置攻击冷却
+            ResetAttackCooldown();
         }
-        
-        // 执行攻击
-        ExecuteAttack(nearestEnemy);
-        
-        // 重置攻击冷却
-        ResetAttackCooldown();
+        catch (System.Exception e)
+        {
+            Debug.LogError($"塔 {this.name} 在处理攻击逻辑时发生错误: {e.Message}\n{e.StackTrace}");
+        }
     }
     public void SetBulletDamage()
     {
@@ -250,6 +301,10 @@ public class Tower : MonoBehaviour
             damageTaker.maxHealth = towerData.GetHealth(level);
             damageTaker.currentHealth = towerData.GetHealth(level);
             
+            // 订阅伤害和死亡事件
+            damageTaker.onTakeDamage += OnTakeDamage;
+            damageTaker.onDeath += OnTowerDeath;
+            
             cachedAttackSpeed = towerData.GetAttackSpeed(level);
             cachedAttackSpeed = cachedAttackSpeed > 0 ? cachedAttackSpeed : 1f;
             
@@ -271,16 +326,46 @@ public class Tower : MonoBehaviour
         }
     }
     
+    private void OnTakeDamage(float damage)
+    {
+        Debug.Log($"塔 {this.name} 受到 {damage} 点伤害，剩余生命值: {damageTaker.currentHealth}");
+    }
+    
+    private void OnTowerDeath()
+    {
+        Debug.Log($"塔 {this.name} 被摧毁");
+        
+        // 从Block中移除塔的引用
+        if (cachedBlock != null)
+        {
+            Vector3Int localCoord = cachedBlock.GetTowerLocalCoord(this);
+            cachedBlock.RemoveTower(localCoord);
+        }
+        else
+        {
+            // 如果找不到Block，直接销毁游戏对象
+            Destroy(gameObject);
+        }
+    }
+    
     private void OnDestroy()
     {
+        // 取消事件订阅
         if (rangeDetector != null)
             rangeDetector.onDetectCollider.RemoveListener(OnDetectCollider);
+            
+        if (damageTaker != null)
+        {
+            damageTaker.onTakeDamage -= OnTakeDamage;
+            damageTaker.onDeath -= OnTowerDeath;
+        }
         
-        // 取消订阅敌人死亡事件
         if (EventBus.Instance != null)
         {
             EventBus.Instance.Unsubscribe<EnemyDeathEventArgs>(OnEnemyDeath);
         }
+        
+        Debug.Log($"塔 {this.name} 已销毁");
     }
     
     /// <summary>
@@ -344,94 +429,119 @@ public class Tower : MonoBehaviour
 
 public void Initialize(TowerData data, Vector3Int pos, bool hasCheck = false, bool isShowArea = false)
 {
-    // try
-    // {
-    // 检查关键组件是否存在
-    if (spriteRenderer == null)
+    try
     {
-        spriteRenderer = GetComponentInChildren<SpriteRenderer>();
+        Debug.Log($"开始初始化塔 {this.name}，位置: {pos}，是否预览: {isShowArea}");
+        
+        // 检查关键组件是否存在
         if (spriteRenderer == null)
         {
-            Debug.LogError("SpriteRenderer 未找到，初始化失败");
+            spriteRenderer = GetComponentInChildren<SpriteRenderer>();
+            if (spriteRenderer == null)
+            {
+                Debug.LogError($"塔 {this.name} 的 SpriteRenderer 未找到，初始化失败");
+                return;
+            }
+        }
+
+        if (data == null)
+        {
+            Debug.LogError($"塔 {this.name} 的 TowerData 为 null，初始化失败");
             return;
         }
-    }
 
-    // if (text == null)
-    // {
-    //     text = GetComponentInChildren<TextMeshPro>();
-    //     if (text == null)
-    //     {
-    //         Debug.LogError("TextMeshPro 未找到，初始化失败");
-    //         return;
-    //     }
-    // }
+        towerData = data;
+        cellPosition = pos;
+        currentHealth = data.GetHealth(level);
 
-    if (data == null)
-    {
-        Debug.LogError("传入的 TowerData 为 null，初始化失败");
-        return;
-    }
+        // 设置塔的名称
+        this.name = $"{(isShowArea ? "ShowArea_" : "")}{data.TowerName}_{pos.x}_{pos.y}";
 
-    towerData = data;
-    cellPosition = pos;
-    currentHealth = data.GetHealth(level);
-
-    // 优化的 Sprite 赋值
-    if (data.TowerSprite != null)
-    {
-        spriteRenderer.sprite = data.GetTowerSprite(level);
-    }
-    else
-    {
-        Debug.LogWarning($"塔 {data.TowerName} 的 Sprite 为空");
-    }
-    block = GetComponentInParent<Block>();
-    // 优化的字符串拼接
-    // text.text = $"塔名：{towerData.TowerName} \n 等级：{level+1}/{towerData.MaxLevel}";
-    // 设置是否为展示区域塔
-    SetAsShowAreaTower(isShowArea);
-
- 
-    if (hasCheck)
-    {  
-       
-        // Vector3Int towerCellPos = new Vector3Int(cellPosition.x + block.CellPosition.x, cellPosition.y +block.CellPosition.y, 0);
-
-        var towerCheckResult = DetectTowerAction(cellPosition,towerData); 
-        this.tag = "Tower";
-
-        switch (towerCheckResult)
+        // 设置 Sprite 和渲染器
+        if (data.TowerSprite != null)
         {
-            case TowerCheckResult.ShouldUpdate:
-                // 升级情况下，删除新创建的塔，让现有塔升级
-                Debug.Log($"升级情况：删除新创建的塔 {this.name}");
-                Destroy(this.gameObject);
-                return; // 直接返回，不执行后续初始化
-            case TowerCheckResult.ShouldDelete:
-                // 替换情况下，继续初始化新塔
-                Debug.Log($"替换情况：继续初始化新塔 {this.name}");
-                break;
-            case TowerCheckResult.None:
-                // 新建情况，继续初始化
-                Debug.Log($"新建情况：继续初始化新塔 {this.name}");
-                break;
+            spriteRenderer.sprite = data.GetTowerSprite(level);
+            spriteRenderer.enabled = true;
+            Debug.Log($"塔 {this.name} 的主渲染器已启用");
         }
-    }
-    
-    
-     
-        if (towerData != null && damageTaker != null)
+        else
         {
-            damageTaker.maxHealth = towerData.GetHealth(level);
-            damageTaker.currentHealth = towerData.GetHealth(level);
-            float attackSpeed = towerData.GetAttackSpeed(level) > 0 ? towerData.GetAttackSpeed(level) : 1f;
-
-            bulletCaster.ammo.reloadTime = attackSpeed;
-            rangeDetector.Radius = towerData.GetAttackRange(level);
+            Debug.LogWarning($"塔 {this.name} 的 Sprite 为空");
         }
 
-   
+        // 确保所有子渲染器都是启用的
+        var renderers = GetComponentsInChildren<SpriteRenderer>(true);
+        foreach (var renderer in renderers)
+        {
+            if (renderer != null)
+            {
+                renderer.enabled = true;
+                Debug.Log($"塔 {this.name} 的子渲染器已启用");
+            }
+        }
+
+        // 获取父级 Block
+        block = GetComponentInParent<Block>();
+        if (block == null)
+        {
+            Debug.LogWarning($"塔 {this.name} 没有找到父级 Block");
+        }
+
+        // 设置是否为展示区域塔
+        SetAsShowAreaTower(isShowArea);
+
+        // 检查塔的操作类型（升级/替换）
+        if (hasCheck && !isShowArea)  // 预览塔不需要检查
+        {
+            var towerCheckResult = DetectTowerAction(cellPosition, towerData);
+            this.tag = "Tower";
+
+            switch (towerCheckResult)
+            {
+                case TowerCheckResult.ShouldUpdate:
+                    Debug.Log($"塔 {this.name} 需要升级，将删除新创建的塔");
+                    Destroy(this.gameObject);
+                    return;
+                case TowerCheckResult.ShouldDelete:
+                    Debug.Log($"塔 {this.name} 需要替换现有塔");
+                    break;
+                case TowerCheckResult.None:
+                    Debug.Log($"塔 {this.name} 是新建塔");
+                    break;
+            }
+        }
+
+        // 设置战斗相关属性
+        if (!isShowArea && towerData != null)
+        {
+            if (damageTaker != null)
+            {
+                damageTaker.maxHealth = towerData.GetHealth(level);
+                damageTaker.currentHealth = towerData.GetHealth(level);
+                Debug.Log($"塔 {this.name} 的生命值已设置: {damageTaker.currentHealth}/{damageTaker.maxHealth}");
+            }
+
+            if (bulletCaster != null)
+            {
+                float attackSpeed = towerData.GetAttackSpeed(level);
+                attackSpeed = attackSpeed > 0 ? attackSpeed : 1f;
+                bulletCaster.ammo.reloadTime = attackSpeed;
+                Debug.Log($"塔 {this.name} 的攻击速度已设置: {attackSpeed}");
+            }
+
+            if (rangeDetector != null)
+            {
+                rangeDetector.Radius = towerData.GetAttackRange(level);
+                Debug.Log($"塔 {this.name} 的攻击范围已设置: {rangeDetector.Radius}");
+            }
+        }
+
+        Debug.Log($"塔 {this.name} 初始化完成");
+    }
+    catch (System.Exception e)
+    {
+        Debug.LogError($"塔 {this.name} 初始化时发生错误: {e.Message}\n{e.StackTrace}");
+    }
 }
 /// <summary>
     /// 检测单个位置的塔操作类型
@@ -767,7 +877,17 @@ public void Initialize(TowerData data, Vector3Int pos, bool hasCheck = false, bo
             cachedAttackSpeed = cachedAttackSpeed > 0 ? cachedAttackSpeed : 1f;
         }
         
-        return Time.unscaledTime - lastAttackTime >= 1f / cachedAttackSpeed;
+        // 使用 Time.time 来计算冷却，这样会受到游戏暂停的影响
+        float cooldownTime = 1f / cachedAttackSpeed;
+        float timeSinceLastAttack = Time.time - lastAttackTime;
+        bool isReady = timeSinceLastAttack >= cooldownTime;
+        
+        if (isReady)
+        {
+            Debug.Log($"塔 {this.name} 攻击冷却就绪 - 间隔: {timeSinceLastAttack:F2}s，冷却时间: {cooldownTime:F2}s");
+        }
+        
+        return isReady;
     }
     
     /// <summary>
@@ -775,7 +895,9 @@ public void Initialize(TowerData data, Vector3Int pos, bool hasCheck = false, bo
     /// </summary>
     private void ResetAttackCooldown()
     {
-        lastAttackTime = Time.unscaledTime;
+        // 使用 Time.time 来重置冷却时间
+        lastAttackTime = Time.time;
+        Debug.Log($"塔 {this.name} 重置攻击冷却时间: {lastAttackTime:F2}");
     }
     
     /// <summary>

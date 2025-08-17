@@ -68,14 +68,14 @@ public class Block : MonoBehaviour
 
         towers.Clear();
 
-        // foreach (Vector3Int coord in config.Coordinates)
-        // {
-        //     towers[coord] = null;
-        //     // 开发阶段调试日志，上线前可关闭
-        //     // Debug.Log($"生成塔于格子 ({coord.x}, {coord.y})");
-        // }
+        // 初始化所有格子位置
+        foreach (Vector3Int coord in config.Coordinates)
+        {
+            towers[coord] = null;
+            Debug.Log($"初始化格子位置: ({coord.x}, {coord.y})");
+        }
 
-        // Debug.Log($"方块初始化完成，形状: {config.name}，包含 {config.CellCount} 个格子");
+        Debug.Log($"方块初始化完成，形状: {config.name}，包含 {config.CellCount} 个格子");
     }
 
     /// <summary>
@@ -114,18 +114,33 @@ public class Block : MonoBehaviour
     /// <summary>
     /// 在指定格子位置生成塔
     /// </summary>
-    public Tower GenerateTower(Vector3Int localCoord, TowerData towerData, Tilemap tilemap = null,bool hasCheck = false)
+    public Tower GenerateTower(Vector3Int localCoord, TowerData towerData, Tilemap tilemap = null, bool hasCheck = false)
     {
-        if (towers.Count > 0)
+        // 检查参数
+        if (towerData == null)
         {
-            if (towers.TryGetValue(localCoord, out Tower tower) && tower != null)
-            {
-                Debug.LogWarning($"格子 ({localCoord.x}, {localCoord.y}) 已经有塔了");
-                return towers[localCoord];
-            }
+            Debug.LogError($"尝试在格子 ({localCoord.x}, {localCoord.y}) 生成塔时，TowerData为空");
+            return null;
         }
-        Vector3Int towerCellPos = new Vector3Int(cellPosition.x + localCoord.x, cellPosition.y + localCoord.y, 0);
 
+        if (towerPrefab == null)
+        {
+            Debug.LogError("塔预制体为空，请确保已正确加载");
+            return null;
+        }
+
+        // 检查格子是否已经有塔
+        if (towers.TryGetValue(localCoord, out Tower existingTower) && existingTower != null)
+        {
+            Debug.LogWarning($"格子 ({localCoord.x}, {localCoord.y}) 已经有塔了");
+            return existingTower;
+        }
+
+        // 计算世界坐标
+        Vector3Int towerCellPos = new Vector3Int(cellPosition.x + localCoord.x, cellPosition.y + localCoord.y, 0);
+        Debug.Log($"在位置 ({towerCellPos.x}, {towerCellPos.y}) 生成塔 {towerData.TowerName}");
+
+        // 生成塔
         Tower towerComponent = TowerBuildUtility.GenerateTower(
             this.transform,
             towerPrefab,
@@ -136,8 +151,28 @@ public class Block : MonoBehaviour
             Color.white,
             hasCheck
         );
-        // 修复：使用localCoord作为key，保持坐标系统一致性
+
+        if (towerComponent == null)
+        {
+            Debug.LogError($"塔生成失败：{towerData.TowerName}");
+            return null;
+        }
+
+        // 确保塔的渲染器是启用的
+        var renderers = towerComponent.GetComponentsInChildren<SpriteRenderer>(true);
+        foreach (var renderer in renderers)
+        {
+            if (renderer != null)
+            {
+                renderer.enabled = true;
+                Debug.Log($"启用塔 {towerData.TowerName} 的渲染器");
+            }
+        }
+
+        // 保存塔的引用
         towers[localCoord] = towerComponent;
+        Debug.Log($"塔 {towerData.TowerName} 生成完成，已保存到字典中");
+
         return towerComponent;
     }
 

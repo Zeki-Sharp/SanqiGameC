@@ -42,25 +42,38 @@ public static class TowerBuildUtility
         if (towerComponent != null)
         {
             // 预览塔和展示区域塔都不进行游戏逻辑
-            bool isShowArea = isPreview;
-            towerComponent.Initialize(towerData, cell, hasCheck, isShowArea);
-            if (!isShowArea)
+            towerComponent.Initialize(towerData, cell, hasCheck, isPreview);
+            
+            // 只有非预览塔才需要设置子弹池
+            if (!isPreview)
             {
-                var bulletManager = GameManager.Instance.GetSystem<BulletManager>();
-                towerComponent.GetComponent<BasicCaster2D>().poolManager = bulletManager.GetPoolManager();
+                var bulletManager = GameManager.Instance?.GetSystem<BulletManager>();
+                if (bulletManager != null)
+                {
+                    var caster = towerComponent.GetComponent<BasicCaster2D>();
+                    if (caster != null)
+                    {
+                        caster.poolManager = bulletManager.GetPoolManager();
+                    }
+                }
             }
+            
+            // 设置名称以便调试
+            towerObj.name = $"{(isPreview ? "Preview_" : "")}{towerData.TowerName}_{cell.x}_{cell.y}";
             // 注意：塔的层级现在由SceneLayerManager统一管理
             // 不再需要手动设置sortingOrder
         }
-        // 设置颜色
+        // 设置颜色和可见性
         SpriteRenderer[] renderers = towerObj.GetComponentsInChildren<SpriteRenderer>(true);
         if (renderers != null && renderers.Length > 0)
         {
             foreach (var sr in renderers)
             {
-                sr.color = color ?? Color.white;
-                sr.enabled = false;
-                sr.enabled = true;
+                if (sr != null)
+                {
+                    sr.color = color ?? Color.white;
+                    sr.enabled = true;
+                }
             }
         }
         return towerComponent;

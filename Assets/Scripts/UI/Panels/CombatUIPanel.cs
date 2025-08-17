@@ -18,7 +18,8 @@ public class CombatUIPanel : UIPanel
     private Button pauseBtnComponent;
 
     private float roundStartTime;
-    private float roundTimeLimit = 300f; // 5分钟时间限制
+    private float roundTimeLimit = 60f; // 默认60秒时间限制
+    private VictoryConditionChecker victoryChecker;
 
     protected override void Awake()
     {
@@ -30,6 +31,18 @@ public class CombatUIPanel : UIPanel
         // 获取Pause按钮组件
         if (pauseButton != null)
             pauseBtnComponent = pauseButton.GetComponent<Button>();
+            
+        // 获取胜利检查器引用
+        victoryChecker = GameManager.Instance?.GetSystem<VictoryConditionChecker>();
+        if (victoryChecker != null)
+        {
+            var config = victoryChecker.GetVictoryConfig();
+            if (config != null)
+            {
+                roundTimeLimit = config.roundTimeLimit;
+                Debug.Log($"从VictoryConfig加载回合时间限制: {roundTimeLimit}秒");
+            }
+        }
     }
 
     protected override void OnShow()

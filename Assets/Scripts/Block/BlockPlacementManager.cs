@@ -1,6 +1,8 @@
 using UnityEngine;
 using UnityEngine.Tilemaps;
 using System.Collections.Generic;
+using RaycastPro.Detectors2D;
+using RaycastPro.Casters2D;
 
 public class BlockPlacementManager : MonoBehaviour
 {
@@ -71,65 +73,94 @@ public class BlockPlacementManager : MonoBehaviour
 
     private void LoadTowerPrefab()
     {
-        if (towerPrefabCache != null)
-            return;
-
-        // 尝试多个可能的预制体路径
-        string[] possiblePaths = new string[]
+        try
         {
-            "Prefabs/Tower/Tower",
-            "Prefab/Tower/Tower",
-            "Tower/Tower",
-            "Towers/Tower",
-            "Tower",
-            "Prefabs/Tower",
-            "Prefab/Tower",
-            "Towers/BasicTower",
-            "Tower/BasicTower",
-            "Prefabs/Towers/BasicTower",
-            "Prefab/Towers/BasicTower"
-        };
-        
-        Debug.Log("开始搜索塔预制体，可能的路径：\n" + string.Join("\n", possiblePaths));
-
-        Debug.Log("开始尝试加载塔预制体...");
-        foreach (string path in possiblePaths)
-        {
-            Debug.Log($"尝试从路径加载：{path}");
-            towerPrefabCache = Resources.Load<GameObject>(path);
             if (towerPrefabCache != null)
             {
-                var tower = towerPrefabCache.GetComponent<Tower>();
-                if (tower != null)
+                Debug.Log($"塔预制体已加载: {towerPrefabCache.name}");
+                return;
+            }
+
+            // 尝试多个可能的预制体路径
+            string[] possiblePaths = new string[]
+            {
+                "Prefabs/Tower/Tower",
+                "Prefab/Tower/Tower",
+                "Tower/Tower",
+                "Towers/Tower",
+                "Tower",
+                "Prefabs/Tower",
+                "Prefab/Tower",
+                "Towers/BasicTower",
+                "Tower/BasicTower",
+                "Prefabs/Towers/BasicTower",
+                "Prefab/Towers/BasicTower"
+            };
+            
+            Debug.Log("开始搜索塔预制体，可能的路径：\n" + string.Join("\n", possiblePaths));
+
+            // 首先检查是否已经有引用
+            if (blockPrefab != null && blockPrefab.GetComponent<Tower>() != null)
+            {
+                towerPrefabCache = blockPrefab;
+                Debug.Log($"使用已有的塔预制体引用: {blockPrefab.name}");
+                return;
+            }
+
+            // 然后尝试从Resources加载
+            foreach (string path in possiblePaths)
+            {
+                Debug.Log($"尝试从路径加载：{path}");
+                var prefab = Resources.Load<GameObject>(path);
+                if (prefab != null)
                 {
-                    Debug.Log($"成功加载塔预制体：{path}");
-                    return;
-                }
-                else
-                {
-                    Debug.LogWarning($"在路径 {path} 找到预制体，但缺少Tower组件");
-                    towerPrefabCache = null;
+                    var tower = prefab.GetComponent<Tower>();
+                    if (tower != null)
+                    {
+                        towerPrefabCache = prefab;
+                        Debug.Log($"成功加载塔预制体：{path}");
+                        
+                        // 验证预制体的关键组件
+                        var spriteRenderer = prefab.GetComponentInChildren<SpriteRenderer>();
+                        var rangeDetector = prefab.GetComponentInChildren<RangeDetector2D>();
+                        var bulletCaster = prefab.GetComponent<BasicCaster2D>();
+                        
+                        Debug.Log($"预制体组件检查：\n" +
+                                $"- SpriteRenderer: {(spriteRenderer != null ? "存在" : "缺失")}\n" +
+                                $"- RangeDetector2D: {(rangeDetector != null ? "存在" : "缺失")}\n" +
+                                $"- BasicCaster2D: {(bulletCaster != null ? "存在" : "缺失")}");
+                        
+                        return;
+                    }
+                    else
+                    {
+                        Debug.LogWarning($"在路径 {path} 找到预制体，但缺少Tower组件");
+                    }
                 }
             }
-        }
 
-        string errorMsg = "无法加载塔预制体！\n" +
-            "请检查以下内容：\n" +
-            "1. 确保塔预制体已经放在Resources文件夹下的某个位置\n" +
-            "2. 预制体的名字是否正确（可能的路径）：\n" + 
-            string.Join("\n", possiblePaths) + "\n" +
-            "3. 预制体上是否有Tower组件\n" +
-            "4. 如果路径或名字不同，请修改BlockPlacementManager中的possiblePaths数组";
-        
-        Debug.LogError(errorMsg);
-        
-#if UNITY_EDITOR
-        // 在编辑器中显示更详细的信息
-        UnityEditor.EditorUtility.DisplayDialog(
-            "错误：找不到塔预制体",
-            errorMsg,
-            "确定");
-#endif
+            string errorMsg = "无法加载塔预制体！\n" +
+                "请检查以下内容：\n" +
+                "1. 确保塔预制体已经放在Resources文件夹下的某个位置\n" +
+                "2. 预制体的名字是否正确（可能的路径）：\n" + 
+                string.Join("\n", possiblePaths) + "\n" +
+                "3. 预制体上是否有Tower组件\n" +
+                "4. 如果路径或名字不同，请修改BlockPlacementManager中的possiblePaths数组";
+            
+            Debug.LogError(errorMsg);
+            
+    #if UNITY_EDITOR
+            // 在编辑器中显示更详细的信息
+            UnityEditor.EditorUtility.DisplayDialog(
+                "错误：找不到塔预制体",
+                errorMsg,
+                "确定");
+    #endif
+        }
+        catch (System.Exception e)
+        {
+            Debug.LogError($"加载塔预制体时发生错误: {e.Message}\n{e.StackTrace}");
+        }
     }
 
     private void SetupInputHandler()
@@ -410,14 +441,16 @@ public class BlockPlacementManager : MonoBehaviour
         if (parent != null) blockObj.transform.SetParent(parent, false); // 保证本地坐标不变
         blockObj.SetActive(true); // 强制激活
         Block block = blockObj.AddComponent<Block>();
-        block.Init(config);
-        block.ClearTower();
         block.tag = "Block";
+        block.Init(config);  // 初始化会自动清理towers字典
+        
         tilemap = tilemap != null ? tilemap : (gameMap != null ? gameMap.GetTilemap() : null);
         
         // 计算Block的cellPosition（使用第一个cell作为基准）
         Vector3Int blockCellPos = cells[0];
         block.SetCellPosition(blockCellPos, tilemap);
+        
+        Debug.Log($"初始化Block: {blockObj.name}, 位置: {blockCellPos}, 配置: {config.name}");
         
         for (int i = 0; i < cells.Count; i++)
         {
@@ -433,26 +466,45 @@ public class BlockPlacementManager : MonoBehaviour
 
             // 判断是否为showarea（父物体名包含showarea）
             bool isShowArea = parent != null && parent.name.ToLower().Contains("showarea");
-            var tower = TowerBuildUtility.GenerateTower(
-                blockObj.transform,
-                towerPrefabCache,
-                cell,
-                tilemap,
+            
+            // 计算相对坐标
+            Vector3Int localCoord = cell - blockCellPos;
+            Debug.Log($"生成塔 - 全局坐标: {cell}, 相对坐标: {localCoord}, 数据: {data.TowerName}");
+            
+            // 使用Block的GenerateTower方法来生成塔
+            Tower tower = block.GenerateTower(
+                localCoord,
                 data,
-                parent != null && !isShowArea, // 只有真正的预览才用预览色
-                isShowArea ? normalColor : (parent != null ? previewColor : normalColor),
+                tilemap,
                 hasCheck
             );
             
-            // 确保展示区域的塔被正确标记
-            if (isShowArea && tower != null)
+            if (tower != null)
             {
-                tower.SetAsShowAreaTower(true);
+                // 设置颜色
+                var renderers = tower.GetComponentsInChildren<SpriteRenderer>(true);
+                Color targetColor = isShowArea ? normalColor : (parent != null ? previewColor : normalColor);
+                foreach (var renderer in renderers)
+                {
+                    if (renderer != null)
+                    {
+                        renderer.color = targetColor;
+                        renderer.enabled = true;
+                    }
+                }
+                
+                // 确保展示区域的塔被正确标记
+                if (isShowArea)
+                {
+                    tower.SetAsShowAreaTower(true);
+                }
+                
+                Debug.Log($"塔生成成功: {tower.name}, 位置: {localCoord}");
             }
-            
-            // 修复：计算正确的相对坐标
-            Vector3Int localCoord = cell - blockCellPos;
-            block.SetTower(localCoord, tower);
+            else
+            {
+                Debug.LogError($"塔生成失败 - 位置: {localCoord}");
+            }
         }
     }
 

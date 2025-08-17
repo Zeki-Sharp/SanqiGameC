@@ -80,7 +80,13 @@ public class VictoryConditionChecker : MonoBehaviour
         if (victoryConfig == null)
         {
             // 尝试从Resources加载VictoryConfig
-            victoryConfig = Resources.Load<VictoryConfig>("Data/Victory/New Victory Config");
+            victoryConfig = Resources.Load<VictoryConfig>("Data/VictoryConfig");
+            
+            if (victoryConfig == null)
+            {
+                Debug.LogWarning("未在 Resources/Data/VictoryConfig 找到配置，尝试其他路径");
+                victoryConfig = Resources.Load<VictoryConfig>("Data/Victory/VictoryConfig");
+            }
             
             if (victoryConfig == null)
             {
@@ -96,9 +102,10 @@ public class VictoryConditionChecker : MonoBehaviour
     private void CreateDefaultVictoryConfig()
     {
         victoryConfig = ScriptableObject.CreateInstance<VictoryConfig>();
-        victoryConfig.roundTimeLimit = 300f; // 每个Round 5分钟时间限制
-        victoryConfig.finalVictoryRound = 10; // 完成10个Round获得最终胜利
+        victoryConfig.roundTimeLimit = 60f; // 每个回合60秒时间限制
+        victoryConfig.finalVictoryRound = 10; // 完成10个回合获得最终胜利
         victoryConfig.requireCenterTowerAlive = true; // 要求中心塔存活
+        Debug.Log("创建默认胜利配置：每回合60秒，10回合最终胜利");
     }
     
     /// <summary>
@@ -345,7 +352,17 @@ public class VictoryConditionChecker : MonoBehaviour
         CheckVictoryConditions();
     }
     
-
+    /// <summary>
+    /// 获取胜利配置
+    /// </summary>
+    public VictoryConfig GetVictoryConfig()
+    {
+        if (victoryConfig == null)
+        {
+            InitializeVictoryConfig();
+        }
+        return victoryConfig;
+    }
 }
 
 /// <summary>
@@ -364,8 +381,9 @@ public enum VictoryType
 [CreateAssetMenu(fileName = "New Victory Config", menuName = "Tower Defense/Victory Config")]
 public class VictoryConfig : ScriptableObject
 {
-    [Header("Round时间限制")]
-    public float roundTimeLimit = 300f; // 每个Round的时间限制（秒），0表示无限制
+    [Header("回合时间限制")]
+    [Tooltip("每个回合的时间限制（秒），0表示无限制")]
+    public float roundTimeLimit = 60f; // 设置为60秒
     
     [Header("最终胜利条件")]
     public int finalVictoryRound = 10; // 完成指定Round数量获得最终胜利

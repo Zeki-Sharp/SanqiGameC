@@ -288,13 +288,21 @@ public class BlockPreviewSystem : MonoBehaviour
                 towerObj.gameObject.name = $"PreviewTower_{i}";
                 towerObj.gameObject.tag = "PreviewTower";
                 
-                // 确保预览塔被正确标记为预览模式（不是展示区域塔）
-                towerObj.SetAsShowAreaTower(false);
-                
                 // 设置预览塔的层级：继承展示区域塔的层级顺序，但设置到UI层
                 if (showAreaOrders != null && i < showAreaOrders.Length)
                 {
                     SetPreviewTowerLayer(towerObj.gameObject, showAreaOrders[i]);
+                }
+
+                // 确保所有渲染器都是可见的
+                var renderers = towerObj.gameObject.GetComponentsInChildren<SpriteRenderer>(true);
+                foreach (var renderer in renderers)
+                {
+                    if (renderer != null)
+                    {
+                        renderer.enabled = true;
+                        renderer.color = previewColor;
+                    }
                 }
                 
                 previewTowers.Add(towerObj.gameObject);

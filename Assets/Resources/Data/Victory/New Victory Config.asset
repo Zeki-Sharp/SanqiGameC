@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 0}
   m_Name: New Victory Config
   m_EditorClassIdentifier: Assembly-CSharp::VictoryConfig
-  roundTimeLimit: 45
+  roundTimeLimit: 60
   finalVictoryRound: 3
   requireCenterTowerAlive: 1
