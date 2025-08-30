@@ -21,7 +21,7 @@ public class EnemyMoveState : EnemyState
     private float recheckInterval = 0.10f; // 路径重检间隔（秒）
     private float nextRecheckTime;
 
-    private const float stopBuffer = 0.02f; // 停在攻距边缘的提前量
+    private const float stopBuffer = 0.1f; // 停在攻距边缘的提前量（从0.02f增加到0.1f）
 
     public EnemyMoveState(EnemyController controller) : base(controller) { }
 
@@ -58,7 +58,15 @@ public class EnemyMoveState : EnemyState
 
         float step = controller.MoveSpeed * Time.deltaTime;
         float distToStop = Mathf.Max(0f, Vector3.Distance(from, to) - controller.AttackRange + stopBuffer);
-        float moveThisFrame = Mathf.Min(step, distToStop);
+        
+        // 添加平滑减速：当距离目标较近时逐渐减速
+        float slowdownFactor = 1f;
+        if (distToStop < 1f) // 当距离目标1单位内开始减速
+        {
+            slowdownFactor = Mathf.Lerp(0.3f, 1f, distToStop / 1f);
+        }
+        
+        float moveThisFrame = Mathf.Min(step * slowdownFactor, distToStop);
 
         if (moveThisFrame > 0f)
         {
@@ -66,6 +74,9 @@ public class EnemyMoveState : EnemyState
             float len = dir.magnitude;
             if (len > 1e-5f) dir /= len;
             controller.transform.position = from + dir * moveThisFrame;
+            
+            // 同步朝向和精灵翻转状态
+            controller.SetDirection(dir);
         }
 
         // 2D：Z 轴归零

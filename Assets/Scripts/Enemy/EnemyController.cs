@@ -269,6 +269,34 @@ public class EnemyController : MonoBehaviour
         Destroy(gameObject);
     }
 
+    /// <summary>
+    /// 设置敌人朝向并同步精灵翻转状态
+    /// </summary>
+    /// <param name="direction">朝向向量</param>
+    public void SetDirection(Vector3 direction)
+    {
+        if (spriteRenderer == null) return;
+        
+        // 根据朝向设置精灵翻转，只在X轴有明显移动时翻转
+        if (Mathf.Abs(direction.x) > 0.1f)
+        {
+            // 只有当朝向发生明显变化时才更新flipX
+            bool shouldFlipX = direction.x < 0;
+            if (spriteRenderer.flipX != shouldFlipX)
+            {
+                spriteRenderer.flipX = shouldFlipX;
+                Debug.Log($"{name} SetDirection: 更新flipX为 {shouldFlipX}，方向: {direction}");
+            }
+        }
+        
+        // 确保Y轴不翻转
+        if (spriteRenderer.flipY)
+        {
+            spriteRenderer.flipY = false;
+            Debug.Log($"{name} SetDirection: 重置flipY为false");
+        }
+    }
+
     public string GetCurrentStateName() => currentState?.GetType().Name ?? "None";
 
     private void OnDrawGizmosSelected()
