@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Remote LowBlood
   m_EditorClassIdentifier: 
   enemyName: Remote LowBlood
-  enemySprite: {fileID: -1777775615664477507, guid: dc1519f39c42dff46a9f6ffe73744617, type: 3}
+  enemySprite: {fileID: 3204246595120030219, guid: a2f10085699c8ee45a744c8ebd54f4a1, type: 3}
   maxHealth: 20
   moveSpeed: 1.2
   attackRange: 1

@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Close
   m_EditorClassIdentifier: 
   enemyName: Close
-  enemySprite: {fileID: -6252645935462283753, guid: dc1519f39c42dff46a9f6ffe73744617, type: 3}
+  enemySprite: {fileID: 7220014039845366251, guid: b62d3036f6510dd48bec34916b3e7ec1, type: 3}
   maxHealth: 30
   moveSpeed: 1
   attackRange: 0.5

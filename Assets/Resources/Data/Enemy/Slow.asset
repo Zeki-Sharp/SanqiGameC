@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Slow
   m_EditorClassIdentifier: 
   enemyName: Slow
-  enemySprite: {fileID: -4259781039392300141, guid: dc1519f39c42dff46a9f6ffe73744617, type: 3}
+  enemySprite: {fileID: 4448676462945974952, guid: 5d37dfcbd2b9d594bb68f9b5384a5306, type: 3}
   maxHealth: 50
   moveSpeed: 0.6
   attackRange: 1

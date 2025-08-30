@@ -15,9 +15,9 @@ MonoBehaviour:
   id: 1
   towerName: Group Remotet
   towerDescription: 
-  towerSprite: {fileID: 7290923138016518919, guid: c2369870105537a469793649e2aa17d8, type: 3}
+  towerSprite: {fileID: 8959719605605309629, guid: 4a620c2a994009240a4dbcc749abe86f, type: 3}
   levels:
-  - towerSprite: {fileID: 7290923138016518919, guid: c2369870105537a469793649e2aa17d8, type: 3}
+  - towerSprite: {fileID: 8959719605605309629, guid: 4a620c2a994009240a4dbcc749abe86f, type: 3}
     health: 30
     skillSlots:
     - skillType: 1
@@ -36,7 +36,7 @@ MonoBehaviour:
         healRangeType: 1
         healEffectType: 0
         maxHealTargets: 5
-  - towerSprite: {fileID: -5363679693085979656, guid: c2369870105537a469793649e2aa17d8, type: 3}
+  - towerSprite: {fileID: -998132747681855244, guid: b4f269df34d970a468ff0ac996f8aa56, type: 3}
     health: 36
     skillSlots:
     - skillType: 1
@@ -55,7 +55,7 @@ MonoBehaviour:
         healRangeType: 1
         healEffectType: 0
         maxHealTargets: 5
-  - towerSprite: {fileID: 9074908732373601645, guid: c2369870105537a469793649e2aa17d8, type: 3}
+  - towerSprite: {fileID: -3605262108074564575, guid: dfd9137bc6b64304b83d2929c84369a1, type: 3}
     health: 42
     skillSlots:
     - skillType: 1
