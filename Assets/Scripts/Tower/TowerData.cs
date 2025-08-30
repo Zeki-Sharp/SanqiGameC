@@ -275,6 +275,7 @@ public class TowerData : ScriptableObject
     // 公共属性访问器
     public int ID => id;
     public string TowerName => towerName;
+    public string TowerDescription => towerDescription;
     public Sprite TowerSprite => towerSprite;
     
     public int MaxLevel => levels != null ? levels.Length : 0;
