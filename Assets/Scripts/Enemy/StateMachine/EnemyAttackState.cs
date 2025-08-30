@@ -127,7 +127,7 @@ public class EnemyAttackState : EnemyState
         bulletCaster.transform.right = dir;
 
         if (raySensor != null)
-            raySensor.SetHitPosition(target.transform.position - controller.transform.position);
+            raySensor.direction =(target.transform.position - controller.transform.position);
 
         SetBulletDamage();
 

@@ -176,7 +176,7 @@ public class MapData
     public int CalculateBlockCost(int towerSlots)
     {
         // 每个塔位5金币
-        return towerSlots * 5;
+        return blockBuildMoney * 5;
     }
 
     /// <summary>
@@ -187,6 +187,9 @@ public class MapData
         int cost = BaseRefreshCost + (refreshCount * RefreshCostIncrement);
         return Mathf.Min(cost, MaxRefreshCost);
     }
+    #endregion
+    #region 道具配置
+    
     #endregion
 }
 

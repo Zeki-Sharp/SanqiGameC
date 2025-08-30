@@ -5,9 +5,9 @@ using UnityEngine.UI;
 
 public class HoverTextChanger  : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
-    [SerializeField] private TextMeshProUGUI buttonText;
-    [SerializeField] private string title;
-    [SerializeField] private string content;
+    [SerializeField] private TMP_Text buttonText;
+    [SerializeField] private string text1;
+    [SerializeField] private string text2;
     [SerializeField] private bool showTitle = true;
 
     [SerializeField] private Button button;
@@ -18,11 +18,11 @@ public class HoverTextChanger  : MonoBehaviour, IPointerEnterHandler, IPointerEx
     {
         if (buttonText == null)
         {
-           buttonText = GetComponentInChildren<TextMeshProUGUI>();
+           buttonText = GetComponentInChildren<TMP_Text>();
         }
         if (buttonText != null)
         {
-           buttonText.text = showTitle ? title : content;
+           buttonText.text = showTitle ? text1 : text2;
         }
         button = GetComponent<Button>();
         if (button != null)
@@ -36,9 +36,9 @@ public class HoverTextChanger  : MonoBehaviour, IPointerEnterHandler, IPointerEx
     
     public void Initialize(string title, string content,bool showTitle)
     {
-        this.title = title;
+        this.text1 = title;
         this.showTitle = showTitle;
-        this.content = content;
+        this.text2 = content;
         buttonText.text = showTitle ? title : content;
     }
 
@@ -48,16 +48,16 @@ public class HoverTextChanger  : MonoBehaviour, IPointerEnterHandler, IPointerEx
         {
             return;
         }
-        buttonText.text = content;
+        buttonText.text = text2;
         
     }
 
     public void OnPointerExit(PointerEventData eventData)
     {
-        if (showTitle)
+        if (!showTitle)
         {
             return;
         }
-       buttonText.text = title;
+       buttonText.text = text1;
     }
 }

@@ -180,7 +180,7 @@ public class EnemyController : MonoBehaviour
         // 2) 探测器没拿到，就用物理圈查做兜底
         if (candidates.Count == 0)
         {
-            int mask = LayerMask.GetMask("Tower", "CenterTower"); // 确保这两个 Layer 存在
+            int mask = LayerMask.GetMask("Tower"); // 确保这两个 Layer 存在
             var cols = Physics2D.OverlapCircleAll(self, AttackRange, mask);
             for (int i = 0; i < cols.Length; i++)
             {

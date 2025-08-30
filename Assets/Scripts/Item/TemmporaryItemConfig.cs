@@ -21,6 +21,7 @@ public class TemmporaryItemConfig : ItemConfig
         // 例如：BattleManager.Instance.ApplyTemporaryBuff(BuffType, BuffValue);
         foreach (var data in ItemDatas)
         {
+            // EventBus.Instance.Publish( new TowerBuffEventArgs(data.type, data.valueType, data.value));
             // BattleManager.Instance.ApplyTemporaryBuff(data.type, data.valueType, data.value);
              Debug.Log($"已触发临时战斗增益：{ItemName} - {data.type} +{data. value}{(data.valueType == ValueType.Absolute ? "" : "%")}");
         }

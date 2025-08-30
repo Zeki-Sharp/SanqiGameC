@@ -17,11 +17,21 @@ public class PermanentItemConfig : ItemConfig
         if (!ValidateConfig()) return;
         foreach (var data in ItemDatas)
         {
+            EventBus.Instance.Publish(new TowerBuffEventArgs(data.type, data.valueType, data.value));
             // BattleManager.Instance.ApplyTemporaryBuff(data.type, data.valueType, data.value);
             Debug.Log($"已触发临时战斗增益：{ItemName} - {data.type} +{data. value}{(data.valueType == ValueType.Absolute ? "" : "%")}");
         }   
     }
 }
+
+public class TowerBuffEventArgs:EventArgs
+{
+    public TowerBuffEventArgs(TowerStatType dataType, ValueType dataValueType, float dataValue)
+    {
+        throw new NotImplementedException();
+    }
+}
+
 /// <summary>
 /// 塔属性类型枚举，用于标识可强化的塔属性
 /// 符合游戏对象升级系统设计规范的参数验证要求

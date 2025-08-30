@@ -812,6 +812,8 @@ MonoBehaviour:
   roundInfoText: {fileID: 0}
   buildingUI: {fileID: 1253757497092634706}
   shopUI: {fileID: 4654203262811201420}
+  buyButton: {fileID: 0}
+  refreshButton: {fileID: 0}
 --- !u!225 &596129122690648292
 CanvasGroup:
   m_ObjectHideFlags: 0
@@ -960,8 +962,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   buttonText: {fileID: 0}
-  title: "\u8D2D\u4E70"
-  content: 3
+  text1: 
+  text2: 
   showTitle: 0
   button: {fileID: 0}
   ActionName: 
@@ -2343,8 +2345,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   buttonText: {fileID: 0}
-  title: "\u5237\u65B0"
-  content: 3
+  text1: 
+  text2: 
   showTitle: 1
   button: {fileID: 0}
   ActionName: RefreshWithMoney

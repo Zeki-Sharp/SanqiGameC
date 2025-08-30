@@ -57,7 +57,7 @@ public class TipSystem : MonoBehaviour
         if (EventSystem.current != null && EventSystem.current.IsPointerOverGameObject())
         {
             var ui = GetCurrentUI();
-            Debug.Log("123");
+            // Debug.Log("123");
             if (ui != null && previewImage != null && (ui == previewImage.gameObject || ui.transform.IsChildOf(previewImage.transform)))
             {
                 if (previewCamera != null)
@@ -142,7 +142,7 @@ public class TipSystem : MonoBehaviour
 
         // Intersect with 2D physics using the 3D ray
         RaycastHit2D hit2D = Physics2D.GetRayIntersection(ray, rayMaxDistance, towerMask);
-        Debug.Log(hit2D.collider);
+        // Debug.Log(hit2D.collider);
         if (hit2D.collider != null)
         {
             // Show tooltip at current mouse screen position

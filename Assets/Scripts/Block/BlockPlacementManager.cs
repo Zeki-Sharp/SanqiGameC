@@ -161,6 +161,7 @@ public class BlockPlacementManager : MonoBehaviour
         {
             Debug.LogError($"加载塔预制体时发生错误: {e.Message}\n{e.StackTrace}");
         }
+        // 只在这里刷新 ShowArea
     }
 
     private void SetupInputHandler()

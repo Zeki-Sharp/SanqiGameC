@@ -651,6 +651,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 64
   blockPlacementManager: {fileID: 0}
+  rayMaxDistance: 1000
 --- !u!114 &378793956 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 1521612213511819119, guid: 200a80d6137f03844863fdfed25d9d94, type: 3}
@@ -1668,9 +1669,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   victoryConfig: {fileID: 11400000, guid: f9b234f1614cd6c4aa0035e1a772cce6, type: 2}
-  enableTimeVictory: 1
-  enableRoundVictory: 1
-  enableFinalVictory: 1
 --- !u!4 &935450264
 Transform:
   m_ObjectHideFlags: 0
@@ -2237,7 +2235,6 @@ MonoBehaviour:
   gameMap: {fileID: 410750875}
   previewAreaController: {fileID: 1551768889}
   runTestsOnStart: 1
-  prefabShowName: PrefabArea
   mapConfig: {fileID: 11400000, guid: b138276068ce4ff4f8fce4bd703f7f06, type: 2}
 --- !u!4 &1214545649
 Transform:
@@ -2936,7 +2933,6 @@ MonoBehaviour:
   groundTile: {fileID: 11400000, guid: acf57d632270e594b9a9a1afe67d5c1d, type: 2}
   prefabShowArea: {fileID: 1262841301}
   camera: {fileID: 1986145379}
-  hasClick: 0
 --- !u!1 &1600780931
 GameObject:
   m_ObjectHideFlags: 0
@@ -5384,6 +5380,10 @@ PrefabInstance:
     - target: {fileID: 3069916382304386975, guid: 3b66d0f80c3385243848c82d98b1223d, type: 3}
       propertyPath: m_AnchoredPosition.y
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3568807671104027913, guid: 3b66d0f80c3385243848c82d98b1223d, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: -1018.99994
       objectReference: {fileID: 0}
     - target: {fileID: 3742389809312428825, guid: 3b66d0f80c3385243848c82d98b1223d, type: 3}
       propertyPath: m_Name

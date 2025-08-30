@@ -15,6 +15,8 @@ public class BuildingUIPanel : UIPanel
     [SerializeField] private GameObject buildingUI;
     [SerializeField] private GameObject shopUI;
 
+    [SerializeField] private HoverTextChanger buyButton;
+    [SerializeField] private HoverTextChanger refreshButton;
     protected override void Awake()
     {
         base.Awake();
@@ -24,10 +26,20 @@ public class BuildingUIPanel : UIPanel
             startCombatButton = GetComponentInChildren<Button>();
         if (moneyText == null)
             moneyText = GetComponentInChildren<TextMeshProUGUI>();
-            
+
+        if (buyButton == null)
+        {
+            buyButton = GameObject.Find("Buy_Button").GetComponent<HoverTextChanger>();
+            buyButton.Initialize("", GameManager.Instance.GetSystem<GameMap>().GetMapData().BlockBuildMoney.ToString(), false);
+        }
+        if (buyButton == null)
+        {
+            refreshButton = GameObject.Find("Reduce_Button").GetComponent<HoverTextChanger>();
+            refreshButton.Initialize("刷新", GameManager.Instance.GetSystem<GameMap>().GetMapData().BlockBuildMoney.ToString(), true);
+        }
         Debug.Log($"BuildingUIPanel Awake - startCombatButton: {startCombatButton}");
     }
-
+    
     protected override void OnShow()
     {
         base.OnShow();
