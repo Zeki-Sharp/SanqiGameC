@@ -932,10 +932,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   unitSpawnDelay: 1
   spawnAreas:
-  - min: {x: -9.58, y: -5.61}
-    max: {x: -9.03, y: 5.28}
-  - min: {x: 8.19, y: -5.41}
-    max: {x: 9.16, y: 5.27}
+  - min: {x: -4.12, y: 1.18}
+    max: {x: -3.13, y: 3.55}
+  - min: {x: 3.87, y: 1.36}
+    max: {x: 4.91, y: 3.3}
+  - min: {x: -5.05, y: -5.64}
+    max: {x: -0.82, y: -3.54}
+  - min: {x: 1.16, y: -5.37}
+    max: {x: 4.3, y: -3.61}
   showSpawnAreas: 1
   debugSpawnInfo: 1
 --- !u!4 &635971283
