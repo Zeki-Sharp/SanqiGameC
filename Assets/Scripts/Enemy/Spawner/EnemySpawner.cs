@@ -26,6 +26,7 @@ public class EnemySpawner : MonoBehaviour
     private List<Wave> waves = new List<Wave>();
     private int currentWaveIndex = 0;
     private int currentEnemyCount = 0;
+    private int remainingEnemyCount = 0; // 新增：剩余敌人数量
     private Coroutine spawnRoutine;
     
     private BulletManager bulletManager;
@@ -189,6 +190,7 @@ public class EnemySpawner : MonoBehaviour
             Destroy(enemy);
         }
         currentEnemyCount = 0;
+        remainingEnemyCount = 0; // 重置剩余敌人数
         Debug.Log($"EnemySpawner: 清除所有敌人，共清除 {enemies.Length} 个敌人");
     }
     
@@ -200,9 +202,15 @@ public class EnemySpawner : MonoBehaviour
         if (currentEnemyCount > 0)
         {
             currentEnemyCount--;
+        }
+        
+        // 更新剩余敌人数
+        if (remainingEnemyCount > 0)
+        {
+            remainingEnemyCount--;
             if (debugSpawnInfo)
             {
-                Debug.Log($"EnemySpawner: 敌人 {e.EnemyName} 死亡，当前敌人总数: {currentEnemyCount}");
+                Debug.Log($"EnemySpawner: 敌人 {e.EnemyName} 死亡，剩余敌人: {remainingEnemyCount}/{CalculateTotalEnemyCount(waves)}");
             }
         }
     }
@@ -226,7 +234,32 @@ public class EnemySpawner : MonoBehaviour
     {
         waves = newWaves;
         currentEnemyCount = 0; // 重置敌人计数，准备新回合
-        Debug.Log($"EnemySpawner: 设置Wave配置，共 {waves?.Count ?? 0} 个Wave，敌人计数已重置");
+        
+        // 计算当前round的敌人总数
+        remainingEnemyCount = CalculateTotalEnemyCount(newWaves);
+        
+        Debug.Log($"EnemySpawner: 设置Wave配置，共 {waves?.Count ?? 0} 个Wave，敌人总数: {remainingEnemyCount}，敌人计数已重置");
+    }
+
+    /// <summary>
+    /// 计算Wave列表中的敌人总数
+    /// </summary>
+    private int CalculateTotalEnemyCount(List<Wave> waveList)
+    {
+        if (waveList == null) return 0;
+        
+        int totalCount = 0;
+        foreach (var wave in waveList)
+        {
+            if (wave.enemies != null)
+            {
+                foreach (var enemyInfo in wave.enemies)
+                {
+                    totalCount += enemyInfo.count;
+                }
+            }
+        }
+        return totalCount;
     }
     
     /// <summary>
@@ -235,6 +268,22 @@ public class EnemySpawner : MonoBehaviour
     public int GetCurrentEnemyCount()
     {
         return currentEnemyCount;
+    }
+
+    /// <summary>
+    /// 获取剩余敌人数量
+    /// </summary>
+    public int GetRemainingEnemyCount()
+    {
+        return remainingEnemyCount;
+    }
+
+    /// <summary>
+    /// 获取当前round的敌人总数
+    /// </summary>
+    public int GetTotalEnemyCount()
+    {
+        return CalculateTotalEnemyCount(waves);
     }
     
     /// <summary>

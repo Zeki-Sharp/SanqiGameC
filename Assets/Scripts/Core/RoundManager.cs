@@ -451,6 +451,44 @@ public class RoundManager : MonoBehaviour
     }
 
     /// <summary>
+    /// 获取当前Round的敌人总数
+    /// </summary>
+    public int GetCurrentRoundTotalEnemyCount()
+    {
+        RoundConfig config = GetCurrentRoundConfig();
+        if (config == null || config.waves == null)
+        {
+            return 0;
+        }
+
+        int totalCount = 0;
+        foreach (var wave in config.waves)
+        {
+            if (wave.enemies != null)
+            {
+                foreach (var enemyInfo in wave.enemies)
+                {
+                    totalCount += enemyInfo.count;
+                }
+            }
+        }
+
+        return totalCount;
+    }
+
+    /// <summary>
+    /// 获取当前Round的剩余敌人数量
+    /// </summary>
+    public int GetCurrentRoundRemainingEnemyCount()
+    {
+        if (EnemySpawner != null)
+        {
+            return EnemySpawner.GetRemainingEnemyCount();
+        }
+        return 0;
+    }
+
+    /// <summary>
     /// 处理敌人死亡事件
     /// </summary>
     private void OnEnemyDeath(EnemyDeathEventArgs e)

@@ -122,8 +122,30 @@ public class CombatUIPanel : UIPanel
     {
         if (enemyCountText == null) return;
 
-        GameObject[] enemies = GameObject.FindGameObjectsWithTag("Enemy");
-        enemyCountText.text = $"敌人: {enemies.Length}";
+        // 获取RoundManager来显示剩余敌人数
+        var roundManager = GameManager.Instance?.GetSystem<RoundManager>();
+        if (roundManager != null)
+        {
+            int totalEnemies = roundManager.GetCurrentRoundTotalEnemyCount();
+            int remainingEnemies = roundManager.GetCurrentRoundRemainingEnemyCount();
+            
+            if (totalEnemies > 0)
+            {
+                enemyCountText.text = $"敌人: {remainingEnemies}/{totalEnemies}";
+            }
+            else
+            {
+                // 如果没有配置信息，回退到原来的显示方式
+                GameObject[] enemies = GameObject.FindGameObjectsWithTag("Enemy");
+                enemyCountText.text = $"敌人: {enemies.Length}";
+            }
+        }
+        else
+        {
+            // 备用方案：直接查找敌人
+            GameObject[] enemies = GameObject.FindGameObjectsWithTag("Enemy");
+            enemyCountText.text = $"敌人: {enemies.Length}";
+        }
     }
 
     /// <summary>
