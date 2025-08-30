@@ -269,16 +269,6 @@ public class EnemySpawner : MonoBehaviour
         {
             // 左侧生成朝右，右侧生成朝左
             spriteRenderer.flipX = !isOnLeftSide;
-            // 确保Y轴不翻转
-            spriteRenderer.flipY = false;
-        }
-        
-        // 调用控制器的SetDirection方法确保状态同步
-        var controller = enemy.GetComponent<EnemyController>();
-        if (controller != null)
-        {
-            Vector3 direction = (centerTowerPosition - spawnPosition).normalized;
-            controller.SetDirection(direction);
         }
     }
 

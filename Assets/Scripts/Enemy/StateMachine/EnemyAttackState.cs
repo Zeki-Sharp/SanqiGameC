@@ -124,17 +124,10 @@ public class EnemyAttackState : EnemyState
 
         // 2D: BasicCaster2D 沿 +X(right) 发射，必须对齐
         Vector2 dir = (target.transform.position - controller.transform.position).normalized;
-        // 不再改变bulletCaster的Transform，避免影响敌人朝向
-        // bulletCaster.transform.right = dir;
+        bulletCaster.transform.right = dir;
 
         if (raySensor != null)
-        {
-            // 设置raySensor的方向，这样子弹就能正确发射
-            raySensor.direction = dir;
-        }
-
-        // 同步敌人朝向和精灵翻转状态
-        controller.SetDirection(dir);
+            raySensor.direction =(target.transform.position - controller.transform.position);
 
         SetBulletDamage();
 
