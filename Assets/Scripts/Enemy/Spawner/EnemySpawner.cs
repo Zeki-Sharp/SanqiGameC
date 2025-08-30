@@ -71,17 +71,58 @@ public class EnemySpawner : MonoBehaviour
             
             Debug.Log($"EnemySpawner: 开始生成Wave {currentWaveIndex + 1}，包含 {wave.enemies.Count} 种敌人");
             
-            foreach (var enemyInfo in wave.enemies)
+            // 创建随机打乱的敌人生成序列
+            List<EnemySpawnInfo> shuffledEnemySequence = CreateShuffledEnemySequence(wave);
+            
+            // 按照打乱后的顺序生成敌人
+            foreach (var enemyInfo in shuffledEnemySequence)
             {
-                for (int i = 0; i < enemyInfo.count; i++)
-                {
-                    SpawnEnemy(wave,enemyInfo.enemyData);
-                    yield return new WaitForSeconds(unitSpawnDelay);
-                }
+                SpawnEnemy(wave, enemyInfo.enemyData);
+                yield return new WaitForSeconds(unitSpawnDelay);
             }
         }
         
         Debug.Log("EnemySpawner: 所有Wave生成完成");
+    }
+
+    /// <summary>
+    /// 创建随机打乱的敌人生成序列
+    /// 将同一wave中所有类型的敌人混合在一起，随机打乱顺序
+    /// </summary>
+    private List<EnemySpawnInfo> CreateShuffledEnemySequence(Wave wave)
+    {
+        List<EnemySpawnInfo> shuffledSequence = new List<EnemySpawnInfo>();
+        
+        // 为每种敌人类型创建对应数量的EnemySpawnInfo
+        foreach (var enemyInfo in wave.enemies)
+        {
+            for (int i = 0; i < enemyInfo.count; i++)
+            {
+                // 创建新的EnemySpawnInfo，避免修改原始配置
+                EnemySpawnInfo newEnemyInfo = new EnemySpawnInfo
+                {
+                    enemyData = enemyInfo.enemyData,
+                    count = 1 // 每个都是1个，用于随机打乱
+                };
+                shuffledSequence.Add(newEnemyInfo);
+            }
+        }
+        
+        // 使用Fisher-Yates洗牌算法随机打乱顺序
+        for (int i = shuffledSequence.Count - 1; i > 0; i--)
+        {
+            int randomIndex = Random.Range(0, i + 1);
+            var temp = shuffledSequence[i];
+            shuffledSequence[i] = shuffledSequence[randomIndex];
+            shuffledSequence[randomIndex] = temp;
+        }
+        
+        if (debugSpawnInfo)
+        {
+            Debug.Log($"Wave {currentWaveIndex + 1}: 创建了 {shuffledSequence.Count} 个敌人的随机生成序列");
+        }
+        
+        return shuffledSequence;
     }
 
     /// <summary>
