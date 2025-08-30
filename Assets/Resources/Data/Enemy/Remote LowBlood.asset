@@ -16,7 +16,7 @@ MonoBehaviour:
   enemySprite: {fileID: 3204246595120030219, guid: a2f10085699c8ee45a744c8ebd54f4a1, type: 3}
   maxHealth: 20
   moveSpeed: 1.2
-  attackRange: 1
+  attackRange: 1.5
   attackBehavior: {fileID: 11400000, guid: f8e6a5643e2672f47b4f65008aaf27a2, type: 2}
   goldReward: 10
   enemyPrefab: {fileID: 9133360019857942620, guid: 8e19af0d194bc28419cddd955b2b213c, type: 3}

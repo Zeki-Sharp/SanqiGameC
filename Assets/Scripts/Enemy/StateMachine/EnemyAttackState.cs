@@ -85,8 +85,14 @@ public class EnemyAttackState : EnemyState
 
         if (IsAttackCooldownReady())
         {
+            Debug.Log($"[Attack Debug] {controller.name} 攻击冷却就绪，执行攻击");
             ExecuteAttack(currentTarget);
             ResetAttackCooldown();
+        }
+        else
+        {
+            float timeSinceLastAttack = Time.time - lastAttackTime;
+            Debug.Log($"[Attack Debug] {controller.name} 攻击冷却中，距离上次攻击: {timeSinceLastAttack:F2}s，需要等待: {attackCoolDown:F2}s");
         }
     }
 
@@ -111,9 +117,42 @@ public class EnemyAttackState : EnemyState
 
     private void ExecuteAttack(GameObject target)
     {
-        if (target == null || bulletCaster == null)
+        if (target == null) return;
+
+        // 同步敌人朝向和精灵翻转状态
+        Vector2 dir = (target.transform.position - controller.transform.position).normalized;
+        controller.SetDirection(dir);
+
+        // 根据攻击行为类型分别处理
+        if (controller.AttackBehavior is MeleeAttackBehavior melee)
         {
-            Debug.LogWarning("[Attack] skip cast: target or caster is null");
+            // 近战攻击：直接调用攻击行为，不发射子弹
+            ExecuteMeleeAttack(target, melee);
+        }
+        else if (controller.AttackBehavior is RangedAttackBehavior ranged)
+        {
+            // 远程攻击：发射子弹
+            ExecuteRangedAttack(target, ranged, dir);
+        }
+        else
+        {
+            // 默认攻击行为：使用原来的逻辑
+            ExecuteDefaultAttack(target, dir);
+        }
+    }
+
+    private void ExecuteMeleeAttack(GameObject target, MeleeAttackBehavior melee)
+    {
+        // 近战攻击：直接调用攻击行为
+        melee.PerformAttack(controller, target);
+        Debug.Log($"[Melee Attack] {controller.name} 对 {target.name} 进行近战攻击");
+    }
+
+    private void ExecuteRangedAttack(GameObject target, RangedAttackBehavior ranged, Vector2 dir)
+    {
+        if (bulletCaster == null)
+        {
+            Debug.LogWarning("[Attack] skip ranged attack: caster is null");
             return;
         }
         if (bulletCaster.bullets == null || bulletCaster.bullets.Length == 0)
@@ -122,25 +161,47 @@ public class EnemyAttackState : EnemyState
             return;
         }
 
-        // 2D: BasicCaster2D 沿 +X(right) 发射，必须对齐
-        Vector2 dir = (target.transform.position - controller.transform.position).normalized;
-        // 不再改变bulletCaster的Transform，避免影响敌人朝向
-        // bulletCaster.transform.right = dir;
-
+        // 设置raySensor的方向，这样子弹就能正确发射
         if (raySensor != null)
         {
-            // 设置raySensor的方向，这样子弹就能正确发射
             raySensor.direction = dir;
         }
-
-        // 同步敌人朝向和精灵翻转状态
-        controller.SetDirection(dir);
 
         SetBulletDamage();
 
         bulletCaster.Cast(0);
 
-        Debug.Log($"[Attack] CAST -> {target.name}, casterPos={bulletCaster.transform.position}, dir={dir}");
+        Debug.Log($"[Ranged Attack] CAST -> {target.name}, casterPos={bulletCaster.transform.position}, dir={dir}");
+#if UNITY_EDITOR
+        Debug.DrawLine(bulletCaster.transform.position,
+                       bulletCaster.transform.position + (Vector3)dir * 1.5f, Color.yellow, 0.2f);
+#endif
+    }
+
+    private void ExecuteDefaultAttack(GameObject target, Vector2 dir)
+    {
+        if (bulletCaster == null)
+        {
+            Debug.LogWarning("[Attack] skip default attack: caster is null");
+            return;
+        }
+        if (bulletCaster.bullets == null || bulletCaster.bullets.Length == 0)
+        {
+            Debug.LogWarning("[Attack] caster has NO bullets array");
+            return;
+        }
+
+        // 设置raySensor的方向，这样子弹就能正确发射
+        if (raySensor != null)
+        {
+            raySensor.direction = dir;
+        }
+
+        SetBulletDamage();
+
+        bulletCaster.Cast(0);
+
+        Debug.Log($"[Default Attack] CAST -> {target.name}, casterPos={bulletCaster.transform.position}, dir={dir}");
 #if UNITY_EDITOR
         Debug.DrawLine(bulletCaster.transform.position,
                        bulletCaster.transform.position + (Vector3)dir * 1.5f, Color.yellow, 0.2f);

@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f31d169b0100ab144965420b556efbdd, type: 3}
   m_Name: Ranged Attack
   m_EditorClassIdentifier: 
-  damage: 5
+  damage: 3
   attackCooldown: 1
   bulletSpeed: 8
   attackAnimationTrigger: Attack

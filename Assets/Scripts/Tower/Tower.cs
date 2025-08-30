@@ -460,7 +460,19 @@ public void Initialize(TowerData data, Vector3Int pos, bool hasCheck = false, bo
         // 设置 Sprite 和渲染器
         if (data.TowerSprite != null)
         {
-            spriteRenderer.sprite = data.GetTowerSprite(level);
+            Sprite targetSprite = data.GetTowerSprite(level);
+            Debug.Log($"[Tower Debug] 塔 {this.name} 初始化 - 等级: {level}, 目标图片: {targetSprite?.name ?? "null"}, 主渲染器: {spriteRenderer?.name ?? "null"}");
+            
+            if (targetSprite != null)
+            {
+                spriteRenderer.sprite = targetSprite;
+                Debug.Log($"[Tower Debug] 塔 {this.name} 图片设置成功: {spriteRenderer.sprite?.name ?? "null"}");
+            }
+            else
+            {
+                Debug.LogError($"[Tower Debug] 塔 {this.name} 等级 {level} 的图片为空！");
+            }
+            
             spriteRenderer.enabled = true;
             Debug.Log($"塔 {this.name} 的主渲染器已启用");
         }
@@ -764,7 +776,18 @@ public void Initialize(TowerData data, Vector3Int pos, bool hasCheck = false, bo
         // }
         if (towerData.TowerSprite != null)
         {
-            spriteRenderer.sprite = towerData.GetTowerSprite(level);
+            Sprite targetSprite = towerData.GetTowerSprite(level);
+            Debug.Log($"[Tower Debug] 塔 {this.name} 升级后 - 等级: {level}, 目标图片: {targetSprite?.name ?? "null"}, 主渲染器: {spriteRenderer?.name ?? "null"}");
+            
+            if (targetSprite != null)
+            {
+                spriteRenderer.sprite = targetSprite;
+                Debug.Log($"[Tower Debug] 塔 {this.name} 升级后图片设置成功: {spriteRenderer.sprite?.name ?? "null"}");
+            }
+            else
+            {
+                Debug.LogError($"[Tower Debug] 塔 {this.name} 升级后等级 {level} 的图片为空！");
+            }
         }
         else
         {

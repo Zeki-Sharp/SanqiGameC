@@ -286,7 +286,10 @@ public class TowerData : ScriptableObject
             Debug.LogError($"无效等级 {level}，等级范围应为 0-{levels?.Length - 1 ?? 0}");
             return null;
         }
-        return levels[level].TowerSprite;
+        
+        Sprite result = levels[level].TowerSprite;
+        Debug.Log($"[TowerData Debug] 获取等级 {level} 的图片: {result?.name ?? "null"}");
+        return result;
     }
     
     public float GetHealth(int level)

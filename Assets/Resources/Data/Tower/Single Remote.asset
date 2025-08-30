@@ -15,9 +15,9 @@ MonoBehaviour:
   id: 100
   towerName: Single Remote
   towerDescription: 
-  towerSprite: {fileID: 5589411325867289451, guid: 1f2f40b47edd53946ba22d71934e2be0, type: 3}
+  towerSprite: {fileID: -5714696534973952748, guid: bab2e57048ddb7743bed3b63adb534c8, type: 3}
   levels:
-  - towerSprite: {fileID: 5589411325867289451, guid: 1f2f40b47edd53946ba22d71934e2be0, type: 3}
+  - towerSprite: {fileID: -5714696534973952748, guid: bab2e57048ddb7743bed3b63adb534c8, type: 3}
     health: 30
     skillSlots:
     - skillType: 1
@@ -25,7 +25,7 @@ MonoBehaviour:
         skillName: "\u5355\u4F53\u8FDC\u7A0B1"
         skillDescription: 
         physicAttack: 10
-        attackRange: 1.5
+        attackRange: 2
         attackInterval: 1
         attackSpeed: 1
       healSkill:
@@ -36,7 +36,7 @@ MonoBehaviour:
         healRangeType: 1
         healEffectType: 0
         maxHealTargets: 5
-  - towerSprite: {fileID: -6570672375128977675, guid: 771189f445998854989efd849b47b9f3, type: 3}
+  - towerSprite: {fileID: -8645551173486429497, guid: 77d0026e66e5c544e880d5caf1cf6957, type: 3}
     health: 36
     skillSlots:
     - skillType: 1
@@ -44,7 +44,7 @@ MonoBehaviour:
         skillName: "\u5355\u4F53\u8FDC\u7A0B2"
         skillDescription: 
         physicAttack: 15
-        attackRange: 1.5
+        attackRange: 2
         attackInterval: 1
         attackSpeed: 1
       healSkill:
@@ -55,7 +55,7 @@ MonoBehaviour:
         healRangeType: 1
         healEffectType: 0
         maxHealTargets: 5
-  - towerSprite: {fileID: -3481066822735678434, guid: 444b92d50c3b7944a92a744ac69487c9, type: 3}
+  - towerSprite: {fileID: -6514901823750137127, guid: 4db296c109c7a2744a19a9fc4aadec3a, type: 3}
     health: 42
     skillSlots:
     - skillType: 1
@@ -63,7 +63,7 @@ MonoBehaviour:
         skillName: "\u5355\u4F53\u8FDC\u7A0B3"
         skillDescription: 
         physicAttack: 20
-        attackRange: 1.5
+        attackRange: 2
         attackInterval: 1
         attackSpeed: 1
       healSkill:

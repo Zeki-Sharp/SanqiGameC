@@ -18,17 +18,30 @@ public class MeleeAttackBehavior : ScriptableObject, IAttackBehavior
     
     public void PerformAttack(EnemyController attacker, GameObject target)
     {
-        if (!CanAttack(attacker, target))
-            return;
-            
-        Debug.Log($"{attacker.name} 执行近战攻击，目标: {target.name}");
+        Debug.Log($"[Melee Debug] {attacker.name} 开始执行近战攻击，目标: {target.name}");
         
+        if (!CanAttack(attacker, target))
+        {
+            Debug.LogWarning($"[Melee Debug] {attacker.name} 无法攻击 {target.name}，CanAttack 返回 false");
+            return;
+        }
+            
+        Debug.Log($"[Melee Debug] {attacker.name} CanAttack 检查通过，继续执行攻击");
+        Debug.Log($"[Melee Debug] 攻击者位置: {attacker.transform.position}, 目标位置: {target.transform.position}");
+        Debug.Log($"[Melee Debug] 两者距离: {Vector3.Distance(attacker.transform.position, target.transform.position):F3}");
+            
         // 对目标造成伤害
         DamageTaker targetDamageTaker = target.GetComponent<DamageTaker>();
         if (targetDamageTaker != null)
         {
+            Debug.Log($"[Melee Debug] 找到目标 DamageTaker，当前血量: {targetDamageTaker.currentHealth}/{targetDamageTaker.maxHealth}");
+            float oldHealth = targetDamageTaker.currentHealth;
             targetDamageTaker.TakeDamage(damage);
-            Debug.Log($"{attacker.name} 对 {target.name} 造成 {damage} 点伤害");
+            Debug.Log($"[Melee Debug] {attacker.name} 对 {target.name} 造成 {damage} 点伤害，血量变化: {oldHealth} -> {targetDamageTaker.currentHealth}");
+        }
+        else
+        {
+            Debug.LogError($"[Melee Debug] 目标 {target.name} 没有 DamageTaker 组件！");
         }
         
         // 播放攻击动画
@@ -57,11 +70,18 @@ public class MeleeAttackBehavior : ScriptableObject, IAttackBehavior
     public bool CanAttack(EnemyController attacker, GameObject target)
     {
         if (attacker == null || target == null)
+        {
+            Debug.LogWarning($"[Melee Debug] CanAttack 检查失败: attacker={attacker}, target={target}");
             return false;
+        }
             
         // 检查距离
         float distance = Vector3.Distance(attacker.transform.position, target.transform.position);
-        return distance <= attackRange;
+        bool inRange = distance <= attackRange;
+        
+        Debug.Log($"[Melee Debug] CanAttack 距离检查: {attacker.name} -> {target.name}, 距离={distance:F3}, 攻击范围={attackRange:F3}, 结果={inRange}");
+        
+        return inRange;
     }
     
     public float GetAttackCooldown()
