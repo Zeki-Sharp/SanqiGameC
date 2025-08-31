@@ -30,6 +30,7 @@ public class UIManager : MonoBehaviour
     [SerializeField] private VictoryUIPanel victoryUIPanel;
     [SerializeField] private PauseUIPanel pauseUIPanel;
     [SerializeField] private DefeatUIPanel defeatUIPanel;
+    [SerializeField] private MainTowerHealthPanel mainTowerHealthPanel; // 主塔血量面板
 
     // 当前显示的面板
     private UIPanel currentPanel;
@@ -82,14 +83,23 @@ public class UIManager : MonoBehaviour
             pauseUIPanel = FindFirstObjectByType<PauseUIPanel>();
         if (defeatUIPanel == null)
             defeatUIPanel = FindFirstObjectByType<DefeatUIPanel>();
+        if (mainTowerHealthPanel == null)
+            mainTowerHealthPanel = FindFirstObjectByType<MainTowerHealthPanel>();
 
-        // 先隐藏所有面板
+        // 先隐藏所有面板（除了主塔血量面板）
         if (buildingUIPanel != null) buildingUIPanel.Hide();
         if (combatUIPanel != null) combatUIPanel.Hide();
         if (passUIPanel != null) passUIPanel.Hide();
         if (victoryUIPanel != null) victoryUIPanel.Hide();
         if (pauseUIPanel != null) pauseUIPanel.Hide();
         if (defeatUIPanel != null) defeatUIPanel.Hide();
+        
+        // 主塔血量面板在所有阶段都显示
+        if (mainTowerHealthPanel != null)
+        {
+            mainTowerHealthPanel.Initialize();
+            mainTowerHealthPanel.Show();
+        }
 
         // 注册面板到字典
         if (buildingUIPanel != null)
@@ -180,8 +190,8 @@ public class UIManager : MonoBehaviour
     /// <param name="gamePhase">游戏阶段</param>
     public void SwitchToPhase(GamePhase gamePhase)
     {
-        // 先隐藏所有面板
-        HideAllPanels();
+        // 先隐藏所有面板（除了主塔血量面板）
+        HideAllPanelsExceptMainTowerHealth();
         
         switch (gamePhase)
         {
@@ -203,6 +213,12 @@ public class UIManager : MonoBehaviour
             default:
                 Debug.LogWarning($"未知的游戏阶段：{gamePhase}");
                 break;
+        }
+        
+        // 确保主塔血量面板在所有阶段都显示
+        if (mainTowerHealthPanel != null && !mainTowerHealthPanel.IsVisible)
+        {
+            mainTowerHealthPanel.Show();
         }
     }
 
@@ -234,6 +250,24 @@ public class UIManager : MonoBehaviour
         }
         currentPanel = null;
     }
+    
+    /// <summary>
+    /// 隐藏除主塔血量面板外的所有面板
+    /// </summary>
+    public void HideAllPanelsExceptMainTowerHealth()
+    {
+        foreach (var panel in panels.Values)
+        {
+            panel.Hide();
+        }
+        currentPanel = null;
+        
+        // 主塔血量面板保持显示
+        if (mainTowerHealthPanel != null && mainTowerHealthPanel.IsVisible)
+        {
+            // 已经显示，不需要操作
+        }
+    }
 
     /// <summary>
     /// 重置所有面板
@@ -256,6 +290,15 @@ public class UIManager : MonoBehaviour
     {
         if (pauseUIPanel != null)
             pauseUIPanel.Hide();
+    }
+    
+    /// <summary>
+    /// 获取主塔血量面板
+    /// </summary>
+    /// <returns>主塔血量面板实例</returns>
+    public MainTowerHealthPanel GetMainTowerHealthPanel()
+    {
+        return mainTowerHealthPanel;
     }
 }
 
