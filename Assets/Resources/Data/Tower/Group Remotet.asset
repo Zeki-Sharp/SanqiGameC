@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: Group Remotet
   m_EditorClassIdentifier: 
   id: 1
-  towerName: Group Remotet
-  towerDescription: 
+  towerName: "\u5426\u8BA4"
+  towerDescription: "\u8303\u56F4\u6740\u4F24\uFF0C\u4F46\u5B83\u7684\u5B58\u5728\u8BA9\u5468\u56F4\u53CB\u519B\u9677\u5165\u81EA\u6211\u6000\u7591\uFF1A\u6BCF\u6B21\u5F00\u706B\u65F6\uFF0C\u90BB\u8FD1\u53CB\u65B9\u653B\u51FB\u8303\u56F4\u663E\u8457\u7F29\u5C0F\u3002"
   towerSprite: {fileID: 8959719605605309629, guid: 4a620c2a994009240a4dbcc749abe86f, type: 3}
   levels:
   - towerSprite: {fileID: 8959719605605309629, guid: 4a620c2a994009240a4dbcc749abe86f, type: 3}

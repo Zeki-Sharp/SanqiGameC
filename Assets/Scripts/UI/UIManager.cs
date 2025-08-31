@@ -93,7 +93,7 @@ public class UIManager : MonoBehaviour
         if (victoryUIPanel != null) victoryUIPanel.Hide();
         if (pauseUIPanel != null) pauseUIPanel.Hide();
         if (defeatUIPanel != null) defeatUIPanel.Hide();
-        
+
         // 主塔血量面板在所有阶段都显示
         if (mainTowerHealthPanel != null)
         {
@@ -313,4 +313,4 @@ public enum PanelType
     Victory,   // 胜利阶段UI
     Pause,     // 暂停界面UI
     Defeat     // 失败阶段UI
-} 
+}

@@ -509,7 +509,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f3e2c2569723b5a4580f45bc79151879, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  towerData: {fileID: 0}
+  towerData: {fileID: 11400000, guid: 690df8d23f7d89247971ee730fb07deb, type: 2}
   currentHealth: 0
   level: 0
   cellPosition: {x: 0, y: 0, z: 0}

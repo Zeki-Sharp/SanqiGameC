@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: Single Remote
   m_EditorClassIdentifier: 
   id: 100
-  towerName: Single Remote
-  towerDescription: 
+  towerName: "\u7406\u6027"
+  towerDescription: "\u8D85\u9AD8\u901F\u72D9\u51FB\u6700\u8FD1\u76EE\u6807\uFF0C\u4F46\u6BCF\u6B21\u5F00\u706B\u90FD\u4F1A\u6CE2\u53CA\u5468\u56F4\u53CB\u5854\u3002\u7CBE\u51C6\uFF0C\u5374\u4ECE\u4E0D\u987E\u53CA\u8BEF\u4F24\u3002"
   towerSprite: {fileID: -5714696534973952748, guid: bab2e57048ddb7743bed3b63adb534c8, type: 3}
   levels:
   - towerSprite: {fileID: -5714696534973952748, guid: bab2e57048ddb7743bed3b63adb534c8, type: 3}
