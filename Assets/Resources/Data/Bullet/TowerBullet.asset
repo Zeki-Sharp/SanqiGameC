@@ -21,7 +21,7 @@ MonoBehaviour:
   movementType: 0
   targetTags:
   - Enemy
-  targetType: 1
+  targetType: 0
   aoeRadius: 1.5
   initialPoolSize: 20
   maxPoolSize: 100
