@@ -22,17 +22,13 @@ public class TipSystem : MonoBehaviour
 
     
     [Header("塔信息显示组件")]
-
     [SerializeField] private TextMeshProUGUI nameText;
-    [SerializeField] private TextMeshProUGUI infoText;
-
     [SerializeField] private Image towerImage;
     [SerializeField] private TextMeshProUGUI levelText;
     [SerializeField] private TextMeshProUGUI descriptionText;
     [SerializeField] private Slider healthBar;
     [SerializeField] private TextMeshProUGUI healthText;
     [SerializeField] private TextMeshProUGUI maxHealthText;
-
     [SerializeField] private string previewShowName = "Preview_Show";
     [SerializeField] private RawImage previewImage;
 
@@ -287,8 +283,6 @@ public class TipSystem : MonoBehaviour
         
         // 设置基础文本信息
         if (nameText != null) nameText.text = tile;
-        if (infoText != null) infoText.text = context;
-
         // 尝试获取塔组件并显示详细信息
         TryShowTowerDetails(screenPosition);
 

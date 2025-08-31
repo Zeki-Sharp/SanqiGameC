@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using System.Collections.Generic;
 
 /// <summary>
 /// 建设阶段UI面板
@@ -17,6 +18,16 @@ public class BuildingUIPanel : UIPanel
 
     [SerializeField] private HoverTextChanger buyButton;
     [SerializeField] private HoverTextChanger refreshButton;
+
+    [Header("敌人预览")]
+    [SerializeField] private GameObject enemyPreviewContainer;
+    [SerializeField] private GameObject enemyPreviewCardPrefab;
+    [SerializeField] private Transform enemyPreviewCardsParent;
+    [SerializeField] private TextMeshProUGUI enemyPreviewTitleText;
+
+    // 敌人预览卡片列表
+    private List<GameObject> enemyPreviewCards = new List<GameObject>();
+
     protected override void Awake()
     {
         base.Awake();
@@ -52,6 +63,9 @@ public class BuildingUIPanel : UIPanel
         
         // 显示建设相关UI
         ShowBuildingUI();
+        
+        // 生成敌人预览
+        GenerateEnemyPreview();
     }
 
     protected override void OnHide()
@@ -63,6 +77,9 @@ public class BuildingUIPanel : UIPanel
         
         // 隐藏建设相关UI
         HideBuildingUI();
+        
+        // 清理敌人预览
+        ClearEnemyPreview();
     }
 
     protected override void OnReset()
@@ -198,6 +215,157 @@ public class BuildingUIPanel : UIPanel
     }
 
     /// <summary>
+    /// 生成敌人预览
+    /// </summary>
+    private void GenerateEnemyPreview()
+    {
+        if (enemyPreviewCardPrefab == null || enemyPreviewCardsParent == null)
+        {
+            Debug.LogWarning("敌人预览预制体或父容器未设置");
+            return;
+        }
+
+        // 清理现有预览
+        ClearEnemyPreview();
+
+        // 获取当前关卡敌人信息
+        var currentRoundEnemies = GetCurrentRoundEnemies();
+        if (currentRoundEnemies == null || currentRoundEnemies.Count == 0)
+        {
+            Debug.Log("没有当前关卡敌人信息");
+            return;
+        }
+
+        // 生成敌人预览卡片
+        foreach (var enemyInfo in currentRoundEnemies)
+        {
+            if (enemyInfo.enemyData != null)
+            {
+                CreateEnemyPreviewCard(enemyInfo);
+            }
+        }
+
+        // 更新预览标题
+        UpdateEnemyPreviewTitle();
+    }
+
+    /// <summary>
+    /// 创建单个敌人预览卡片
+    /// </summary>
+    private void CreateEnemyPreviewCard(EnemySpawnInfo enemyInfo)
+    {
+        GameObject cardObject = Instantiate(enemyPreviewCardPrefab, enemyPreviewCardsParent);
+        enemyPreviewCards.Add(cardObject);
+
+        // 设置敌人图像
+        var enemyImage = cardObject.transform.Find("EnemyImage")?.GetComponent<Image>();
+        if (enemyImage != null && enemyInfo.enemyData.EnemySprite != null)
+        {
+            enemyImage.sprite = enemyInfo.enemyData.EnemySprite;
+            enemyImage.preserveAspect = true;
+            enemyImage.type = Image.Type.Simple;
+        }
+
+        // 设置敌人名称
+        var enemyNameText = cardObject.transform.Find("EnemyName")?.GetComponent<TextMeshProUGUI>();
+        if (enemyNameText != null)
+        {
+            enemyNameText.text = enemyInfo.enemyData.EnemyName;
+        }
+
+        // 设置敌人描述
+        var enemyDescText = cardObject.transform.Find("EnemyDesc")?.GetComponent<TextMeshProUGUI>();
+        if (enemyDescText != null)
+        {
+            enemyDescText.text = enemyInfo.enemyData.Description;
+        }
+
+        // 设置敌人数目
+        var enemyAmountText = cardObject.transform.Find("EnemyAmount")?.GetComponent<TextMeshProUGUI>();
+        if (enemyAmountText != null)
+        {
+            enemyAmountText.text = $"x{enemyInfo.count}";
+        }
+    }
+
+    /// <summary>
+    /// 获取当前关卡敌人信息
+    /// </summary>
+    private List<EnemySpawnInfo> GetCurrentRoundEnemies()
+    {
+        if (GameManager.Instance == null) return null;
+
+        var roundManager = GameManager.Instance.GetSystem<RoundManager>();
+        if (roundManager == null) return null;
+
+        // 获取当前关卡配置
+        int currentRoundNumber = roundManager.CurrentRoundNumber;
+        
+        // 通过反射获取私有字段roundConfigs
+        var roundConfigsField = roundManager.GetType().GetField("roundConfigs", 
+            System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+        
+        if (roundConfigsField != null)
+        {
+            var roundConfigs = roundConfigsField.GetValue(roundManager) as List<RoundConfig>;
+            if (roundConfigs != null && currentRoundNumber <= roundConfigs.Count)
+            {
+                var currentRoundConfig = roundConfigs[currentRoundNumber - 1];
+                if (currentRoundConfig != null && currentRoundConfig.waves != null && currentRoundConfig.waves.Count > 0)
+                {
+                    // 合并所有Wave中的敌人信息
+                    List<EnemySpawnInfo> allEnemies = new List<EnemySpawnInfo>();
+                    foreach (var wave in currentRoundConfig.waves)
+                    {
+                        if (wave.enemies != null)
+                        {
+                            allEnemies.AddRange(wave.enemies);
+                        }
+                    }
+                    return allEnemies;
+                }
+            }
+        }
+
+        return null;
+    }
+
+    /// <summary>
+    /// 更新敌人预览标题
+    /// </summary>
+    private void UpdateEnemyPreviewTitle()
+    {
+        if (enemyPreviewTitleText != null)
+        {
+            var roundManager = GameManager.Instance?.GetSystem<RoundManager>();
+            if (roundManager != null)
+            {
+                int currentRoundNumber = roundManager.CurrentRoundNumber;
+                enemyPreviewTitleText.text = $"第{currentRoundNumber}关敌人预览";
+            }
+            else
+            {
+                enemyPreviewTitleText.text = "当前关卡敌人预览";
+            }
+        }
+    }
+
+    /// <summary>
+    /// 清理敌人预览
+    /// </summary>
+    private void ClearEnemyPreview()
+    {
+        foreach (var card in enemyPreviewCards)
+        {
+            if (card != null)
+            {
+                DestroyImmediate(card);
+            }
+        }
+        enemyPreviewCards.Clear();
+    }
+
+    /// <summary>
     /// 公共方法：更新UI（供外部调用）
     /// </summary>
     public void UpdateUIDisplay()
@@ -205,6 +373,7 @@ public class BuildingUIPanel : UIPanel
         if (isVisible)
         {
             UpdateUI();
+            GenerateEnemyPreview(); // 同时更新敌人预览
         }
     }
 

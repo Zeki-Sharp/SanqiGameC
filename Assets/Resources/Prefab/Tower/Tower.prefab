@@ -778,6 +778,10 @@ PrefabInstance:
       propertyPath: m_SortingOrder
       value: -1
       objectReference: {fileID: 0}
+    - target: {fileID: 7053625217933827843, guid: aba2953e4a0691941bad75be33fca80d, type: 3}
+      propertyPath: m_SortingLayerID
+      value: 630144195
+      objectReference: {fileID: 0}
     - target: {fileID: 7147983075775335984, guid: aba2953e4a0691941bad75be33fca80d, type: 3}
       propertyPath: m_Color.b
       value: 0.37866142
