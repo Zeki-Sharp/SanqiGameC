@@ -200,6 +200,7 @@ GameObject:
   - component: {fileID: -7595511447757510442}
   - component: {fileID: 5642779683472572973}
   - component: {fileID: 2606805816921575336}
+  - component: {fileID: 2137878387081373763}
   m_Layer: 7
   m_Name: Enemy
   m_TagString: Enemy
@@ -375,6 +376,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxHealth: 100
   currentHealth: 0
+  visualEffectController: {fileID: 0}
 --- !u!114 &-7595511447757510442
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -461,6 +463,19 @@ MonoBehaviour:
   healthBarFill: {fileID: 178101048526205706}
   offset: {x: 0, y: -0.8, z: 0}
   showDebugInfo: 0
+--- !u!114 &2137878387081373763
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9133360019857942620}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 851c9a2818f3145408ca9fb89bd99c39, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  effectPreset: {fileID: 0}
 --- !u!1 &9180548607674242521
 GameObject:
   m_ObjectHideFlags: 0
