@@ -398,6 +398,7 @@ GameObject:
   - component: {fileID: 8938938391962000119}
   - component: {fileID: 669885837155348704}
   - component: {fileID: 5405798796694162524}
+  - component: {fileID: -3175997523596774920}
   m_Layer: 6
   m_Name: CenterTower
   m_TagString: CenterTower
@@ -516,6 +517,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxHealth: 0
   currentHealth: 0
+  visualEffectController: {fileID: 0}
 --- !u!114 &669885837155348704
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -602,6 +604,19 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   raySource: {fileID: 4185971873869370229}
+--- !u!114 &-3175997523596774920
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7002921581114174909}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 851c9a2818f3145408ca9fb89bd99c39, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  effectPreset: {fileID: 0}
 --- !u!1 &7371399421173341675
 GameObject:
   m_ObjectHideFlags: 0

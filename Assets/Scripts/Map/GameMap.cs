@@ -245,8 +245,6 @@ public class GameMap : MonoBehaviour
         block.SetCellPosition(cellPos, tilemap);
         placedBlocks[cellPos] = block;
 
-        Debug.Log($"[GameMap Debug] Block {block.name} 成功放置到cell位置 {cellPos}");
-        Debug.Log($"[GameMap Debug] 当前occupiedCells数量: {occupiedCells.Count}");
         
         return true;
     }

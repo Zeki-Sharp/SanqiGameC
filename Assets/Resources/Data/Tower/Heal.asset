@@ -31,7 +31,7 @@ MonoBehaviour:
       healSkill:
         skillName: "\u6CBB\u75971"
         skillDescription: 
-        healAmount: 3
+        healAmount: 4
         healInterval: 2
         healRangeType: 1
         healEffectType: 0
@@ -50,7 +50,7 @@ MonoBehaviour:
       healSkill:
         skillName: "\u6CBB\u75972"
         skillDescription: 
-        healAmount: 4
+        healAmount: 5
         healInterval: 2
         healRangeType: 1
         healEffectType: 0
@@ -69,7 +69,7 @@ MonoBehaviour:
       healSkill:
         skillName: "\u6CBB\u75973"
         skillDescription: 
-        healAmount: 5
+        healAmount: 6
         healInterval: 2
         healRangeType: 1
         healEffectType: 0

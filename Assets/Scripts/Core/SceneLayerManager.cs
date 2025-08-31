@@ -152,6 +152,13 @@ public class SceneLayerManager : MonoBehaviour
     {
         foreach (string tag in tags)
         {
+            // 跳过子弹标签，让子弹保持自己的层级设置
+            if (tag == "Bullet")
+            {
+                Log($"跳过子弹标签 {tag}，让子弹保持自己的层级设置");
+                continue;
+            }
+            
             GameObject[] objects = GameObject.FindGameObjectsWithTag(tag);
             foreach (GameObject obj in objects)
             {
@@ -183,6 +190,13 @@ public class SceneLayerManager : MonoBehaviour
     /// </summary>
     private void ForceSetObjectsByTag(string tag)
     {
+        // 跳过子弹，让子弹保持自己的层级设置（由PathBullet2D插件管理）
+        if (tag == "Bullet") 
+        {
+            Log($"跳过子弹标签 {tag}，让子弹保持自己的层级设置");
+            return;
+        }
+        
         GameObject[] objects = GameObject.FindGameObjectsWithTag(tag);
         Log($"找到 {objects.Length} 个 {tag} 标签的对象");
         
@@ -406,6 +420,13 @@ public class SceneLayerManager : MonoBehaviour
     {
         foreach (string tag in tags)
         {
+            // 跳过子弹标签，让子弹保持自己的层级设置
+            if (tag == "Bullet")
+            {
+                Log($"跳过子弹标签 {tag}，让子弹保持自己的层级设置");
+                continue;
+            }
+            
             GameObject[] objects = GameObject.FindGameObjectsWithTag(tag);
             foreach (GameObject obj in objects)
             {
@@ -419,58 +440,19 @@ public class SceneLayerManager : MonoBehaviour
     /// </summary>
     private void AutoDetectAndRegisterObjects()
     {
-        // 检测新创建的塔
-        GameObject[] newTowers = GameObject.FindGameObjectsWithTag("Tower");
-        foreach (GameObject tower in newTowers)
-        {
-            if (!registeredObjects.Contains(tower))
-            {
-                RegisterObject(tower);
-            }
-        }
+        if (!enableAutoSortingLayer) return;
         
-        // 检测新创建的中心塔
-        GameObject[] newCenterTowers = GameObject.FindGameObjectsWithTag("CenterTower");
-        foreach (GameObject centerTower in newCenterTowers)
-        {
-            if (!registeredObjects.Contains(centerTower))
-            {
-                RegisterObject(centerTower);
-            }
-        }
+        // 自动检测塔
+        ScanObjectsByTags(towerTags);
         
-        // 检测新创建的敌人
-        GameObject[] newEnemies = GameObject.FindGameObjectsWithTag("Enemy");
-        foreach (GameObject enemy in newEnemies)
-        {
-            if (!registeredObjects.Contains(enemy))
-            {
-                RegisterObject(enemy);
-            }
-        }
+        // 自动检测敌人
+        ScanObjectsByTags(enemyTags);
         
-        // 检测新创建的子弹
-        GameObject[] newBullets = GameObject.FindGameObjectsWithTag("Bullet");
-        foreach (GameObject bullet in newBullets)
-        {
-            if (!registeredObjects.Contains(bullet))
-            {
-                RegisterObject(bullet);
-            }
-        }
+        // 跳过子弹，让子弹保持自己的层级设置
+        Log("跳过子弹标签，让子弹保持自己的层级设置");
         
-        // 检测新创建的场景物体
-        foreach (string sceneTag in sceneObjectTags)
-        {
-            GameObject[] newSceneObjects = GameObject.FindGameObjectsWithTag(sceneTag);
-            foreach (GameObject sceneObj in newSceneObjects)
-            {
-                if (!registeredObjects.Contains(sceneObj))
-                {
-                    RegisterObject(sceneObj);
-                }
-            }
-        }
+        // 自动检测场景物体
+        ScanObjectsByTags(sceneObjectTags);
     }
     
     /// <summary>
