@@ -192,7 +192,6 @@ public class GameMap : MonoBehaviour
                 return false;
             }
 
-            // Debug.Log($"  检查格子 ({cell.x},{cell.y}) 是否可放置 {!occupiedCells.Contains(cell)}");
             // 检查格子是否已被占用
             if (occupiedCells.Contains(cell))
             {
@@ -224,56 +223,31 @@ public class GameMap : MonoBehaviour
         }
 
         var coordinates = block.Config.GetCellCoords();
-        // Debug.Log($"方块坐标: {coordinates}");
-        // Debug.Log($"坐标大小: {coordinates.Length}");
+        
+        if (coordinates == null || coordinates.Length == 0)
+        {
+            return false;
+        }
+        
         // 标记格子为已占用
         foreach (Vector2Int coord in coordinates)
         {
-            Vector3Int cell = cellPos + new Vector3Int(coord.x, coord.y, 0); // 修复：使用正确的相对坐标
-            // Debug.Log($"占用格子: {cell}");
-            occupiedCells.Add(new OccupiedCell(cell, !block.CanBeOverridden));
+            Vector3Int cell = cellPos + new Vector3Int(coord.x, coord.y, 0);
+            Debug.Log($"[GameMap Debug] 标记格子 {cell} 为已占用");
+            
+
+            var occupiedCell = new OccupiedCell(cell, !block.CanBeOverridden);
+                    
+            bool addResult = occupiedCells.Add(occupiedCell);
         }
 
         // 设置方块位置并添加到地图
         block.SetCellPosition(cellPos, tilemap);
         placedBlocks[cellPos] = block;
 
-        // Debug.Log($"方块成功放置到cell位置 {cellPos}");
-        return true;
-    }
-
-    /// <summary>
-    /// 放置方块到地图上
-    /// </summary>
-    /// <param name="cellPos">方块左下角的cell坐标</param>
-    /// <param name="block">要放置的方块</param>
-    /// <param name="tilemap">Tilemap引用</param>
-    /// <returns>是否放置成功</returns>
-    public bool PlaceBlock(Vector3Int cellPos, Block block, Tilemap tilemap)
-    {
-        if (block == null || block.Config == null)
-        {
-            Debug.LogError("方块或形状为空，无法放置");
-            return false;
-        }
-
-        // if (!CanPlaceBlock(position, block.Config))
-        // {
-        //     Debug.LogWarning($"无法在位置 ({position.x}, {position.y}) 放置方块");
-        //     return false;
-        // }
-
-        // 标记格子为已占用
-        foreach (Vector2Int coord in block.Config.Coordinates)
-        {
-            Vector3Int cell = cellPos + new Vector3Int(coord.x, coord.y, 0); // 修复：使用正确的相对坐标
-            occupiedCells.Add(new OccupiedCell(cell, !block.CanBeOverridden));
-        }
-
-        // 设置方块位置并添加到地图
-        block.SetCellPosition(cellPos, tilemap);
-        placedBlocks[cellPos] = block;
-
+        Debug.Log($"[GameMap Debug] Block {block.name} 成功放置到cell位置 {cellPos}");
+        Debug.Log($"[GameMap Debug] 当前occupiedCells数量: {occupiedCells.Count}");
+        
         return true;
     }
 
@@ -281,22 +255,24 @@ public class GameMap : MonoBehaviour
     /// 移除方块
     /// </summary>
     /// <param name="cellPos">方块左下角的cell坐标</param>
+    /// <param name="block">要移除的方块</param>
     /// <returns>是否移除成功</returns>
-    public bool RemoveBlock(Vector3Int cellPos)
+    public bool RemoveBlock(Vector3Int cellPos, Block block)
     {
-        if (!placedBlocks.ContainsKey(cellPos))
+        if (block == null || block.Config == null)
         {
-            Debug.LogWarning($"cell位置 {cellPos} 没有方块");
+            Debug.LogWarning($"方块或配置为空，无法移除");
             return false;
         }
 
-        Block block = placedBlocks[cellPos];
-        if (block.Config != null && block.Config.Coordinates != null)
+        // 修复：使用GetCellCoords()而不是Coordinates
+        var coordinates = block.Config.GetCellCoords();
+        if (coordinates != null)
         {
             // 取消标记格子占用
-            foreach (Vector2Int coord in block.Config.Coordinates)
+            foreach (Vector2Int coord in coordinates)
             {
-                Vector3Int cell = cellPos + new Vector3Int(coord.x, coord.y, 0); // 修复：使用正确的相对坐标
+                Vector3Int cell = cellPos + new Vector3Int(coord.x, coord.y, 0);
                 occupiedCells.Remove(cell);
             }
         }
@@ -305,34 +281,6 @@ public class GameMap : MonoBehaviour
         if (block.gameObject != null && block.gameObject.scene.IsValid())
         {
             Destroy(block.gameObject);
-        }
-
-        placedBlocks.Remove(cellPos);
-        return true;
-    }
-    /// <summary>
-    /// 移除方块
-    /// </summary>
-    /// <param name="cellPos">方块左下角的cell坐标</param>
-    /// <returns>是否移除成功</returns>
-    public bool RemoveBlock(Vector3Int cellPos,Block block)
-    {
-
-        Block _block = block;
-        if (_block.Config != null && _block.Config.Coordinates != null)
-        {
-            // 取消标记格子占用
-            foreach (Vector2Int coord in _block.Config.Coordinates)
-            {
-                Vector3Int cell = cellPos + new Vector3Int(coord.x, coord.y, 0); // 修复：使用正确的相对坐标
-                occupiedCells.Remove(cell);
-            }
-        }
-
-        // 销毁方块GameObject
-        if (_block.gameObject != null && _block.gameObject.scene.IsValid())
-        {
-            Destroy(_block.gameObject);
         }
 
         placedBlocks.Remove(cellPos);
@@ -502,16 +450,27 @@ public class OccupiedCell
 
 public class OccupiedCellSet : HashSet<OccupiedCell>
 {
+    public new bool Add(OccupiedCell item)
+    {
+            
+        bool result = base.Add(item);
+
+        
+        return result;
+    }
+
     public bool Contains(Vector3Int position)
     {
+        
         foreach (var cell in this)
         {
             if (cell.CellPosition == position)
             {
+               
                 return cell.IsOccupied;
             }
         }
-
+        
         return false;
     }
 

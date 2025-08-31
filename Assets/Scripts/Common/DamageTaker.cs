@@ -44,9 +44,16 @@ public class DamageTaker : MonoBehaviour
         currentHealth = Mathf.Min(currentHealth + amount, maxHealth);
         float actualHeal = currentHealth - oldHealth;
         
+        Debug.Log($"[DamageTaker Debug] {this.name} 治疗: {oldHealth:F1} -> {currentHealth:F1} (+{actualHeal:F1}), 治疗量={amount:F1}, 最大血量={maxHealth:F1}");
+        
         if (actualHeal > 0)
         {
             onHeal?.Invoke(actualHeal);
+            Debug.Log($"[DamageTaker Debug] {this.name} 触发治疗事件回调: +{actualHeal:F1}");
+        }
+        else
+        {
+            Debug.Log($"[DamageTaker Debug] {this.name} 治疗无效: 血量已满或治疗量为0");
         }
     }
 

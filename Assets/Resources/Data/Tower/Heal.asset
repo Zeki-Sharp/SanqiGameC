@@ -31,11 +31,11 @@ MonoBehaviour:
       healSkill:
         skillName: "\u6CBB\u75971"
         skillDescription: 
-        healAmount: 6
-        healInterval: 1.2
+        healAmount: 3
+        healInterval: 2
         healRangeType: 1
         healEffectType: 0
-        maxHealTargets: 4
+        maxHealTargets: 2
   - towerSprite: {fileID: 4293587053738703087, guid: b4bf0700b3c507e48b3075acc47fefb1, type: 3}
     health: 36
     skillSlots:
@@ -50,11 +50,11 @@ MonoBehaviour:
       healSkill:
         skillName: "\u6CBB\u75972"
         skillDescription: 
-        healAmount: 9
-        healInterval: 1.2
+        healAmount: 4
+        healInterval: 2
         healRangeType: 1
         healEffectType: 0
-        maxHealTargets: 4
+        maxHealTargets: 3
   - towerSprite: {fileID: 4293587053738703087, guid: b4bf0700b3c507e48b3075acc47fefb1, type: 3}
     health: 42
     skillSlots:
@@ -69,8 +69,8 @@ MonoBehaviour:
       healSkill:
         skillName: "\u6CBB\u75973"
         skillDescription: 
-        healAmount: 12
-        healInterval: 1.2
+        healAmount: 5
+        healInterval: 2
         healRangeType: 1
         healEffectType: 0
         maxHealTargets: 4

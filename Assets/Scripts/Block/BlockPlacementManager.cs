@@ -449,7 +449,14 @@ public class BlockPlacementManager : MonoBehaviour
         
         // 计算Block的cellPosition（使用第一个cell作为基准）
         Vector3Int blockCellPos = cells[0];
-        block.SetCellPosition(blockCellPos, tilemap);
+        
+        // 通过GameMap.PlaceBlock()正确注册Block到地图系统
+        if (!gameMap.PlaceBlock(blockCellPos, block))
+        {
+            Debug.LogError($"无法在位置 {blockCellPos} 放置Block {blockObj.name}");
+            Destroy(blockObj);
+            return;
+        }
         
         Debug.Log($"初始化Block: {blockObj.name}, 位置: {blockCellPos}, 配置: {config.name}");
         

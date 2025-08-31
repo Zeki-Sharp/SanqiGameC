@@ -1,7 +1,5 @@
 using UnityEngine;
 using System.Collections.Generic;
-using System.Collections;
-using System.Linq;
 
 public class EffectController : MonoBehaviour
 {
@@ -50,7 +48,7 @@ public class EffectData
     public float effectFxDuration;
     public AudioClip sfx;
     
-    // 新增治疗效果相关字段
+    // 治疗效果相关字段
     [Header("治疗效果配置")]
     public float healAmount;
     public float healInterval;
@@ -93,9 +91,7 @@ public class ActiveEffect
             // 激活治疗效果
             isHealEffectActive = true;
             healCooldownTimer = 0f;
-            Debug.Log($"治疗效果激活：治疗量={Data.healAmount}，间隔={Data.healInterval}，范围={Data.healRangeType}");
         }
-        // 可扩展：播放特效、音效等
     }
     
     public void OnRemove(GameObject target)
@@ -112,9 +108,7 @@ public class ActiveEffect
         {
             // 停用治疗效果
             isHealEffectActive = false;
-            Debug.Log("治疗效果已停用");
         }
-        // 可扩展：移除特效、还原属性等
     }
     
     public bool UpdateEffect(GameObject target, float deltaTime)
@@ -136,132 +130,172 @@ public class ActiveEffect
     }
     
     /// <summary>
+    /// 检查是否在战斗阶段
+    /// </summary>
+    private bool IsInBattlePhase()
+    {
+        if (GameManager.Instance != null)
+        {
+            var currentPhase = GameManager.Instance.GetCurrentGamePhase();
+            return currentPhase == GamePhase.CombatPhase;
+        }
+        return false;
+    }
+    
+    /// <summary>
     /// 更新治疗效果
     /// </summary>
     private void UpdateHealEffect(GameObject target, float deltaTime)
     {
         if (!isHealEffectActive || Data.effectName != "Heal") return;
         
+        // 检查是否在战斗阶段
+        if (!IsInBattlePhase())
+        {
+            return;
+        }
+        
         healCooldownTimer += deltaTime;
         
-        // 检查是否到达治疗间隔
+        // 治疗冷却完成，执行治疗
         if (healCooldownTimer >= Data.healInterval)
         {
             healCooldownTimer = 0f;
             
-            // 使用格子范围系统查找治疗目标
-            var healTargets = FindHealTargetsByGrid(target);
-            
-            if (healTargets.Count > 0)
+            try
             {
-                // 对每个目标进行治疗
-                foreach (var healTarget in healTargets)
+                var healTargets = FindHealTargetsSimple(target);
+                
+                if (healTargets.Count > 0)
                 {
-                    if (healTarget != null && healTarget.TryGetComponent<DamageTaker>(out var damageTaker))
+                    foreach (var healTarget in healTargets)
                     {
-                        damageTaker.Heal(Data.healAmount);
+                        if (healTarget != null && healTarget.TryGetComponent<DamageTaker>(out var damageTaker))
+                        {
+                            float oldHealth = damageTaker.currentHealth;
+                            damageTaker.Heal(Data.healAmount);
+                            float newHealth = damageTaker.currentHealth;
+                            Debug.Log($"[Heal Debug] 治疗 {healTarget.name}: {oldHealth:F1} -> {newHealth:F1} (+{newHealth - oldHealth:F1})");
+                        }
                     }
                 }
-                
-                Debug.Log($"范围治疗完成：治疗了 {healTargets.Count} 个目标，每个目标恢复生命值 {Data.healAmount}");
+                else
+                {
+                    Debug.LogWarning($"[Heal Debug] {target.name} 没有找到任何治疗目标！");
+                }
+            }
+            catch (System.Exception e)
+            {
+                Debug.LogError($"[Heal Debug] {target.name} 治疗过程中发生异常: {e.Message}");
             }
         }
     }
     
     /// <summary>
-    /// 使用格子范围系统查找治疗目标
+    /// 使用格子范围系统查找治疗目标 - 严格按照上下左右四格范围
     /// </summary>
-    /// <returns>治疗目标列表</returns>
-    private List<GameObject> FindHealTargetsByGrid(GameObject centerTarget)
+    private List<GameObject> FindHealTargetsSimple(GameObject centerTarget)
     {
         var healTargets = new List<GameObject>();
         
-        // 获取治疗塔的格子位置
         if (centerTarget == null) return healTargets;
         
         // 获取GameMap引用
         var gameMap = GameManager.Instance?.GetSystem<GameMap>();
         if (gameMap == null)
         {
-            Debug.LogWarning("无法获取GameMap，使用物理检测作为备选方案");
-            return FindHealTargetsByPhysics(centerTarget);
+            Debug.LogWarning("[Heal Debug] 无法获取GameMap");
+            return healTargets;
         }
         
         // 将治疗塔的世界坐标转换为格子坐标
         Vector3Int towerCellPos = gameMap.WorldToCellPosition(centerTarget.transform.position);
+        Debug.Log($"[Heal Debug] 治疗塔 {centerTarget.name} 格子坐标: {towerCellPos}");
         
         // 获取治疗范围类型
         var tower = centerTarget.GetComponent<Tower>();
-        if (tower == null || tower.TowerData == null) return healTargets;
+        if (tower == null || tower.TowerData == null) 
+        {
+            Debug.LogWarning($"[Heal Debug] 治疗塔 {centerTarget.name} 没有Tower组件或TowerData");
+            return healTargets;
+        }
         
         HealRangeType rangeType = tower.TowerData.GetHealRangeType(tower.Level);
         
-        // 获取需要检查的格子坐标
+        // 获取需要检查的格子坐标（严格按照Adjacent4范围）
         var targetCells = HealRangeCalculator.GetHealTargetCells(towerCellPos, rangeType);
+        
+        // 🔧 添加治疗塔自己的格子到检查列表
+        if (!targetCells.Contains(towerCellPos))
+        {
+            targetCells.Add(towerCellPos);
+            Debug.Log($"[Heal Debug] 添加治疗塔自身格子: {towerCellPos}");
+        }
+        
+        Debug.Log($"[Heal Debug] 治疗范围类型: {rangeType}, 需要检查的格子数量: {targetCells.Count} (包含自身)");
+        
+        // 🔧 直接使用直接检测逻辑，不依赖GameMap.IsCellOccupied()
+        var placedBlocks = gameMap.GetAllPlacedBlocks();
+        Debug.Log($"[Heal Debug] 总共有 {placedBlocks.Count} 个已放置的Block");
         
         // 检查每个格子中的塔
         foreach (var cellPos in targetCells)
         {
-            // 检查格子是否被占用
-            if (gameMap.IsCellOccupied(cellPos))
+            Debug.Log($"[Heal Debug] ===== 开始检查格子: {cellPos} =====");
+            
+            bool cellIsOccupied = false;
+            GameObject towerInThisCell = null;
+            
+            // 直接检查所有Block，找到覆盖目标格子的Block
+            foreach (var block in placedBlocks.Values)
             {
-                // 获取该格子中的Block
-                var placedBlocks = gameMap.GetAllPlacedBlocks();
-                foreach (var block in placedBlocks.Values)
+                if (block != null && block.Config != null)
                 {
-                    if (block != null)
+                    var blockCoords = block.Config.GetCellCoords();
+                    if (blockCoords != null)
                     {
-                        // 检查Block是否覆盖该格子
-                        var blockCoords = block.Config.GetCellCoords();
                         Vector3Int blockCellPos = block.CellPosition;
                         
-                        foreach (var coord in blockCoords)
+                        // 检查这个Block是否覆盖目标格子
+                        foreach (Vector2Int coord in blockCoords)
                         {
-                            Vector3Int absoluteCoord = blockCellPos + coord;
-                            if (absoluteCoord == cellPos)
+                            Vector3Int coveredCell = blockCellPos + new Vector3Int(coord.x, coord.y, 0);
+                            if (coveredCell == cellPos)
                             {
-                                // 获取该格子中的塔
-                                var towerInCell = block.GetTower(coord);
-                                if (towerInCell != null && IsValidHealTarget(towerInCell.gameObject))
+                                Debug.Log($"[Heal Debug] ✓ 发现Block {block.name} 覆盖目标格子 {cellPos}");
+                                Debug.Log($"[Heal Debug] Block基础位置: {blockCellPos}");
+                                cellIsOccupied = true;
+                                
+                                // 在这个Block中查找塔
+                                var towerInBlock = block.GetTower(new Vector3Int(coord.x, coord.y, 0));
+                                if (towerInBlock != null && IsValidHealTarget(towerInBlock.gameObject))
                                 {
-                                    healTargets.Add(towerInCell.gameObject);
+                                    Debug.Log($"[Heal Debug] 格子 {cellPos} 中找到塔: {towerInBlock.name}");
+                                    towerInThisCell = towerInBlock.gameObject;
                                 }
                                 break;
                             }
                         }
+                        if (cellIsOccupied) break;
                     }
                 }
             }
-        }
-        
-        return healTargets;
-    }
-    
-    /// <summary>
-    /// 使用物理检测作为备选方案（保持向后兼容）
-    /// </summary>
-    /// <returns>治疗目标列表</returns>
-    private List<GameObject> FindHealTargetsByPhysics(GameObject centerTarget)
-    {
-        var healTargets = new List<GameObject>();
-        
-        if (centerTarget == null) return healTargets;
-        
-        // 使用物理检测查找范围内的目标
-        Collider2D[] colliders = Physics2D.OverlapBoxAll(
-            centerTarget.transform.position,
-            Vector2.one * 2f, // 使用固定范围作为备选
-            0f
-        );
-        
-        foreach (var collider in colliders)
-        {
-            if (IsValidHealTarget(collider.gameObject))
+            
+            // 如果找到有效的治疗目标，添加到列表
+            if (towerInThisCell != null)
             {
-                healTargets.Add(collider.gameObject);
+                Debug.Log($"[Heal Debug] 添加有效治疗目标: {towerInThisCell.name}");
+                healTargets.Add(towerInThisCell);
             }
+            else
+            {
+                Debug.Log($"[Heal Debug] 格子 {cellPos} 中没有找到有效的治疗目标");
+            }
+            
+            Debug.Log($"[Heal Debug] ===== 完成检查格子: {cellPos} =====");
         }
         
+        Debug.Log($"[Heal Debug] 最终找到 {healTargets.Count} 个治疗目标");
         return healTargets;
     }
     
@@ -270,7 +304,21 @@ public class ActiveEffect
     /// </summary>
     private bool IsValidHealTarget(GameObject target)
     {
+        if (target == null) return false;
+        
         // 检查是否为友方单位（塔或中心塔）
-        return target.CompareTag("Tower") || target.CompareTag("CenterTower");
+        bool isValid = target.CompareTag("Tower") || target.CompareTag("CenterTower");
+        
+        // 额外检查：确保目标有DamageTaker组件
+        if (isValid)
+        {
+            var damageTaker = target.GetComponent<DamageTaker>();
+            if (damageTaker == null)
+            {
+                isValid = false;
+            }
+        }
+        
+        return isValid;
     }
 } 

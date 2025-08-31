@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 92e25ad1f2a94d94ea3184473da45d52, type: 3}
   m_Name: Melee Attack
   m_EditorClassIdentifier: 
-  damage: 5
+  damage: 6
   attackCooldown: 2
   attackRange: 1
   attackAnimationTrigger: Attack
