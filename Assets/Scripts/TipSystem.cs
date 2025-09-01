@@ -131,8 +131,7 @@ public class TipSystem : MonoBehaviour
             }
             else
             {
-                // 记录离开时间，但不立即隐藏
-                lastLeaveTime = Time.time;
+                HideTip();
             }
         }
         else
@@ -149,14 +148,12 @@ public class TipSystem : MonoBehaviour
                 }
                 else
                 {
-                    // 记录离开时间，但不立即隐藏
-                    lastLeaveTime = Time.time;
+                    HideTip();
                 }
             }
             else
             {
-                // 记录离开时间，但不立即隐藏
-                lastLeaveTime = Time.time;
+                HideTip();
             }
         }
      
