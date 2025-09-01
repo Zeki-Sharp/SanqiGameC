@@ -56,7 +56,7 @@ public class TipSystem : MonoBehaviour
 
     private Sequence inSeq, outSeq;
     private Vector3 _lastMousePosition;
-
+    private Tower _lastTower; 
     private void Awake()
     {
         if (mainCamera == null) mainCamera = Camera.main;
@@ -244,14 +244,20 @@ public class TipSystem : MonoBehaviour
     }
 
   
-   #region 进入动画
+    #region 进入动画
     public void PlayIntro(Tower tower)
     {
-        // 先杀掉旧动画
-        DOTween.Kill(this);
-        outSeq?.Kill();      // 如果正在做离开动画也杀掉
+        // 1. 若进入动画正在跑，直接忽略
+        if (inSeq != null && inSeq.IsActive()) return;
 
-        // 确保可见
+        // 2. 若离开动画正在跑，也忽略（或改为立刻 Kill 它，可按需求二选一）
+        if (outSeq != null && outSeq.IsActive()) return;
+        // 如果想强制打断离开动画，把上一行改成：
+        // outSeq?.Kill();
+        
+        DOTween.Kill(this);
+        outSeq?.Kill();
+
         if (tipMenu != null) tipMenu.gameObject.SetActive(true);
 
         inSeq = DOTween.Sequence();
@@ -306,10 +312,18 @@ public class TipSystem : MonoBehaviour
         // inSeq.Join(maxHealthText.DOFade(1, 0.4f));
     }
     #endregion
-
+    
     #region 离开动画
     public void PlayOutro(System.Action onComplete = null)
     {
+        // 1. 若离开动画正在跑，直接忽略
+        if (outSeq != null && outSeq.IsActive()) return;
+
+        // 2. 若进入动画正在跑，也忽略（或改为立刻 Kill 它）
+        if (inSeq != null && inSeq.IsActive()) return;
+        // 如果想强制打断进入动画，把上一行改成：
+        // inSeq?.Kill();
+        
         DOTween.Kill(this);
         inSeq?.Kill();
 
@@ -335,6 +349,11 @@ public class TipSystem : MonoBehaviour
     public void ShowTip(Tower tower, Vector3 screenPosition)
     {
         if (TipMenu == null || tower == null) return; 
+
+        // 如果还是同一座塔，直接跳过一切逻辑
+        if (tower == _lastTower) return;
+        _lastTower = tower;
+
         TipMenu.SetActive(true);
         PlayIntro(tower);
         // 基础信息
@@ -376,7 +395,8 @@ public class TipSystem : MonoBehaviour
     /// </summary>
     public void HideTip()
     {
-        if (TipMenu != null) 
+        _lastTower = null;          // 新增
+        if (TipMenu != null)
             PlayOutro(() => Debug.Log("已完全关闭"));
     }
 

@@ -1014,4 +1014,14 @@ public void Initialize(TowerData data, Vector3Int pos, bool hasCheck = false, bo
             $"塔名: {towerData.TowerName}\n等级: {level :F0}/{ towerData.MaxLevel:F0}\n 生命值: {currentHealth:F0}/{towerData.GetHealth(level):F0}\n攻击力: {towerData.GetPhysicAttack(level):F0}\n攻击间隔: {towerData.GetAttackInterval(level):F2}");
         #endif
     }
+    //塔link 添加
+    public void TowerLinkAdd()
+    {
+        
+    }
+    //塔link 添加
+    public void TowerLinkDelete()
+    {
+        
+    }
 }

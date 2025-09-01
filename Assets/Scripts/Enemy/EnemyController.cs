@@ -4,6 +4,7 @@ using RaycastPro.Bullets2D;
 using RaycastPro.Casters2D;
 using RaycastPro.Detectors2D;
 using RaycastPro.RaySensors2D;
+using Sirenix.OdinInspector;
 using UnityEngine;
 
 /// <summary>
@@ -20,7 +21,7 @@ public class EnemyController : MonoBehaviour
     [SerializeField] public BasicRay2D raySensor;
     [SerializeField] private BasicCaster2D bulletCaster;
 
-    [SerializeField] private EnemyState currentState;
+    [ShowInInspector] private EnemyState currentState;
     private float currentHealth;
     private SpriteRenderer spriteRenderer;
     private float moveSpeedOverride = -1f;
