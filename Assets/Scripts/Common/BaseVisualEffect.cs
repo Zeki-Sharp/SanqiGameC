@@ -69,6 +69,17 @@ public abstract class BaseVisualEffect : MonoBehaviour
         }
     }
     
+    /// <summary>
+    /// 当对象被销毁时，确保特效被正确清理
+    /// </summary>
+    private void OnDestroy()
+    {
+        if (isActive)
+        {
+            Deactivate();
+        }
+    }
+    
     // 抽象方法，子类实现具体逻辑
     protected abstract void OnActivate();
     protected abstract void OnDeactivate();

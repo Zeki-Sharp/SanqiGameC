@@ -153,6 +153,9 @@ public class EffectCombination
     {
         BaseVisualEffect effect = null;
         
+        // 清理同类型的旧特效组件，避免冲突
+        CleanupOldEffects(target, config.effectType);
+        
         switch (config.effectType)
         {
             case EffectType.Flash:
@@ -189,6 +192,51 @@ public class EffectCombination
         }
         
         return effect;
+    }
+    
+    /// <summary>
+    /// 清理同类型的旧特效组件
+    /// </summary>
+    private void CleanupOldEffects(GameObject target, EffectType effectType)
+    {
+        switch (effectType)
+        {
+            case EffectType.Flash:
+                var oldFlashEffects = target.GetComponents<FlashEffect>();
+                foreach (var oldEffect in oldFlashEffects)
+                {
+                    if (oldEffect != null)
+                    {
+                        oldEffect.Deactivate();
+                        Object.DestroyImmediate(oldEffect);
+                    }
+                }
+                break;
+                
+            case EffectType.Knockback:
+                var oldKnockbackEffects = target.GetComponents<KnockbackEffect>();
+                foreach (var oldEffect in oldKnockbackEffects)
+                {
+                    if (oldEffect != null)
+                    {
+                        oldEffect.Deactivate();
+                        Object.DestroyImmediate(oldEffect);
+                    }
+                }
+                break;
+                
+            case EffectType.Scale:
+                var oldScaleEffects = target.GetComponents<ScaleEffect>();
+                foreach (var oldEffect in oldScaleEffects)
+                {
+                    if (oldEffect != null)
+                    {
+                        oldEffect.Deactivate();
+                        Object.DestroyImmediate(oldEffect);
+                    }
+                }
+                break;
+        }
     }
     
     /// <summary>
