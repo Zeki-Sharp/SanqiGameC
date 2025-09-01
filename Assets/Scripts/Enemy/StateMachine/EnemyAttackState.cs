@@ -67,14 +67,14 @@ public class EnemyAttackState : EnemyState
         if (rangeDetector != null && (Time.frameCount % 10 == 0))
             rangeDetector.Cast();
 
-        // —— 只看存活/有效，不看距离 ——（硬锁定）
-        bool targetAliveAndValid = IsAliveAndValid(currentTarget);
-        if (!targetAliveAndValid)
+        // 检查目标是否仍然有效（存活且在攻击范围内）
+        bool targetValid = IsTargetValid(currentTarget);
+        if (!targetValid)
         {
             var oldName = currentTarget ? currentTarget.name : "null";
             currentTarget = controller.AcquireBestTargetInRange(preferCenter: true);
 
-            Debug.Log($"[Attack] target lost/dead: {oldName} -> reacquire: {currentTarget?.name ?? "null"}");
+            Debug.Log($"[Attack] target lost/dead/out_of_range: {oldName} -> reacquire: {currentTarget?.name ?? "null"}");
 
             if (currentTarget == null)
             {
@@ -113,6 +113,26 @@ public class EnemyAttackState : EnemyState
         if (go.TryGetComponent<DamageTaker>(out var dt) && dt.currentHealth <= 0) return false;
         // 其他非法（ShowArea 等）不在这里判，避免误把已锁目标踢掉
         return true;
+    }
+
+    /// <summary>
+    /// 检查目标是否有效（存活且在攻击范围内）
+    /// </summary>
+    private bool IsTargetValid(GameObject target)
+    {
+        // 首先检查目标是否存活和有效
+        if (!IsAliveAndValid(target)) return false;
+        
+        // 然后检查是否在攻击范围内
+        float distance = Vector3.Distance(controller.transform.position, target.transform.position);
+        bool inRange = distance <= controller.AttackRange;
+        
+        if (!inRange)
+        {
+            Debug.Log($"[Attack] {controller.name} 目标 {target.name} 超出攻击范围，距离: {distance:F2}, 攻击范围: {controller.AttackRange:F2}");
+        }
+        
+        return inRange;
     }
 
     private void ExecuteAttack(GameObject target)

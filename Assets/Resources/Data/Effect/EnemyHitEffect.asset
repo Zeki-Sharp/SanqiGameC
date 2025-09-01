@@ -17,7 +17,7 @@ MonoBehaviour:
     executionMode: 0
     effects:
     - effectType: 0
-      duration: 0.5
+      duration: 0.2
       delay: 0
       intensity: 0.8
       frequency: 2

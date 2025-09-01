@@ -178,8 +178,34 @@ public class KnockbackEffect : BaseVisualEffect
     protected override void OnActivate()
     {
         originalPosition = transform.position;
-        knockbackDirection = Random.insideUnitCircle.normalized;
+        knockbackDirection = GetKnockbackDirection();
         knockbackTimer = 0f;
+    }
+    
+    /// <summary>
+    /// 获取击退方向：敌人和中心塔连线，朝远离中心塔的方向
+    /// </summary>
+    private Vector3 GetKnockbackDirection()
+    {
+        // 查找中心塔
+        GameObject centerTower = GameObject.FindGameObjectWithTag("CenterTower");
+        if (centerTower != null)
+        {
+            // 计算从中心塔到敌人的方向向量
+            Vector3 directionToEnemy = transform.position - centerTower.transform.position;
+            
+            // 如果距离太近，使用随机方向作为备选
+            if (directionToEnemy.magnitude < 0.1f)
+            {
+                return Random.insideUnitCircle.normalized;
+            }
+            
+            // 返回远离中心塔的方向
+            return directionToEnemy.normalized;
+        }
+        
+        // 如果找不到中心塔，使用随机方向作为备选
+        return Random.insideUnitCircle.normalized;
     }
     
     protected override void OnUpdate(float deltaTime)
@@ -189,12 +215,12 @@ public class KnockbackEffect : BaseVisualEffect
         
         if (progress >= 1f)
         {
-            // 击退完成，恢复到原始位置
-            transform.position = originalPosition;
+            // 击退完成，保持在击退后的位置，不回到原位置
+            // 这样敌人会在击退后的位置继续移动或攻击
         }
         else
         {
-            // 计算击退位置
+            // 计算击退位置并实际改变位置
             Vector3 knockbackPosition = originalPosition + knockbackDirection * force * progress;
             transform.position = knockbackPosition;
         }
@@ -202,8 +228,8 @@ public class KnockbackEffect : BaseVisualEffect
     
     protected override void OnDeactivate()
     {
-        // 确保回到原始位置
-        transform.position = originalPosition;
+        // 击退效果结束时，保持在当前位置，不回到原位置
+        // 这样敌人会在击退后的位置继续游戏逻辑
     }
 }
 
