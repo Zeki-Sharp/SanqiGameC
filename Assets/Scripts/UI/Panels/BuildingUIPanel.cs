@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
@@ -38,19 +39,15 @@ public class BuildingUIPanel : UIPanel
         if (moneyText == null)
             moneyText = GetComponentInChildren<TextMeshProUGUI>();
 
-        if (buyButton == null)
-        {
-            buyButton = GameObject.Find("Buy_Button").GetComponent<HoverTextChanger>();
-            buyButton.Initialize("", GameManager.Instance.GetSystem<GameMap>().GetMapData().BlockBuildMoney.ToString(), false);
-        }
-        if (buyButton == null)
-        {
-            refreshButton = GameObject.Find("Reduce_Button").GetComponent<HoverTextChanger>();
-            refreshButton.Initialize("刷新", GameManager.Instance.GetSystem<GameMap>().GetMapData().BlockBuildMoney.ToString(), true);
-        }
+     
         Debug.Log($"BuildingUIPanel Awake - startCombatButton: {startCombatButton}");
     }
-    
+
+    private void Start()
+    {
+       
+    }
+
     protected override void OnShow()
     {
         base.OnShow();
@@ -176,7 +173,13 @@ public class BuildingUIPanel : UIPanel
     private void UpdateUI()
     {
         if (GameManager.Instance == null) return;
-
+        if (buyButton == null)
+            buyButton = GameObject.Find("Buy_Button").GetComponent<HoverTextChanger>();
+        buyButton.Initialize("", GameManager.Instance.GetSystem<GameMap>().GetMapData().BlockBuildMoney.ToString(), false);
+        
+        if (refreshButton == null)
+            refreshButton = GameObject.Find("Reduce_Button").GetComponent<HoverTextChanger>();
+        refreshButton.Initialize("刷新", GameManager.Instance.GetSystem<GameMap>().GetMapData().BlockBuildMoney.ToString(), true);
         // 更新金钱显示
         var shopSystem = GameManager.Instance.GetSystem<ShopSystem>();
         if (shopSystem != null && moneyText != null)
