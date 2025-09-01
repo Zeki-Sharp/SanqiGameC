@@ -51,8 +51,8 @@ public class TipSystem : MonoBehaviour
 
     [ShowInInspector] private Vector3 _lastMousePos;
 
-    private float lastLeaveTime = -999f;
-    private const float hideDelay = 0.15f;
+    [ShowInInspector] private float lastLeaveTime = -999f;
+    [ShowInInspector] private  float hideDelay = 0.15f;
 
     [SerializeField] private CanvasGroup tipMenu;
 
