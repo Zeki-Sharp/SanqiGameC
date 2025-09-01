@@ -588,6 +588,8 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 64
   rayMaxDistance: 1000
+  worldHitRadius: 0.06
+  confirmFrames: 2
   tipMenu: {fileID: 1333244314}
 --- !u!114 &378793956 stripped
 MonoBehaviour:
