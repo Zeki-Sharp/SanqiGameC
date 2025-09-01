@@ -71,7 +71,7 @@ public class TipSystem : MonoBehaviour
             Debug.LogError("PreviewCamera not found in the scene!");
         }
         lastLeaveTime = Time.time;   // 新增：避免第一帧就被判定需要隐藏
-        HideTip();
+        if (tipMenu != null) tipMenu.gameObject.SetActive(false);
     }
 
     private void Update()
