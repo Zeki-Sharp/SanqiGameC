@@ -13,10 +13,9 @@ public class MainTowerHealthPanel : UIPanel
     [SerializeField] private Sprite centerTowerSprite;
     
     [Header("血条组件")]
-    [SerializeField] private Slider healthSlider;
-    [SerializeField] private Image healthBarFill;
-    [SerializeField] private TextMeshProUGUI healthText;
-    [SerializeField] private TextMeshProUGUI maxHealthText;
+    [SerializeField] private Image healthBarFill; // 血条填充图像
+    [SerializeField] private TextMeshProUGUI healthText; // 当前血量文本
+    [SerializeField] private TextMeshProUGUI maxHealthText; // 最大血量文本
     
     [Header("血条颜色设置")]
     [SerializeField] private Color highHealthColor = Color.green;
@@ -39,10 +38,8 @@ public class MainTowerHealthPanel : UIPanel
         // 自动获取组件引用
         if (centerTowerImage == null)
             centerTowerImage = GetComponentInChildren<Image>();
-        if (healthSlider == null)
-            healthSlider = GetComponentInChildren<Slider>();
-        if (healthBarFill == null && healthSlider != null)
-            healthBarFill = healthSlider.fillRect?.GetComponent<Image>();
+        if (healthBarFill == null)
+            healthBarFill = GetComponentInChildren<Image>();
         if (healthText == null)
             healthText = GetComponentInChildren<TextMeshProUGUI>();
         if (maxHealthText == null)
@@ -52,6 +49,18 @@ public class MainTowerHealthPanel : UIPanel
     protected override void OnShow()
     {
         base.OnShow();
+        
+        // 延迟初始化主塔血量UI，确保Tower组件已经完成初始化
+        StartCoroutine(DelayedInitializeMainTowerHealthUI());
+    }
+    
+    /// <summary>
+    /// 延迟初始化主塔血量UI
+    /// </summary>
+    private System.Collections.IEnumerator DelayedInitializeMainTowerHealthUI()
+    {
+        // 等待一帧，确保所有组件的Awake都执行完成
+        yield return null;
         
         // 初始化主塔血量UI
         InitializeMainTowerHealthUI();
@@ -137,18 +146,61 @@ public class MainTowerHealthPanel : UIPanel
     /// </summary>
     private void InitializeHealthBar()
     {
-        if (healthSlider != null && centerTowerDamageTaker != null)
+        if (healthBarFill != null && centerTowerDamageTaker != null)
         {
-            healthSlider.minValue = 0f;
-            healthSlider.maxValue = centerTowerDamageTaker.maxHealth;
-            healthSlider.value = centerTowerDamageTaker.currentHealth;
+            // 检查血量是否已经正确设置
+            if (centerTowerDamageTaker.maxHealth <= 0 || centerTowerDamageTaker.currentHealth <= 0)
+            {
+                // 如果血量还没有设置，延迟重试
+                StartCoroutine(DelayedInitializeHealthBar());
+                return;
+            }
+            
+            // 设置血条填充量
+            float healthPercent = centerTowerDamageTaker.currentHealth / centerTowerDamageTaker.maxHealth;
+            healthBarFill.fillAmount = healthPercent;
             
             // 设置血条颜色
             UpdateHealthBarColor();
             
             // 更新血量文本
             UpdateHealthText();
+            
+            Debug.Log($"主塔血条初始化完成: {centerTowerDamageTaker.currentHealth}/{centerTowerDamageTaker.maxHealth}, 百分比: {healthPercent:F2}");
         }
+        else
+        {
+            Debug.LogWarning("血条组件或DamageTaker组件未找到，无法初始化血条");
+        }
+    }
+    
+    /// <summary>
+    /// 延迟初始化血条
+    /// </summary>
+    private System.Collections.IEnumerator DelayedInitializeHealthBar()
+    {
+        float retryTime = 0f;
+        float maxRetryTime = 2f; // 最大重试时间2秒
+        
+        while (retryTime < maxRetryTime)
+        {
+            yield return new WaitForSeconds(0.1f);
+            retryTime += 0.1f;
+            
+            // 重新查找中心塔和DamageTaker
+            FindCenterTower();
+            
+            if (centerTowerDamageTaker != null && 
+                centerTowerDamageTaker.maxHealth > 0 && 
+                centerTowerDamageTaker.currentHealth > 0)
+            {
+                // 血量已经设置，重新初始化血条
+                InitializeHealthBar();
+                yield break;
+            }
+        }
+        
+        Debug.LogError("主塔血量初始化超时，请检查Tower组件是否正确设置血量");
     }
     
     /// <summary>
@@ -167,10 +219,11 @@ public class MainTowerHealthPanel : UIPanel
                 return;
         }
         
-        // 更新血条值
-        if (healthSlider != null)
+        // 更新血条填充量
+        if (healthBarFill != null)
         {
-            healthSlider.value = centerTowerDamageTaker.currentHealth;
+            float healthPercent = centerTowerDamageTaker.currentHealth / centerTowerDamageTaker.maxHealth;
+            healthBarFill.fillAmount = healthPercent;
         }
         
         // 更新血条颜色
@@ -209,13 +262,13 @@ public class MainTowerHealthPanel : UIPanel
         // 更新当前血量文本
         if (healthText != null)
         {
-            healthText.text = $"血量: {centerTowerDamageTaker.currentHealth:F0}";
+            healthText.text = $"{centerTowerDamageTaker.currentHealth:F0}";
         }
         
         // 更新最大血量文本
         if (maxHealthText != null)
         {
-            maxHealthText.text = $"最大血量: {centerTowerDamageTaker.maxHealth:F0}";
+            maxHealthText.text = $"{centerTowerDamageTaker.maxHealth:F0}";
         }
     }
     
