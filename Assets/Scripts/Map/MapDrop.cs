@@ -246,16 +246,28 @@ public class MapDrop : MonoBehaviour
     // 或者把逻辑放到别的脚本里，通过 onAllDropsCompleted 在 Inspector 里绑定。
     private void ResetCenterTower()
     {
+        Debug.Log("ResetCenterTower() 被调用");
+        
         // 通知UI面板刷新中心塔血量显示
         var uiManager = GameManager.Instance?.GetSystem<UIManager>();
         if (uiManager != null)
         {
+            Debug.Log("找到UIManager");
             var mainTowerHealthPanel = uiManager.GetMainTowerHealthPanel();
             if (mainTowerHealthPanel != null)
             {
+                Debug.Log("找到MainTowerHealthPanel，开始延迟显示");
                 // 延迟一点时间确保中心塔完全生成
                 StartCoroutine(DelayedRefreshMainTowerUI(mainTowerHealthPanel));
             }
+            else
+            {
+                Debug.LogWarning("未找到MainTowerHealthPanel");
+            }
+        }
+        else
+        {
+            Debug.LogWarning("未找到UIManager");
         }
     }
     
@@ -264,11 +276,13 @@ public class MapDrop : MonoBehaviour
     /// </summary>
     private System.Collections.IEnumerator DelayedRefreshMainTowerUI(MainTowerHealthPanel panel)
     {
-        // 等待确保中心塔完全生成和初始化
+        // 等待几帧确保中心塔完全生成和初始化
         yield return new WaitForSeconds(0.1f);
         
         // 显示主塔血量面板（面板会在OnShow时自动初始化）
         panel.Show();
+        
+        Debug.Log("主塔血量面板已显示");
     }
 
     // ====== 数据结构 ======

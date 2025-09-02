@@ -152,10 +152,10 @@ public class UIManager : MonoBehaviour
     {
         if (panels.TryGetValue(panelType, out UIPanel panel))
         {
-            // 隐藏所有其他面板
+            // 隐藏所有其他面板（除了主塔血量面板）
             foreach (var kvp in panels)
             {
-                if (kvp.Value != panel && kvp.Value.IsVisible)
+                if (kvp.Value != panel && kvp.Value.IsVisible && kvp.Key != PanelType.MainTowerHealth)
                 {
                     kvp.Value.Hide();
                 }
@@ -217,8 +217,6 @@ public class UIManager : MonoBehaviour
                 Debug.LogWarning($"未知的游戏阶段：{gamePhase}");
                 break;
         }
-        
-        // 主塔血量面板现在由MapDrop控制显示时机，不在这里强制显示
     }
 
     /// <summary>
@@ -255,17 +253,15 @@ public class UIManager : MonoBehaviour
     /// </summary>
     public void HideAllPanelsExceptMainTowerHealth()
     {
-        foreach (var panel in panels.Values)
+        foreach (var kvp in panels)
         {
-            panel.Hide();
+            // 跳过主塔血量面板，不隐藏它
+            if (kvp.Key == PanelType.MainTowerHealth)
+                continue;
+                
+            kvp.Value.Hide();
         }
         currentPanel = null;
-        
-        // 主塔血量面板保持显示
-        if (mainTowerHealthPanel != null && mainTowerHealthPanel.IsVisible)
-        {
-            // 已经显示，不需要操作
-        }
     }
 
     /// <summary>

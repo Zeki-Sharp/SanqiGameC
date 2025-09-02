@@ -59,6 +59,8 @@ public class MainTowerHealthPanel : UIPanel
     
     public override void Show()
     {
+        Debug.Log("MainTowerHealthPanel.Show() 被调用");
+        
         // 先激活GameObject
         gameObject.SetActive(true);
         
@@ -184,7 +186,7 @@ public class MainTowerHealthPanel : UIPanel
             // 更新血量文本
             UpdateHealthText();
             
-
+            Debug.Log($"主塔血条初始化完成: {centerTowerDamageTaker.currentHealth}/{centerTowerDamageTaker.maxHealth}");
         }
         else
         {
@@ -285,7 +287,7 @@ public class MainTowerHealthPanel : UIPanel
         if (healthText != null)
         {
             healthText.text = $"{centerTowerDamageTaker.currentHealth:F0}";
-
+            Debug.Log($"更新当前血量文本: {healthText.text}");
         }
         else
         {
@@ -296,7 +298,7 @@ public class MainTowerHealthPanel : UIPanel
         if (maxHealthText != null)
         {
             maxHealthText.text = $"{centerTowerDamageTaker.maxHealth:F0}";
-
+            Debug.Log($"更新最大血量文本: {maxHealthText.text}");
         }
         else
         {
