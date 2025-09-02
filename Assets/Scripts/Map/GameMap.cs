@@ -20,17 +20,17 @@ public class GameMap : MonoBehaviour
 
     [Header("Tilemap可视化")] public Tilemap tilemap; // 拖拽赋值
     public TileBase groundTile; // 拖拽你的grass瓦片
-    [Header("交错地砖配置")]
-    [SerializeField] private Tile groundTile1; // 地砖1
+    [Header("交错地砖配置")] [SerializeField] private Tile groundTile1; // 地砖1
     [SerializeField] private Tile groundTile2; // 地砖2
     [SerializeField] private bool useAlternatingTiles = true; // 是否使用交错地砖
 
     [Header("预制体生成区域")] [SerializeField, LabelText("塔的生成区域物体名")]
     private string towerAreaName = "TowerArea";
 
-    private Transform towerArea;
-    private BulletManager bulletManager;
+    [SerializeField] private Transform towerArea;
+    [SerializeField] private BulletManager bulletManager;
 
+    [SerializeField] private MapDrop mapDrop;
     // 移除传统单例模式，改为通过GameManager注册
 
     // 公共属性
@@ -45,11 +45,17 @@ public class GameMap : MonoBehaviour
         {
             GameManager.Instance.RegisterSystem(this);
         }
+
+        if (mapDrop == null)
+        {
+            mapDrop = this.GetComponent<MapDrop>();
+        }
+
         bulletManager = GameManager.Instance.GetSystem<BulletManager>();
         if (!InitializeScene())
             return;
-
         InitializeMap();
+
 
         var (worldMin, worldMax) = MapUtility.GetTilemapWorldBounds(tilemap);
         // Debug.Log($"世界坐标范围: Min = {worldMin}，Max = {worldMax}");
@@ -131,14 +137,21 @@ public class GameMap : MonoBehaviour
                 Debug.LogWarning("未分配地砖资源，无法初始化地图");
             }
         }
+        mapDrop.onAllDropsCompleted.AddListener(ResetCenterTower);
+        //
+        // ResetCenterTower();
+    }
 
-        // 创建中心塔
+    public void ResetCenterTower()
+    {
+        if (GameObject.FindGameObjectWithTag("CenterTower") != null)
+        {
+            return;
+        }
         GameObject centerTower = Instantiate(mapConfig.centerTower, towerArea);
         Vector3Int centerCell = CoordinateUtility.GetCenterCell(mapWidth, mapHeight); // 新增方法，返回cell坐标
-        PlaceBlock(centerCell, centerTower.GetComponent<Block>());
+        PlaceBlock(centerCell, centerTower.GetComponent<Block>(), tilemap);
         centerTower.GetComponent<BasicCaster2D>().poolManager = bulletManager.GetPoolManager();
-        // 注意：中心塔的层级现在由SceneLayerManager统一管理
-        // 不再需要手动设置
     }
 
     /// <summary>
@@ -164,9 +177,17 @@ public class GameMap : MonoBehaviour
         {
             for (int y = 0; y < mapHeight; y++)
             {
-                // 交错排列：棋盘格模式，相邻格子使用不同地砖
-                TileBase tileToUse = ((x + y) % 2 == 0) ? groundTile1 : groundTile2;
-                tilemap.SetTile(new Vector3Int(x, y, 0), tileToUse);
+                if (mapDrop != null)
+                {
+                    TileBase tileToUse = ((x + y) % 2 == 0) ? groundTile1 : groundTile2;
+                    mapDrop.AddDropTile(tileToUse, new Vector3Int(x, y, 0), 0.1f);
+                }
+                else
+                {
+                    // 交错排列：棋盘格模式，相邻格子使用不同地砖
+                    TileBase tileToUse = ((x + y) % 2 == 0) ? groundTile1 : groundTile2;
+                    tilemap.SetTile(new Vector3Int(x, y, 0), tileToUse);
+                }
             }
         }
     }
@@ -177,7 +198,7 @@ public class GameMap : MonoBehaviour
     /// <param name="cellPos">方块左下角的cell坐标</param>
     /// <param name="config">方块生成配置</param>
     /// <returns>是否可以放置</returns>
-    public bool CanPlaceBlock(Vector3Int cellPos, BlockGenerationConfig config)
+    public bool CanPlaceBlock(Vector3Int cellPos, BlockGenerationConfig config, Tilemap tilemap)
     {
         if (config == null || config.CellCount <= 0)
             return false;
@@ -208,7 +229,7 @@ public class GameMap : MonoBehaviour
     /// <param name="cellPos">方块左下角的cell坐标</param>
     /// <param name="block">要放置的方块</param>
     /// <returns>是否放置成功</returns>
-    public bool PlaceBlock(Vector3Int cellPos, Block block)
+    public bool PlaceBlock(Vector3Int cellPos, Block block, Tilemap tilemap)
     {
         if (block == null || block.Config == null)
         {
@@ -216,28 +237,28 @@ public class GameMap : MonoBehaviour
             return false;
         }
 
-        if (!CanPlaceBlock(cellPos, block.Config))
+        if (!CanPlaceBlock(cellPos, block.Config, tilemap))
         {
             Debug.LogWarning($"无法在位置 ({cellPos.x}, {cellPos.y}) 放置方块");
             return false;
         }
 
         var coordinates = block.Config.GetCellCoords();
-        
+
         if (coordinates == null || coordinates.Length == 0)
         {
             return false;
         }
-        
+
         // 标记格子为已占用
         foreach (Vector2Int coord in coordinates)
         {
             Vector3Int cell = cellPos + new Vector3Int(coord.x, coord.y, 0);
             Debug.Log($"[GameMap Debug] 标记格子 {cell} 为已占用");
-            
+
 
             var occupiedCell = new OccupiedCell(cell, !block.CanBeOverridden);
-                    
+
             bool addResult = occupiedCells.Add(occupiedCell);
         }
 
@@ -245,7 +266,7 @@ public class GameMap : MonoBehaviour
         block.SetCellPosition(cellPos, tilemap);
         placedBlocks[cellPos] = block;
 
-        
+
         return true;
     }
 
@@ -377,7 +398,7 @@ public class GameMap : MonoBehaviour
     {
         var shopSystem = GameManager.Instance?.GetSystem<ShopSystem>();
         var itemManage = GameManager.Instance?.GetSystem<ItemManage>();
-        
+
         if (shopSystem != null && itemManage != null && shopSystem.CanAfford(GetMapData().ItemRefreshMoney))
         {
             shopSystem.SpendMoney(GetMapData().ItemRefreshMoney);
@@ -386,6 +407,7 @@ public class GameMap : MonoBehaviour
             {
                 previewAreaController.RefreshShowArea();
             }
+
             itemManage.ShowItem();
         }
     }
@@ -397,14 +419,14 @@ public class GameMap : MonoBehaviour
     {
         // 清空并重新初始化地图
         ClearMap();
-        
+
         // 重置预览区域
         var previewAreaController = GameManager.Instance?.GetSystem<PreviewAreaController>();
         if (previewAreaController != null)
         {
             previewAreaController.RefreshShowArea();
         }
-        
+
         // 重置物品系统
         var itemManage = GameManager.Instance?.GetSystem<ItemManage>();
         if (itemManage != null)
@@ -450,25 +472,22 @@ public class OccupiedCellSet : HashSet<OccupiedCell>
 {
     public new bool Add(OccupiedCell item)
     {
-            
         bool result = base.Add(item);
 
-        
+
         return result;
     }
 
     public bool Contains(Vector3Int position)
     {
-        
         foreach (var cell in this)
         {
             if (cell.CellPosition == position)
             {
-               
                 return cell.IsOccupied;
             }
         }
-        
+
         return false;
     }
 

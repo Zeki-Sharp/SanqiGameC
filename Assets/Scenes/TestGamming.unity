@@ -614,6 +614,7 @@ GameObject:
   m_Component:
   - component: {fileID: 410750876}
   - component: {fileID: 410750875}
+  - component: {fileID: 410750877}
   m_Layer: 0
   m_Name: GameMap
   m_TagString: Untagged
@@ -644,6 +645,9 @@ MonoBehaviour:
   groundTile2: {fileID: 11400000, guid: a77f90c913dacbd47b796898b628546b, type: 2}
   useAlternatingTiles: 1
   towerAreaName: TowerArea
+  towerArea: {fileID: 0}
+  bulletManager: {fileID: 0}
+  mapDrop: {fileID: 0}
 --- !u!4 &410750876
 Transform:
   m_ObjectHideFlags: 0
@@ -660,6 +664,20 @@ Transform:
   - {fileID: 1479333735}
   m_Father: {fileID: 1974605107}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &410750877
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 410750874}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ec0135994bda26043807d2236dfc20e1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tilemap: {fileID: 850465150}
+  dropTime: 0
 --- !u!1 &414966604
 GameObject:
   m_ObjectHideFlags: 0

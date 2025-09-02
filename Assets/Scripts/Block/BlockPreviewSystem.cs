@@ -56,7 +56,7 @@ public class BlockPreviewSystem : MonoBehaviour
         }
         
         // 判断是否可放置
-        if (gameMap != null && gameMap.CanPlaceBlock(baseGridPos, currentBlockConfig))
+        if (gameMap != null && gameMap.CanPlaceBlock(baseGridPos, currentBlockConfig,gameMap.GetTilemap()))
         {
             // Block可建造，检查每个塔的升级/替换状态
             UpdateIndividualTowerColors(baseGridPos);

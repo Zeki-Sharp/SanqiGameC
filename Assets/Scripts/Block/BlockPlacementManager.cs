@@ -291,7 +291,7 @@ public class BlockPlacementManager : MonoBehaviour
     private void PlaceBlockAtPosition(Vector3Int position)
     {
         if (gameMap == null) return;
-
+        Tilemap tilemap = gameMap.GetTilemap();
         // 生成实际方块对象
         GameObject blockObject = new GameObject($"Block_{position.x}_{position.y}");
         Block block = blockObject.AddComponent<Block>();
@@ -300,7 +300,7 @@ public class BlockPlacementManager : MonoBehaviour
         block.Init(currentBlockConfig);
 
         // 检查是否可以放置
-        if (!gameMap.CanPlaceBlock(position, currentBlockConfig))
+        if (!gameMap.CanPlaceBlock(position, currentBlockConfig,tilemap))
         {
             Debug.LogWarning($"无法在位置 ({position.x}, {position.y}) 放置方块");
             Destroy(blockObject);
@@ -308,12 +308,10 @@ public class BlockPlacementManager : MonoBehaviour
         }
 
         // 放置方块到地图
-        if (gameMap.PlaceBlock(position, block))
+        if (gameMap.PlaceBlock(position, block,tilemap))
         {
             // Debug.Log($"方块成功放置到位置 ({position.x}, {position.y})");
-
-            // 生成塔
-            Tilemap tilemap = gameMap.GetTilemap();
+            
             // Debug.Log($"生成塔: 配置坐标数量={currentBlockConfig.Coordinates.Length}, 塔数据数量={currentTowerDatas.Count}");
             // 恢复：保持hasCheck为true，确保升级替换机制正常工作
             block.GenerateTowers(currentBlockConfig.Coordinates, currentTowerDatas.ToArray(), tilemap, true);
@@ -360,36 +358,36 @@ public class BlockPlacementManager : MonoBehaviour
     /// </summary>
     /// <param name="shapeName">形状名称</param>
     /// <param name="position">cell坐标位置</param>
-    public void TestGenerateBlock(string shapeName, Vector3Int position)
-    {
-        if (gameMap == null)
-        {
-            Debug.LogError("GameMap未找到");
-            return;
-        }
-
-        // 创建测试方块
-        GameObject blockObject = new GameObject($"TestBlock_{shapeName}");
-        Block block = blockObject.AddComponent<Block>();
-
-        // 初始化方块
-        block.Init(shapeName);
-
-        // 放置方块
-        if (gameMap.PlaceBlock(position, block))
-        {
-            // 生成测试塔数据
-            TowerData testTowerData = CreateTestTowerData();
-
-            // 为方块生成塔
-            GenerateTowersForBlock(block, testTowerData);
-        }
-        else
-        {
-            Debug.LogError($"测试方块放置失败");
-            Destroy(blockObject);
-        }
-    }
+    // public void TestGenerateBlock(string shapeName, Vector3Int position)
+    // {
+    //     if (gameMap == null)
+    //     {
+    //         Debug.LogError("GameMap未找到");
+    //         return;
+    //     }
+    //
+    //     // 创建测试方块
+    //     GameObject blockObject = new GameObject($"TestBlock_{shapeName}");
+    //     Block block = blockObject.AddComponent<Block>();
+    //
+    //     // 初始化方块
+    //     block.Init(shapeName);
+    //
+    //     // 放置方块
+    //     if (gameMap.PlaceBlock(position, block,))
+    //     {
+    //         // 生成测试塔数据
+    //         TowerData testTowerData = CreateTestTowerData();
+    //
+    //         // 为方块生成塔
+    //         GenerateTowersForBlock(block, testTowerData);
+    //     }
+    //     else
+    //     {
+    //         Debug.LogError($"测试方块放置失败");
+    //         Destroy(blockObject);
+    //     }
+    // }
 
     /// <summary>
     /// 创建测试塔数据
@@ -451,7 +449,7 @@ public class BlockPlacementManager : MonoBehaviour
         Vector3Int blockCellPos = cells[0];
         
         // 通过GameMap.PlaceBlock()正确注册Block到地图系统
-        if (!gameMap.PlaceBlock(blockCellPos, block))
+        if (!gameMap.PlaceBlock(blockCellPos, block,tilemap))
         {
             Debug.LogError($"无法在位置 {blockCellPos} 放置Block {blockObj.name}");
             Destroy(blockObj);
