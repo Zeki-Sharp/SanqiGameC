@@ -68,8 +68,86 @@ public class EnemyController : MonoBehaviour
         if (damageTaker != null)
             damageTaker.onDeath += Die;
     }
+    
+    // 处理子弹碰撞
+    void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.name.Contains("Bullet_Tower"))
+        {
+            PlayHitEffectManually(other.gameObject);
+        }
+    }
+    
+    /// <summary>
+    /// 手动播放击中特效
+    /// </summary>
+    private void PlayHitEffectManually(GameObject bulletObject)
+    {
+        // 尝试从子弹对象获取塔的信息
+        var bullet2D = bulletObject.GetComponent<RaycastPro.Bullets2D.Bullet2D>();
+        if (bullet2D != null && bullet2D.caster != null)
+        {
+            var tower = bullet2D.caster.GetComponent<Tower>();
+            if (tower != null && tower.TowerData != null)
+            {
+                var bulletConfig = tower.TowerData.GetBulletConfig();
+                if (bulletConfig?.HitEffectPrefab != null)
+                {
+                    Vector3 effectPosition = transform.position + bulletConfig.HitEffectOffset;
+                    GameObject effect = Instantiate(bulletConfig.HitEffectPrefab, effectPosition, Quaternion.identity);
+                    
+                    // 设置特效到Effect层级
+                    SetEffectToEffectLayer(effect);
+                    return;
+                }
+            }
+        }
+        
+        // 如果无法从子弹获取塔信息，回退到原来的方法
+        GameObject[] towers = GameObject.FindGameObjectsWithTag("Tower");
+        foreach (GameObject tower in towers)
+        {
+            var towerComponent = tower.GetComponent<Tower>();
+            if (towerComponent != null && towerComponent.TowerData != null)
+            {
+                var bulletConfig = towerComponent.TowerData.GetBulletConfig();
+                if (bulletConfig?.HitEffectPrefab != null)
+                {
+                    Vector3 effectPosition = transform.position + bulletConfig.HitEffectOffset;
+                    GameObject effect = Instantiate(bulletConfig.HitEffectPrefab, effectPosition, Quaternion.identity);
+                    
+                    // 设置特效到Effect层级
+                    SetEffectToEffectLayer(effect);
+                    return;
+                }
+            }
+        }
+    }
+    
+    /// <summary>
+    /// 设置特效到Effect层级
+    /// </summary>
+    private void SetEffectToEffectLayer(GameObject effect)
+    {
+        // 设置GameObject的Layer
+        effect.layer = LayerMask.NameToLayer("Effect");
+        
+        // 设置所有子对象的Layer
+        Transform[] childTransforms = effect.GetComponentsInChildren<Transform>();
+        foreach (Transform child in childTransforms)
+        {
+            child.gameObject.layer = LayerMask.NameToLayer("Effect");
+        }
+        
+        // 设置渲染器的sortingLayer和sortingOrder
+        var renderers = effect.GetComponentsInChildren<Renderer>();
+        foreach (var renderer in renderers)
+        {
+            renderer.sortingLayerName = "Effect";
+            renderer.sortingOrder = 100; // 设置较高的渲染顺序
+        }
+    }
 
-    void OnBullet(Bullet bullet) => damageTaker.TakeDamage(bullet.damage);
 
     private void Start()
     {

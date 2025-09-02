@@ -74,4 +74,4 @@ MonoBehaviour:
         healRangeType: 1
         healEffectType: 0
         maxHealTargets: 5
-  bulletConfig: {fileID: 11400000, guid: 834d67b011e3c7144ad4ed8ac70e5225, type: 2}
+  bulletConfig: {fileID: 11400000, guid: 5423ff6acf337844f99b2458420c6577, type: 2}

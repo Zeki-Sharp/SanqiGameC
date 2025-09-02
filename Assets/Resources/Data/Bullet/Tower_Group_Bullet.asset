@@ -10,10 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d6ec39cee63d9514abcbf2c22260e2f5, type: 3}
-  m_Name: TowerBullet
+  m_Name: Tower_Group_Bullet
   m_EditorClassIdentifier: 
   bulletName: TowerBullet
-  bulletPrefab: {fileID: 3447451743312656527, guid: 2fb7abf005420a1429b21a013ddbccb1, type: 3}
+  bulletPrefab: {fileID: 3447451743312656527, guid: 11a257e8d2ac3f146b35829f6ac630d5, type: 3}
   bulletType: 2
   bulletCategory: 0
   defaultSpeed: 10
@@ -21,7 +21,9 @@ MonoBehaviour:
   movementType: 0
   targetTags:
   - Enemy
-  targetType: 0
+  targetType: 1
   aoeRadius: 1.5
   initialPoolSize: 20
   maxPoolSize: 100
+  hitEffectPrefab: {fileID: 362261158077530393, guid: 20fda529c996a334da7fd65b48ea40df, type: 3}
+  hitEffectOffset: {x: 0, y: 0.1, z: 0}

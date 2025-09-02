@@ -26,6 +26,10 @@ public class BulletConfig : ScriptableObject
     [SerializeField] private int initialPoolSize = 20;
     [SerializeField] private int maxPoolSize = 100;
     
+    [Header("击中特效配置")]
+    [SerializeField] private GameObject hitEffectPrefab;
+    [SerializeField] private Vector3 hitEffectOffset = Vector3.up * 0.1f;
+    
     // 公共属性
     public string BulletName => bulletName;
     public GameObject BulletPrefab => bulletPrefab;
@@ -39,6 +43,10 @@ public class BulletConfig : ScriptableObject
     public float AoeRadius => aoeRadius;
     public int InitialPoolSize => initialPoolSize;
     public int MaxPoolSize => maxPoolSize;
+    
+    // 击中特效属性
+    public GameObject HitEffectPrefab => hitEffectPrefab;
+    public Vector3 HitEffectOffset => hitEffectOffset;
 }
 
 /// <summary>

@@ -76,11 +76,28 @@ public class BulletCollide : MonoBehaviour
             taker.TakeDamage(bullet.damage);
         }
         
-        // 2. 再分发所有效果
+        // 2. 播放击中特效
+        PlayHitEffect(target.transform.position);
+        
+        // 3. 再分发所有效果
         var effectControllers = GetComponents<IBulletEffectDispatcher>();
         foreach (var dispatcher in effectControllers)
         {
             dispatcher.DispatchEffect(target, owner);
+        }
+    }
+    
+    /// <summary>
+    /// 播放击中特效
+    /// </summary>
+    private void PlayHitEffect(Vector3 position)
+    {
+        if (bulletConfig?.HitEffectPrefab != null)
+        {
+            Vector3 effectPosition = position + bulletConfig.HitEffectOffset;
+            GameObject effect = Instantiate(bulletConfig.HitEffectPrefab, effectPosition, Quaternion.identity);
+            
+            Debug.Log($"[BulletCollide] 播放击中特效: {bulletConfig.HitEffectPrefab.name} 在位置: {effectPosition}");
         }
     }
     

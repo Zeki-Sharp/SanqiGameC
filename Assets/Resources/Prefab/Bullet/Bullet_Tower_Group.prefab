@@ -113,7 +113,7 @@ GameObject:
   - component: {fileID: 4051412511425562908}
   - component: {fileID: -4261691411315826384}
   m_Layer: 0
-  m_Name: Bullet_Test
+  m_Name: Bullet_Tower_Group
   m_TagString: Bullet
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -320,7 +320,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   moveType: 0
-  callMethod: OnBullet
+  callMethod: TestMessage
   messageUpward: 1
   ownerReference: {fileID: 0}
   damage: 100
@@ -328,7 +328,7 @@ MonoBehaviour:
   lifeTime: 10
   endDelay: 0
   endFunction: 1
-  endOnCollide: 0
+  endOnCollide: 1
   caster: {fileID: 0}
   raySource: {fileID: 0}
   collisionRay: {fileID: 1022687090493798512}

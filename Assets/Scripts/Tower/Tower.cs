@@ -5,6 +5,7 @@ using System.Text;
 using Plugins.RaycastPro.Demo.Scripts;
 using RaycastPro;
 using RaycastPro.Bullets;
+using RaycastPro.Bullets2D;
 using RaycastPro.Casters2D;
 using RaycastPro.Detectors;
 using RaycastPro.Detectors2D;
@@ -231,7 +232,10 @@ public class Tower : MonoBehaviour
     public void SetBulletDamage()
     {
         if (bulletCaster == null || bulletCaster.bullets == null)
+        {
+            Debug.LogWarning($"[DEBUG] {this.name} bulletCaster或bullets为空");
             return;
+        }
         
         for (int i = 0; i < bulletCaster.bullets.Length; i++)
         {
@@ -239,13 +243,13 @@ public class Tower : MonoBehaviour
                 continue;
             
             bulletCaster.bullets[i].damage = towerData?.GetPhysicAttack(level) ?? 10f;
+            bulletCaster.bullets[i].caster = bulletCaster; // 确保caster被正确设置
+            
             var bulletCollide = bulletCaster.bullets[i].GetComponent<BulletCollide>();
             if (bulletCollide != null)
             {
                  bulletCollide.Initial(towerData?.GetBulletConfig(), this.gameObject);
             }
-               
-            
         }
     }
     public bool IsCenterTowerDestroyed()
@@ -958,8 +962,6 @@ public void Initialize(TowerData data, Vector3Int pos, bool hasCheck = false, bo
         
         // 使用RaycastPro系统发射子弹
         bulletCaster.Cast(0);
-        
-        Debug.Log($"{this.name} 攻击目标: {target.name}");
     }
     
     /// <summary>
