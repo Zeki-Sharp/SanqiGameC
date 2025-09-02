@@ -590,8 +590,6 @@ MonoBehaviour:
   rayMaxDistance: 1000
   worldHitRadius: 0.06
   confirmFrames: 2
-  showDelay: 0.5
-  hideDelay: 0.15
   tipMenu: {fileID: 1333244314}
 --- !u!114 &378793956 stripped
 MonoBehaviour:
@@ -677,7 +675,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   tilemap: {fileID: 850465150}
-  dropTime: 0
+  cam: {fileID: 0}
+  defaultDropDuration: 5
+  dropEase: 30
+  bounceHeight: 0.2
+  bounceDuration: 0.5
+  maxRandomDelay: 2
+  onAllDropsCompleted:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &414966604
 GameObject:
   m_ObjectHideFlags: 0
@@ -5274,6 +5280,10 @@ PrefabInstance:
     - target: {fileID: 6848563362957936610, guid: 73fa403cbbb0a7940bd5dcba744c1347, type: 3}
       propertyPath: m_Name
       value: MainTowerUIPanel
+      objectReference: {fileID: 0}
+    - target: {fileID: 6848563362957936610, guid: 73fa403cbbb0a7940bd5dcba744c1347, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

@@ -35,22 +35,42 @@ public class MainTowerHealthPanel : UIPanel
     {
         base.Awake();
         
-        // 自动获取组件引用
+        // 确保面板一开始就是隐藏的
+        gameObject.SetActive(false);
+        
+        // 自动获取组件引用（如果Inspector中没有分配）
         if (centerTowerImage == null)
             centerTowerImage = GetComponentInChildren<Image>();
-        if (healthBarFill == null)
-            healthBarFill = GetComponentInChildren<Image>();
+        
         if (healthText == null)
-            healthText = GetComponentInChildren<TextMeshProUGUI>();
+        {
+            var allTexts = GetComponentsInChildren<TextMeshProUGUI>();
+            if (allTexts.Length > 0)
+                healthText = allTexts[0];
+        }
+        
         if (maxHealthText == null)
-            maxHealthText = GetComponentInChildren<TextMeshProUGUI>();
+        {
+            var allTexts = GetComponentsInChildren<TextMeshProUGUI>();
+            if (allTexts.Length > 1)
+                maxHealthText = allTexts[1];
+        }
+    }
+    
+    public override void Show()
+    {
+        // 先激活GameObject
+        gameObject.SetActive(true);
+        
+        // 然后调用基类的Show方法
+        base.Show();
     }
     
     protected override void OnShow()
     {
         base.OnShow();
         
-        // 延迟初始化主塔血量UI，确保Tower组件已经完成初始化
+        // 显示时进行初始化，确保中心塔已经生成
         StartCoroutine(DelayedInitializeMainTowerHealthUI());
     }
     
@@ -92,8 +112,6 @@ public class MainTowerHealthPanel : UIPanel
         InitializeHealthBar();
         
         isInitialized = true;
-        
-        Debug.Log("主塔血量UI初始化完成");
     }
     
     /// <summary>
@@ -166,7 +184,7 @@ public class MainTowerHealthPanel : UIPanel
             // 更新血量文本
             UpdateHealthText();
             
-            Debug.Log($"主塔血条初始化完成: {centerTowerDamageTaker.currentHealth}/{centerTowerDamageTaker.maxHealth}, 百分比: {healthPercent:F2}");
+
         }
         else
         {
@@ -219,6 +237,10 @@ public class MainTowerHealthPanel : UIPanel
                 return;
         }
         
+        // 检查血量数据是否有效
+        if (centerTowerDamageTaker.maxHealth <= 0)
+            return;
+        
         // 更新血条填充量
         if (healthBarFill != null)
         {
@@ -263,12 +285,22 @@ public class MainTowerHealthPanel : UIPanel
         if (healthText != null)
         {
             healthText.text = $"{centerTowerDamageTaker.currentHealth:F0}";
+
+        }
+        else
+        {
+            Debug.LogWarning("healthText 组件为 null");
         }
         
         // 更新最大血量文本
         if (maxHealthText != null)
         {
             maxHealthText.text = $"{centerTowerDamageTaker.maxHealth:F0}";
+
+        }
+        else
+        {
+            Debug.LogWarning("maxHealthText 组件为 null");
         }
     }
     
@@ -280,7 +312,10 @@ public class MainTowerHealthPanel : UIPanel
         if (isVisible)
         {
             FindCenterTower();
-            UpdateHealthDisplay();
+            if (centerTowerDamageTaker != null)
+            {
+                UpdateHealthDisplay();
+            }
         }
     }
     

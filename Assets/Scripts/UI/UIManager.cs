@@ -94,11 +94,14 @@ public class UIManager : MonoBehaviour
         if (pauseUIPanel != null) pauseUIPanel.Hide();
         if (defeatUIPanel != null) defeatUIPanel.Hide();
 
-        // 主塔血量面板在所有阶段都显示
+        // 主塔血量面板初始时隐藏，等中心塔生成后再显示
         if (mainTowerHealthPanel != null)
         {
             mainTowerHealthPanel.Initialize();
-            mainTowerHealthPanel.Show();
+            // 确保面板初始时是隐藏的
+            mainTowerHealthPanel.Hide();
+            // 注册到字典中，以便GetPanel能找到
+            panels[PanelType.MainTowerHealth] = mainTowerHealthPanel;
         }
 
         // 注册面板到字典
@@ -215,11 +218,7 @@ public class UIManager : MonoBehaviour
                 break;
         }
         
-        // 确保主塔血量面板在所有阶段都显示
-        if (mainTowerHealthPanel != null && !mainTowerHealthPanel.IsVisible)
-        {
-            mainTowerHealthPanel.Show();
-        }
+        // 主塔血量面板现在由MapDrop控制显示时机，不在这里强制显示
     }
 
     /// <summary>
@@ -312,5 +311,6 @@ public enum PanelType
     Pass,      // 通过阶段UI（新增）
     Victory,   // 胜利阶段UI
     Pause,     // 暂停界面UI
-    Defeat     // 失败阶段UI
+    Defeat,    // 失败阶段UI
+    MainTowerHealth  // 主塔血量面板
 }

@@ -190,6 +190,12 @@ public class GameMap : MonoBehaviour
                 }
             }
         }
+        
+        // 如果有MapDrop组件，启动所有掉落动画
+        if (mapDrop != null)
+        {
+            mapDrop.StartAllDrops();
+        }
     }
 
     /// <summary>
