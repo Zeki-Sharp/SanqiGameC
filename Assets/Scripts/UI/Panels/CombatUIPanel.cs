@@ -87,6 +87,18 @@ public class CombatUIPanel : UIPanel
     {
         if (isVisible)
         {
+            // 检查游戏状态，如果游戏已经失败或胜利，停止更新UI
+            if (GameManager.Instance != null)
+            {
+                var gameStateManager = GameManager.Instance.GetSystem<GameStateManager>();
+                if (gameStateManager != null && 
+                    (gameStateManager.CurrentPhase == GamePhase.DefeatPhase || 
+                     gameStateManager.CurrentPhase == GamePhase.VictoryPhase))
+                {
+                    return; // 游戏已结束，停止更新UI
+                }
+            }
+            
             UpdateUI();
         }
     }

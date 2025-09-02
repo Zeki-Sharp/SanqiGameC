@@ -267,9 +267,33 @@ public class GameStateManager : MonoBehaviour
     private void OnDefeatConditionMet(DefeatConditionMetEventArgs e)
     {
         Debug.Log("游戏失败：中心塔被摧毁");
-        // TODO: 切换到失败界面或重新开始
-        // 暂时重新开始游戏
-        RestartGame();
+        // 切换到失败阶段
+        SwitchToDefeatPhase();
+    }
+    
+    /// <summary>
+    /// 切换到失败阶段
+    /// </summary>
+    public void SwitchToDefeatPhase()
+    {
+        if (currentPhase == GamePhase.DefeatPhase)
+            return;
+            
+        GamePhase oldPhase = currentPhase;
+        currentPhase = GamePhase.DefeatPhase;
+        
+        // 发布状态变化事件
+        EventBus.Instance.Publish(new GamePhaseChangedEventArgs 
+        { 
+            OldPhase = oldPhase, 
+            NewPhase = GamePhase.DefeatPhase 
+        });
+        
+        // 更新UI
+        if (UIManager != null)
+            UIManager.SwitchToPhase(GamePhase.DefeatPhase);
+            
+        Debug.Log($"游戏状态切换：{oldPhase} → 失败阶段");
     }
     
     /// <summary>

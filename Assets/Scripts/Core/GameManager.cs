@@ -157,6 +157,9 @@ public class GameManager : MonoBehaviour
                 case GamePhase.VictoryPhase:
                     gameStateManager.SwitchToVictoryPhase();
                     break;
+                case GamePhase.DefeatPhase:
+                    gameStateManager.SwitchToDefeatPhase();
+                    break;
             }
         }
         else
@@ -230,5 +233,19 @@ public class GameManager : MonoBehaviour
             var currentPhase = GetCurrentGamePhase();
             uiManager.SwitchToPhase(currentPhase);
         }
+    }
+    
+    /// <summary>
+    /// 完全重置游戏到初始状态 - 重新加载场景
+    /// </summary>
+    public void ResetGameToInitialState()
+    {
+        Debug.Log("GameManager: 重新加载场景以重置游戏");
+        
+        // 恢复时间缩放
+        Time.timeScale = 1f;
+        
+        // 重新加载当前场景，这样会重新执行所有初始化流程
+        UnityEngine.SceneManagement.SceneManager.LoadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name);
     }
 }

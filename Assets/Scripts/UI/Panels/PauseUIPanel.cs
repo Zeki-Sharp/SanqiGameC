@@ -57,77 +57,11 @@ public class PauseUIPanel : UIPanel
         // 隐藏暂停面板
         Hide();
         
-        // 通过GameManager重置游戏
+                // 通过GameManager重置游戏
         if (GameManager.Instance != null)
         {
-            // 销毁所有敌人
-            GameObject[] enemies = GameObject.FindGameObjectsWithTag("Enemy");
-            foreach (GameObject enemy in enemies)
-            {
-                Destroy(enemy);
-            }
-
-            // 销毁所有塔防
-            GameObject[] towers = GameObject.FindGameObjectsWithTag("Tower");
-            foreach (GameObject tower in towers)
-            {
-                // 不销毁中心塔
-                if (!tower.CompareTag("CenterTower"))
-                {
-                    Destroy(tower);
-                }
-            }
-
-            // 重置回合管理器
-            var roundManager = GameManager.Instance.GetSystem<RoundManager>();
-            if (roundManager != null)
-            {
-                roundManager.Reset();
-            }
-            
-            // 重置游戏状态
-            var gameStateManager = GameManager.Instance.GetSystem<GameStateManager>();
-            if (gameStateManager != null)
-            {
-                gameStateManager.SwitchToBuildingPhase();
-            }
-
-            // 重置敌人生成器
-            var enemySpawner = GameObject.FindFirstObjectByType<EnemySpawner>();
-            if (enemySpawner != null)
-            {
-                enemySpawner.StopAllCoroutines(); // 停止所有生成协程
-                enemySpawner.enabled = false;      // 禁用生成器
-                enemySpawner.enabled = true;       // 重新启用生成器
-            }
-
-            // 重置商店/资源系统
-            var shopSystem = GameManager.Instance.GetSystem<ShopSystem>();
-            if (shopSystem != null)
-            {
-                // 重置金钱为初始值
-                shopSystem.Money = shopSystem.InitialMoney;
-            }
-
-            // 重置物品系统
-            var itemManage = GameManager.Instance.GetSystem<ItemManage>();
-            if (itemManage != null)
-            {
-                itemManage.ShowItem(false); // 重新生成物品
-            }
-
-            // 重置地图
-            var gameMap = GameManager.Instance.GetSystem<GameMap>();
-            if (gameMap != null)
-            {
-                gameMap.ResetMap(); // 如果有这个方法的话
-            }
-        }
-        
-        // 切换到建设UI
-        if (UIManager.Instance != null)
-        {
-            UIManager.Instance.SwitchToPhase(GamePhase.BuildingPhase);
+            // 使用GameManager的统一重置方法
+            GameManager.Instance.ResetGameToInitialState();
         }
     }
 

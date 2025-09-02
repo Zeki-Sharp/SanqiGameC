@@ -320,6 +320,19 @@ public class VictoryConditionChecker : MonoBehaviour
         Debug.Log("游戏失败：中心塔被摧毁");
     }
     
+    /// <summary>
+    /// 主塔死亡时调用此方法
+    /// </summary>
+    public void OnCenterTowerDestroyed()
+    {
+        if (hasCheckedVictory)
+            return;
+            
+        Debug.Log("VictoryConditionChecker: 接收到主塔死亡通知");
+        Dictionary<string, object> statistics = CollectGameStatistics();
+        TriggerDefeat(statistics);
+    }
+    
 
     
     /// <summary>

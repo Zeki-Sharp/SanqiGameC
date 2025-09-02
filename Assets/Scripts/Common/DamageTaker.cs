@@ -151,6 +151,18 @@ public class DamageTaker : MonoBehaviour
     protected virtual void Die()
     {
         onDeath?.Invoke();
+        
+        // 检查是否是主塔死亡
+        if (gameObject.CompareTag("CenterTower"))
+        {
+            Debug.Log("主塔死亡，通知VictoryConditionChecker");
+            var victoryChecker = GameManager.Instance?.GetSystem<VictoryConditionChecker>();
+            if (victoryChecker != null)
+            {
+                victoryChecker.OnCenterTowerDestroyed();
+            }
+        }
+        
         // 默认销毁对象，可重写
         Destroy(gameObject);
     }

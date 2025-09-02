@@ -131,19 +131,16 @@ public class VictoryUIPanel : UIPanel
     /// </summary>
     private void RestartGame()
     {
+        Debug.Log("VictoryUIPanel: 开始重新开始游戏");
+        
         if (GameManager.Instance != null)
         {
-            // 重置所有管理器
-            var roundManager = GameManager.Instance.GetSystem<RoundManager>();
-            if (roundManager != null)
-                roundManager.Reset();
-
-            var victoryChecker = GameManager.Instance.GetSystem<VictoryConditionChecker>();
-            if (victoryChecker != null)
-                victoryChecker.Reset();
-
-            // 切换回建设阶段
-            GameManager.Instance.SwitchGamePhase(GamePhase.BuildingPhase);
+            // 使用GameManager的统一重置方法
+            GameManager.Instance.ResetGameToInitialState();
+        }
+        else
+        {
+            Debug.LogError("GameManager.Instance为空，无法重新开始游戏");
         }
     }
 
