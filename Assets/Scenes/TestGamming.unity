@@ -590,6 +590,8 @@ MonoBehaviour:
   rayMaxDistance: 1000
   worldHitRadius: 0.06
   confirmFrames: 2
+  showDelay: 0.5
+  hideDelay: 0.15
   tipMenu: {fileID: 1333244314}
 --- !u!114 &378793956 stripped
 MonoBehaviour:
