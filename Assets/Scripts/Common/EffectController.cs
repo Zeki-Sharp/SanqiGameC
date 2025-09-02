@@ -171,22 +171,28 @@ public class ActiveEffect
             {
                 var healTargets = FindHealTargetsSimple(target);
                 
-                if (healTargets.Count > 0)
+                            if (healTargets.Count > 0)
+            {
+                foreach (var healTarget in healTargets)
                 {
-                    foreach (var healTarget in healTargets)
+                    if (healTarget != null && healTarget.TryGetComponent<DamageTaker>(out var damageTaker))
                     {
-                        if (healTarget != null && healTarget.TryGetComponent<DamageTaker>(out var damageTaker))
+                        float oldHealth = damageTaker.currentHealth;
+                        float maxHealth = damageTaker.maxHealth;
+                        
+                        // 只有非满血的塔才进行治疗和播放特效
+                        if (oldHealth < maxHealth)
                         {
-                            float oldHealth = damageTaker.currentHealth;
                             damageTaker.Heal(Data.healAmount);
                             float newHealth = damageTaker.currentHealth;
                             Debug.Log($"[Heal Debug] 治疗 {healTarget.name}: {oldHealth:F1} -> {newHealth:F1} (+{newHealth - oldHealth:F1})");
-                            
+
                             // 播放治疗特效
                             PlayHealEffect(healTarget);
                         }
                     }
                 }
+            }
                 else
                 {
                     Debug.LogWarning($"[Heal Debug] {target.name} 没有找到任何治疗目标！");
@@ -218,7 +224,6 @@ public class ActiveEffect
         
         // 将治疗塔的世界坐标转换为格子坐标
         Vector3Int towerCellPos = gameMap.WorldToCellPosition(centerTarget.transform.position);
-        Debug.Log($"[Heal Debug] 治疗塔 {centerTarget.name} 格子坐标: {towerCellPos}");
         
         // 获取治疗范围类型
         var tower = centerTarget.GetComponent<Tower>();
@@ -233,24 +238,18 @@ public class ActiveEffect
         // 获取需要检查的格子坐标（严格按照Adjacent4范围）
         var targetCells = HealRangeCalculator.GetHealTargetCells(towerCellPos, rangeType);
         
-        // 🔧 添加治疗塔自己的格子到检查列表
+        // 添加治疗塔自己的格子到检查列表
         if (!targetCells.Contains(towerCellPos))
         {
             targetCells.Add(towerCellPos);
-            Debug.Log($"[Heal Debug] 添加治疗塔自身格子: {towerCellPos}");
         }
         
-        Debug.Log($"[Heal Debug] 治疗范围类型: {rangeType}, 需要检查的格子数量: {targetCells.Count} (包含自身)");
-        
-        // 🔧 直接使用直接检测逻辑，不依赖GameMap.IsCellOccupied()
+        // 直接使用直接检测逻辑，不依赖GameMap.IsCellOccupied()
         var placedBlocks = gameMap.GetAllPlacedBlocks();
-        Debug.Log($"[Heal Debug] 总共有 {placedBlocks.Count} 个已放置的Block");
         
         // 检查每个格子中的塔
         foreach (var cellPos in targetCells)
         {
-            Debug.Log($"[Heal Debug] ===== 开始检查格子: {cellPos} =====");
-            
             bool cellIsOccupied = false;
             GameObject towerInThisCell = null;
             
@@ -270,16 +269,18 @@ public class ActiveEffect
                             Vector3Int coveredCell = blockCellPos + new Vector3Int(coord.x, coord.y, 0);
                             if (coveredCell == cellPos)
                             {
-                                Debug.Log($"[Heal Debug] ✓ 发现Block {block.name} 覆盖目标格子 {cellPos}");
-                                Debug.Log($"[Heal Debug] Block基础位置: {blockCellPos}");
                                 cellIsOccupied = true;
                                 
                                 // 在这个Block中查找塔
                                 var towerInBlock = block.GetTower(new Vector3Int(coord.x, coord.y, 0));
                                 if (towerInBlock != null && IsValidHealTarget(towerInBlock.gameObject))
                                 {
-                                    Debug.Log($"[Heal Debug] 格子 {cellPos} 中找到塔: {towerInBlock.name}");
-                                    towerInThisCell = towerInBlock.gameObject;
+                                    // 检查塔的血量，只有非满血的塔才加入治疗目标
+                                    var damageTaker = towerInBlock.GetComponent<DamageTaker>();
+                                    if (damageTaker != null && damageTaker.currentHealth < damageTaker.maxHealth)
+                                    {
+                                        towerInThisCell = towerInBlock.gameObject;
+                                    }
                                 }
                                 break;
                             }
@@ -292,21 +293,14 @@ public class ActiveEffect
             // 如果找到有效的治疗目标，添加到列表
             if (towerInThisCell != null)
             {
-                Debug.Log($"[Heal Debug] 添加有效治疗目标: {towerInThisCell.name}");
                 healTargets.Add(towerInThisCell);
             }
-            else
-            {
-                Debug.Log($"[Heal Debug] 格子 {cellPos} 中没有找到有效的治疗目标");
-            }
-            
-            Debug.Log($"[Heal Debug] ===== 完成检查格子: {cellPos} =====");
         }
         
-        Debug.Log($"[Heal Debug] 最终找到 {healTargets.Count} 个治疗目标");
         return healTargets;
     }
     
+
     /// <summary>
     /// 检查是否为有效的治疗目标
     /// </summary>
@@ -337,7 +331,6 @@ public class ActiveEffect
     {
         if (Data.healEffectPrefab == null)
         {
-            Debug.LogWarning($"[Heal Debug] 治疗特效预制体为空，跳过特效播放");
             return;
         }
         
@@ -350,8 +343,6 @@ public class ActiveEffect
         
         // 控制粒子系统只播放一次
         ControlParticleSystemPlayOnce(effect);
-        
-        Debug.Log($"[Heal Debug] 播放治疗特效: {Data.healEffectPrefab.name} 在 {healTarget.name}");
     }
     
     /// <summary>
