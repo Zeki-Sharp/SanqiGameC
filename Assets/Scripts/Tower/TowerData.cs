@@ -271,12 +271,20 @@ public class TowerData : ScriptableObject
 
     [Header("子弹配置"), InlineEditor(InlineEditorModes.GUIOnly, InlineEditorObjectFieldModes.Hidden)]
     [SerializeField] private BulletConfig bulletConfig;
+    
+    [Header("治疗特效配置")]
+    [SerializeField, LabelText("治疗特效预制体")] private GameObject healEffectPrefab;
+    [SerializeField, LabelText("治疗特效偏移")] private Vector3 healEffectOffset = Vector3.up * 0.1f;
 
     // 公共属性访问器
     public int ID => id;
     public string TowerName => towerName;
     public string TowerDescription => towerDescription;
     public Sprite TowerSprite => towerSprite;
+    
+    // 治疗特效配置访问器
+    public GameObject HealEffectPrefab => healEffectPrefab;
+    public Vector3 HealEffectOffset => healEffectOffset;
     
     public int MaxLevel => levels != null ? levels.Length : 0;
 
@@ -382,6 +390,22 @@ public class TowerData : ScriptableObject
             return HealEffectType.Instant;
         }
         return levels[level].HealEffectType;
+    }
+    
+    /// <summary>
+    /// 获取治疗特效预制体
+    /// </summary>
+    public GameObject GetHealEffectPrefab(int level)
+    {
+        return HealEffectPrefab; // 治疗特效配置在TowerData级别，不随等级变化
+    }
+    
+    /// <summary>
+    /// 获取治疗特效偏移
+    /// </summary>
+    public Vector3 GetHealEffectOffset(int level)
+    {
+        return HealEffectOffset; // 治疗特效配置在TowerData级别，不随等级变化
     }
     
     /// <summary>

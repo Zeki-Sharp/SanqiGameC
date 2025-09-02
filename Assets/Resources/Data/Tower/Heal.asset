@@ -75,3 +75,5 @@ MonoBehaviour:
         healEffectType: 0
         maxHealTargets: 4
   bulletConfig: {fileID: 11400000, guid: ec8e31838e4c8e242a930307cc159f5d, type: 2}
+  healEffectPrefab: {fileID: 6331275906715107345, guid: 690951f4781b19649bc5c7892414ff37, type: 3}
+  healEffectOffset: {x: 0, y: 0.1, z: 0}

@@ -48,17 +48,11 @@ public class TipSystem : MonoBehaviour
     [Header("Switch Confirm")]
     [SerializeField, Tooltip("Consecutive frames required to confirm switching to a new tower")]
     private int confirmFrames = 2;
-    
-    [Header("Display Timing")]
-    [SerializeField, Tooltip("Delay in seconds before showing tip panel")]
-    private float showDelay = 0.5f;
-    [SerializeField, Tooltip("Delay in seconds before hiding tip panel")]
-    private float hideDelay = 0.15f;
 
     [ShowInInspector] private Vector3 _lastMousePos;
 
     [ShowInInspector] private float lastLeaveTime = -999f;
-    [ShowInInspector] private float lastEnterTime = -999f;
+    [ShowInInspector] private  float hideDelay = 0.15f;
 
     [SerializeField] private CanvasGroup tipMenu;
 
@@ -215,38 +209,11 @@ public class TipSystem : MonoBehaviour
         {
             _pendingTower = null;
             _pendingCount = 0;
-            
-            // 如果面板已经显示，保持显示
-            if (isVisible)
-            {
-                KeepAlive();
-                // optional: refresh data (hp may change)
-                UpdateUIData(_currentTower);
-                SetTipPosition(Input.mousePosition);
-                lastLeaveTime = -999f;
-            }
-            else
-            {
-                // 如果面板还没显示，检查延迟时间
-                if (lastEnterTime < 0) lastEnterTime = Time.time;
-                float elapsedTime = Time.time - lastEnterTime;
-                if (showDebugInfo) Debug.Log($"[TipSystem] 等待显示延迟: {elapsedTime:F2}s / {showDelay:F2}s");
-                
-                if (elapsedTime >= showDelay)
-                {
-                    bool needIntro = !isVisible;
-
-                    UpdateUIData(_currentTower);
-                    if (!TipMenu.activeSelf) TipMenu.SetActive(true);
-                    if (tipMenu != null) tipMenu.alpha = 1f;
-                    KeepAlive();
-
-                    if (needIntro) PlayIntro(_currentTower);
-                    SetTipPosition(Input.mousePosition);
-                    
-                    if (showDebugInfo) Debug.Log($"[TipSystem] 延迟时间到达，显示面板");
-                }
-            }
+            KeepAlive();
+            // optional: refresh data (hp may change)
+            UpdateUIData(_currentTower);
+            SetTipPosition(Input.mousePosition);
+            lastLeaveTime = -999f;
             return;
         }
 
@@ -255,7 +222,6 @@ public class TipSystem : MonoBehaviour
         {
             _pendingTower = detected;
             _pendingCount = 1;
-            lastEnterTime = Time.time; // 重置进入时间
         }
         else
         {
@@ -268,26 +234,16 @@ public class TipSystem : MonoBehaviour
             _pendingCount = 0;
             _currentTower = _pendingTower;
             lastLeaveTime = -999f;
-            
-            // 检查是否已经等待足够的时间
-            if (lastEnterTime < 0) lastEnterTime = Time.time;
-            float elapsedTime = Time.time - lastEnterTime;
-            if (showDebugInfo) Debug.Log($"[TipSystem] 新塔等待显示延迟: {elapsedTime:F2}s / {showDelay:F2}s");
-            
-            if (elapsedTime >= showDelay)
-            {
-                bool needIntro = !isVisible;
 
-                UpdateUIData(_currentTower);
-                if (!TipMenu.activeSelf) TipMenu.SetActive(true);
-                if (tipMenu != null) tipMenu.alpha = 1f;
-                KeepAlive();
+            bool needIntro = !isVisible;
 
-                if (needIntro) PlayIntro(_currentTower);
-                SetTipPosition(Input.mousePosition);
-                
-                if (showDebugInfo) Debug.Log($"[TipSystem] 新塔延迟时间到达，显示面板");
-            }
+            UpdateUIData(_currentTower);
+            if (!TipMenu.activeSelf) TipMenu.SetActive(true);
+            if (tipMenu != null) tipMenu.alpha = 1f;
+            KeepAlive();
+
+            if (needIntro) PlayIntro(_currentTower);
+            SetTipPosition(Input.mousePosition);
         }
     }
 
@@ -297,7 +253,6 @@ public class TipSystem : MonoBehaviour
         if (Time.time - lastLeaveTime > hideDelay)
         {
             _currentTower = null;
-            lastEnterTime = -999f; // 重置进入时间
             ReallyHide();
         }
     }

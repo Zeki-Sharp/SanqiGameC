@@ -116,7 +116,9 @@ public class Tower : MonoBehaviour
                 healInterval = towerData.GetHealInterval(level),
                 healRangeType = towerData.GetHealRangeType(level),
                 healEffectType = towerData.GetHealEffectType(level),
-                duration = -1f // 永久效果
+                duration = -1f, // 永久效果
+                healEffectPrefab = towerData.GetHealEffectPrefab(level),
+                healEffectOffset = towerData.GetHealEffectOffset(level)
             };
             
             // 应用治疗效果

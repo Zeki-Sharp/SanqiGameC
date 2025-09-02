@@ -54,6 +54,11 @@ public class EffectData
     public float healInterval;
     public HealRangeType healRangeType;
     public HealEffectType healEffectType;
+    
+    // 治疗特效配置
+    [Header("治疗特效配置")]
+    public GameObject healEffectPrefab;
+    public Vector3 healEffectOffset = Vector3.up * 0.1f;
 }
 
 public class ActiveEffect
@@ -176,6 +181,9 @@ public class ActiveEffect
                             damageTaker.Heal(Data.healAmount);
                             float newHealth = damageTaker.currentHealth;
                             Debug.Log($"[Heal Debug] 治疗 {healTarget.name}: {oldHealth:F1} -> {newHealth:F1} (+{newHealth - oldHealth:F1})");
+                            
+                            // 播放治疗特效
+                            PlayHealEffect(healTarget);
                         }
                     }
                 }
@@ -321,4 +329,109 @@ public class ActiveEffect
         
         return isValid;
     }
+    
+    /// <summary>
+    /// 播放治疗特效
+    /// </summary>
+    private void PlayHealEffect(GameObject healTarget)
+    {
+        if (Data.healEffectPrefab == null)
+        {
+            Debug.LogWarning($"[Heal Debug] 治疗特效预制体为空，跳过特效播放");
+            return;
+        }
+        
+        // 实例化治疗特效
+        Vector3 effectPosition = healTarget.transform.position + Data.healEffectOffset;
+        GameObject effect = UnityEngine.Object.Instantiate(Data.healEffectPrefab, effectPosition, Quaternion.identity);
+        
+        // 设置特效到Effect层级
+        SetEffectToEffectLayer(effect);
+        
+        // 控制粒子系统只播放一次
+        ControlParticleSystemPlayOnce(effect);
+        
+        Debug.Log($"[Heal Debug] 播放治疗特效: {Data.healEffectPrefab.name} 在 {healTarget.name}");
+    }
+    
+    /// <summary>
+    /// 控制粒子系统只播放一次
+    /// </summary>
+    private void ControlParticleSystemPlayOnce(GameObject effect)
+    {
+        // 获取所有粒子系统组件
+        var particleSystems = effect.GetComponentsInChildren<ParticleSystem>();
+        
+        foreach (var ps in particleSystems)
+        {
+            // 设置粒子系统只播放一次
+            var main = ps.main;
+            main.loop = false; // 关闭循环
+            main.playOnAwake = true; // 确保自动播放
+            
+            // 设置停止行为为销毁
+            main.stopAction = ParticleSystemStopAction.Destroy;
+            
+            // 播放粒子系统
+            ps.Play();
+        }
+        
+        // 如果特效没有自动销毁，设置一个定时器来销毁它
+        // 使用MonoBehaviour的协程来延迟销毁
+        var monoBehaviour = effect.GetComponent<MonoBehaviour>();
+        if (monoBehaviour == null)
+        {
+            // 如果没有MonoBehaviour组件，添加一个临时的
+            var tempMono = effect.AddComponent<TempMonoBehaviour>();
+            tempMono.StartCoroutine(DestroyEffectAfterDelay(effect, 0.5f));
+        }
+        else
+        {
+            monoBehaviour.StartCoroutine(DestroyEffectAfterDelay(effect, 0.5f));
+        }
+    }
+    
+    /// <summary>
+    /// 延迟销毁特效
+    /// </summary>
+    private System.Collections.IEnumerator DestroyEffectAfterDelay(GameObject effect, float delay)
+    {
+        yield return new UnityEngine.WaitForSeconds(delay);
+        if (effect != null)
+        {
+            UnityEngine.Object.Destroy(effect);
+        }
+    }
+    
+    /// <summary>
+    /// 设置特效到Effect层级
+    /// </summary>
+    private void SetEffectToEffectLayer(GameObject effect)
+    {
+        // 设置GameObject的Layer
+        effect.layer = LayerMask.NameToLayer("Effect");
+        
+        // 设置所有子对象的Layer
+        Transform[] childTransforms = effect.GetComponentsInChildren<Transform>();
+        foreach (Transform child in childTransforms)
+        {
+            child.gameObject.layer = LayerMask.NameToLayer("Effect");
+        }
+        
+        // 设置渲染器的sortingLayer和sortingOrder
+        var renderers = effect.GetComponentsInChildren<Renderer>();
+        foreach (var renderer in renderers)
+        {
+            renderer.sortingLayerName = "Effect";
+            renderer.sortingOrder = 100; // 设置较高的渲染顺序
+        }
+    }
+}
+
+/// <summary>
+/// 临时的MonoBehaviour，用于协程
+/// </summary>
+public class TempMonoBehaviour : MonoBehaviour
+{
+    // 空的MonoBehaviour，只用于协程
 } 

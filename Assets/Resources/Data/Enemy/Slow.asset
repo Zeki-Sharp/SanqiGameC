@@ -14,9 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   enemyName: Slow
   enemySprite: {fileID: 4448676462945974952, guid: 5d37dfcbd2b9d594bb68f9b5384a5306, type: 3}
+  description: "\u654C\u4EBA\u63CF\u8FF0"
   maxHealth: 50
   moveSpeed: 0.6
-  attackRange: 1
+  attackRange: 0.5
   attackBehavior: {fileID: 11400000, guid: b98a1bd3ac1870a4290ca621ffea98f4, type: 2}
   goldReward: 10
   enemyPrefab: {fileID: 9133360019857942620, guid: 8e19af0d194bc28419cddd955b2b213c, type: 3}
