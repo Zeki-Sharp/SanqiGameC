@@ -453,7 +453,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f3e2c2569723b5a4580f45bc79151879, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  towerData: {fileID: 11400000, guid: 2c56d48c1b17cd04e8bfca12c88f6655, type: 2}
+  towerData: {fileID: 11400000, guid: cc705e3591960064d8fcf8969269f5da, type: 2}
   currentHealth: 0
   level: 0
   cellPosition: {x: 0, y: 0, z: 0}
@@ -463,6 +463,8 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 0
   isShowAreaTower: 0
+  upgradeEffectPrefab: {fileID: 0}
+  upgradeEffectOffset: {x: 0, y: 0.5, z: 0}
   rangeDetector: {fileID: 0}
   raySensor: {fileID: 0}
   bulletCaster: {fileID: 0}

@@ -12,6 +12,10 @@ PrefabInstance:
       propertyPath: towerData
       value: 
       objectReference: {fileID: 11400000, guid: 2c56d48c1b17cd04e8bfca12c88f6655, type: 2}
+    - target: {fileID: -5265095980399352289, guid: 8dc11cd1dfb10b0458a98588f73496b4, type: 3}
+      propertyPath: upgradeEffectPrefab
+      value: 
+      objectReference: {fileID: 7823327091382468809, guid: af0d06ad2f476cc43be23ac0f464a510, type: 3}
     - target: {fileID: 5274610125877554572, guid: 8dc11cd1dfb10b0458a98588f73496b4, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
