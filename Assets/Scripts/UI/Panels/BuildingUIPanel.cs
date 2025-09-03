@@ -175,7 +175,7 @@ public class BuildingUIPanel : UIPanel
         if (GameManager.Instance == null) return;
         if (buyButton == null)
             buyButton = GameObject.Find("Buy_Button").GetComponent<HoverTextChanger>();
-        buyButton.Initialize("", GameManager.Instance.GetSystem<GameMap>().GetMapData().BlockBuildMoney.ToString(), false);
+        buyButton.Initialize("", GameManager.Instance.GetSystem<GameMap>().GetMapData().BlockBuildMoney.ToString()+"/塔", false);
         
         if (refreshButton == null)
             refreshButton = GameObject.Find("Reduce_Button").GetComponent<HoverTextChanger>();

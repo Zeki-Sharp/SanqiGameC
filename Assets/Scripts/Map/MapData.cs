@@ -176,7 +176,7 @@ public class MapData
     public int CalculateBlockCost(int towerSlots)
     {
         // 每个塔位5金币
-        return blockBuildMoney * 5;
+        return blockBuildMoney * towerSlots;
     }
 
     /// <summary>

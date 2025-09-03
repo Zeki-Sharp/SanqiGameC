@@ -23,6 +23,8 @@ public class EventBus : MonoBehaviour
     }
 
     private Dictionary<Type, List<Delegate>> _eventSubscribers = new Dictionary<Type, List<Delegate>>();
+    // 存储无参数事件的字典
+    private Dictionary<string, List<Action>> _simpleEventSubscribers = new Dictionary<string, List<Action>>();
 
     private void Awake()
     {
@@ -38,7 +40,7 @@ public class EventBus : MonoBehaviour
     }
 
     /// <summary>
-    /// 订阅事件
+    /// 订阅事件（基于EventArgs的事件）
     /// </summary>
     /// <typeparam name="T">事件类型</typeparam>
     /// <param name="handler">事件处理函数</param>
@@ -60,8 +62,36 @@ public class EventBus : MonoBehaviour
         _eventSubscribers[eventType].Add(handler);
     }
 
+   
     /// <summary>
-    /// 取消订阅事件
+    /// 订阅无参数事件
+    /// </summary>
+    /// <param name="eventName">事件名称</param>
+    /// <param name="handler">事件处理函数</param>
+    public void SubscribeSimple(string eventName, Action handler)
+    {
+        if (string.IsNullOrEmpty(eventName))
+        {
+            Debug.LogError("事件名称不能为空");
+            return;
+        }
+
+        if (handler == null)
+        {
+            Debug.LogError("尝试订阅空事件处理函数");
+            return;
+        }
+
+        if (!_simpleEventSubscribers.ContainsKey(eventName))
+        {
+            _simpleEventSubscribers[eventName] = new List<Action>();
+        }
+
+        _simpleEventSubscribers[eventName].Add(handler);
+    }
+
+    /// <summary>
+    /// 取消订阅事件（基于EventArgs的事件）
     /// </summary>
     /// <typeparam name="T">事件类型</typeparam>
     /// <param name="handler">事件处理函数</param>
@@ -78,8 +108,31 @@ public class EventBus : MonoBehaviour
         _eventSubscribers[eventType].Remove(handler);
     }
 
+  
     /// <summary>
-    /// 发布事件
+    /// 取消订阅无参数事件
+    /// </summary>
+    /// <param name="eventName">事件名称</param>
+    /// <param name="handler">事件处理函数</param>
+    public void UnsubscribeSimple(string eventName, Action handler)
+    {
+        if (string.IsNullOrEmpty(eventName))
+        {
+            Debug.LogError("事件名称不能为空");
+            return;
+        }
+
+        if (!_simpleEventSubscribers.ContainsKey(eventName))
+        {
+            Debug.LogWarning($"尝试取消未注册的事件订阅: {eventName}");
+            return;
+        }
+
+        _simpleEventSubscribers[eventName].Remove(handler);
+    }
+
+    /// <summary>
+    /// 发布事件（基于EventArgs的事件）
     /// </summary>
     /// <typeparam name="T">事件类型</typeparam>
     /// <param name="eventArgs">事件参数</param>
@@ -102,6 +155,40 @@ public class EventBus : MonoBehaviour
             try
             {
                 handler.DynamicInvoke(eventArgs);
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"事件处理出错: {e.Message}\n{e.StackTrace}");
+            }
+        }
+    }
+    
+   
+    /// <summary>
+    /// 发布无参数事件
+    /// </summary>
+    /// <param name="eventName">事件名称</param>
+    public void PublishSimple(string eventName)
+    {
+        if (string.IsNullOrEmpty(eventName))
+        {
+            Debug.LogError("事件名称不能为空");
+            return;
+        }
+
+        if (!_simpleEventSubscribers.ContainsKey(eventName) || _simpleEventSubscribers[eventName].Count == 0)
+        {
+            return;
+        }
+
+        // 创建副本以防止在调用过程中列表被修改
+        var handlers = new List<Action>(_simpleEventSubscribers[eventName]);
+        
+        foreach (var handler in handlers)
+        {
+            try
+            {
+                handler?.Invoke();
             }
             catch (Exception e)
             {

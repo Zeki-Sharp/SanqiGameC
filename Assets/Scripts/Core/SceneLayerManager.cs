@@ -449,7 +449,7 @@ public class SceneLayerManager : MonoBehaviour
         ScanObjectsByTags(enemyTags);
         
         // 跳过子弹，让子弹保持自己的层级设置
-        Log("跳过子弹标签，让子弹保持自己的层级设置");
+        // Log("跳过子弹标签，让子弹保持自己的层级设置");
         
         // 自动检测场景物体
         ScanObjectsByTags(sceneObjectTags);

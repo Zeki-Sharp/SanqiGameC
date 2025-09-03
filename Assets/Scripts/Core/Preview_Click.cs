@@ -76,10 +76,11 @@ public class Preview_Click : MonoBehaviour
         }
     }
 
-    public void ResetClickState()
+    public void ResetClickState(bool refundMoney = false)
     {
         hasClick = false;
-        shopSystem.AddMoney(cost);
+        if (refundMoney)
+            shopSystem.AddMoney(cost);
     }
 
 }

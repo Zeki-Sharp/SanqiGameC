@@ -1,3 +1,4 @@
+using DG.Tweening;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
@@ -92,7 +93,7 @@ public class MainTowerHealthPanel : UIPanel
         InitializeMainTowerHealthUI();
         
         // 开始定期更新
-        InvokeRepeating(nameof(UpdateHealthDisplay), 0f, updateInterval);
+        InvokeRepeating(nameof(UpdateHealthDisplay), 0.2f, updateInterval);
     }
     
     protected override void OnHide()
@@ -262,7 +263,7 @@ public class MainTowerHealthPanel : UIPanel
         
         // 更新RectTransform的sizeDelta，只改变宽度
         Vector2 currentSize = healthBarFillRect.sizeDelta;
-        healthBarFillRect.sizeDelta = new Vector2(newWidth, currentSize.y);
+        healthBarFillRect.DOSizeDelta(new Vector2(newWidth, currentSize.y),0.5f)  ;
     }
     
     /// <summary>
@@ -294,13 +295,23 @@ public class MainTowerHealthPanel : UIPanel
         // 更新当前血量文本
         if (healthText != null)
         {
-            healthText.text = $"{centerTowerDamageTaker.currentHealth:F0}";
+            healthText.DOText( $"{centerTowerDamageTaker.currentHealth:F0}",0.5f);
+            // Debug.Log($"更新当前血量文本: {healthText.text}");
+        }
+        else
+        {
+            Debug.LogWarning("healthText 组件为 null");
         }
         
         // 更新最大血量文本
         if (maxHealthText != null)
         {
-            maxHealthText.text = $"{centerTowerDamageTaker.maxHealth:F0}";
+            maxHealthText.DOText( $"{centerTowerDamageTaker.maxHealth:F0}",0.5f);
+            // Debug.Log($"更新最大血量文本: {maxHealthText.text}");
+        }
+        else
+        {
+            Debug.LogWarning("maxHealthText 组件为 null");
         }
     }
     

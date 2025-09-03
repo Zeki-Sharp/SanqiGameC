@@ -11,7 +11,7 @@ public abstract class ItemConfig : ScriptableObject
     [MultiLineProperty]
     public string Description;
     public int Price;
-
+    
 
     public abstract void Init();
     public abstract void Use();

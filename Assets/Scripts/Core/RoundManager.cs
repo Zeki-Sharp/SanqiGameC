@@ -316,6 +316,7 @@ public class RoundManager : MonoBehaviour
         }
 
         currentRoundNumber++;
+        EventBus.Instance.PublishSimple("Game_NextRound");
         Debug.Log($"准备第 {currentRoundNumber} 回合");
     }
 

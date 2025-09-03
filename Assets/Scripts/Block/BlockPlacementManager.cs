@@ -177,7 +177,7 @@ public class BlockPlacementManager : MonoBehaviour
         }
 
         inputHandler.OnPlaceBlockRequested += PlaceBlockAtPosition;
-        inputHandler.OnCancelPlacementRequested += StopPlacement;
+        inputHandler.OnCancelPlacementRequested += CallPlacement;
         inputHandler.OnPreviewPositionChanged += OnPreviewPositionChanged;
     }
 
@@ -210,7 +210,7 @@ public class BlockPlacementManager : MonoBehaviour
         if (inputHandler != null)
         {
             inputHandler.OnPlaceBlockRequested -= PlaceBlockAtPosition;
-            inputHandler.OnCancelPlacementRequested -= StopPlacement;
+            inputHandler.OnCancelPlacementRequested -= CallPlacement;
             inputHandler.OnPreviewPositionChanged -= OnPreviewPositionChanged;
         }
         EventBus.Instance.Unsubscribe<BuildPreviewEventArgs>(OnBuildPreviewRequested);
@@ -262,7 +262,22 @@ public class BlockPlacementManager : MonoBehaviour
             previewBlock = null;
         }
     }
+    public void CallPlacement()
+    {
+        isPlacing = false;
+        if (inputHandler != null)
+            inputHandler.StopPlacement();
+        if (PreviewSystem != null)
+            PreviewSystem.ClearPreview();
+        FindFirstObjectByType<Preview_Click>()?.ResetClickState(true); // 重置建造状态
 
+        // 销毁预览方块
+        if (previewBlock != null)
+        {
+            Destroy(previewBlock);
+            previewBlock = null;
+        }
+    }
     /// <summary>
     /// 获取塔组预览坐标的锚点（左下角 → 中心）
     /// </summary>
@@ -535,6 +550,7 @@ public class BlockPlacementManager : MonoBehaviour
         }
         else
         {
+            FindFirstObjectByType<Preview_Click>()?.ResetClickState(true); // 重置建造状态
             StopPlacement();
         }
     }

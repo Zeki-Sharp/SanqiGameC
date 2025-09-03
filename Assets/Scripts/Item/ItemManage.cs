@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -8,7 +9,8 @@ public class ItemManage : MonoBehaviour
     public GameObject itemPrefab;
     public GameObject itemArea;
     [SerializeField]private int itemLimitCount = 5;
-    private List<Item> TemmporaryItemData = new List<Item>(); 
+    private List<Item> currentItemData = new List<Item>();
+    private int duration;
     public void GenerateItem()
     {
         ItemConfig itemConfig = itemGenerator.GetRandomItem();
@@ -41,6 +43,20 @@ public class ItemManage : MonoBehaviour
         {
             map = GameManager.Instance?.GetSystem<GameMap>();
         }
+        EventBus.Instance.SubscribeSimple("Game_NextRound", OnGame_NextRound);
+    }
+
+    private void OnGame_NextRound()
+    {
+        duration++;
+    }
+
+    public void CheckItem()
+    {
+        foreach (var item in currentItemData)
+        {
+            
+        }
     }
 
     void Start()
@@ -71,6 +87,10 @@ public class ItemManage : MonoBehaviour
                 GenerateItem();
             }
         }
+    }
 
+    private void OnDestroy()
+    {
+        EventBus.Instance.UnsubscribeSimple("Game_NextRound", OnGame_NextRound);
     }
 }

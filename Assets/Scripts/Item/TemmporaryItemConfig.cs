@@ -8,7 +8,8 @@ using UnityEngine;
 public class TemmporaryItemConfig : ItemConfig
 {
     public List<ItemData<BattleBuffType>> ItemDatas = new List<ItemData<BattleBuffType>>();
-
+    public int durationMax;
+    
     public override void Init()
     {
     }
