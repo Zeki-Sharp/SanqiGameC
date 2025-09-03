@@ -4,16 +4,17 @@ using TMPro;
 
 /// <summary>
 /// 主塔血量UI面板 - 在建造阶段和战斗阶段都一直存在
-/// 包含中心塔图像和血条显示
+/// 包含固定的用户头像和血条显示（头像与主塔图像已脱钩）
 /// </summary>
 public class MainTowerHealthPanel : UIPanel
 {
-    [Header("主塔图像")]
+    [Header("用户头像（固定，与主塔图像脱钩）")]
     [SerializeField] private Image centerTowerImage;
     [SerializeField] private Sprite centerTowerSprite;
     
     [Header("血条组件")]
     [SerializeField] private Image healthBarFill; // 血条填充图像
+    [SerializeField] private RectTransform healthBarFillRect; // 血条填充的RectTransform
     [SerializeField] private TextMeshProUGUI healthText; // 当前血量文本
     [SerializeField] private TextMeshProUGUI maxHealthText; // 最大血量文本
     
@@ -30,6 +31,7 @@ public class MainTowerHealthPanel : UIPanel
     private DamageTaker centerTowerDamageTaker;
     private float lastUpdateTime;
     private bool isInitialized = false;
+    private float originalHealthBarWidth; // 血条原始宽度
     
     protected override void Awake()
     {
@@ -41,6 +43,10 @@ public class MainTowerHealthPanel : UIPanel
         // 自动获取组件引用（如果Inspector中没有分配）
         if (centerTowerImage == null)
             centerTowerImage = GetComponentInChildren<Image>();
+        
+        // 自动获取血条填充的RectTransform
+        if (healthBarFillRect == null && healthBarFill != null)
+            healthBarFillRect = healthBarFill.GetComponent<RectTransform>();
         
         if (healthText == null)
         {
@@ -59,8 +65,6 @@ public class MainTowerHealthPanel : UIPanel
     
     public override void Show()
     {
-        Debug.Log("MainTowerHealthPanel.Show() 被调用");
-        
         // 先激活GameObject
         gameObject.SetActive(true);
         
@@ -137,27 +141,19 @@ public class MainTowerHealthPanel : UIPanel
     }
     
     /// <summary>
-    /// 设置中心塔图像
+    /// 设置中心塔图像（头像保持固定，不从主塔数据读取）
     /// </summary>
     private void SetupCenterTowerImage()
     {
         if (centerTowerImage != null)
         {
+            // 头像保持固定，只使用预设的sprite，不从主塔数据中读取
             if (centerTowerSprite != null)
             {
                 centerTowerImage.sprite = centerTowerSprite;
                 centerTowerImage.preserveAspect = true;
             }
-            else if (centerTower != null)
-            {
-                // 如果没有设置sprite，尝试从中心塔获取
-                var spriteRenderer = centerTower.GetComponentInChildren<SpriteRenderer>();
-                if (spriteRenderer != null && spriteRenderer.sprite != null)
-                {
-                    centerTowerImage.sprite = spriteRenderer.sprite;
-                    centerTowerImage.preserveAspect = true;
-                }
-            }
+            // 移除从中心塔获取sprite的逻辑，保持头像固定
         }
     }
     
@@ -166,7 +162,7 @@ public class MainTowerHealthPanel : UIPanel
     /// </summary>
     private void InitializeHealthBar()
     {
-        if (healthBarFill != null && centerTowerDamageTaker != null)
+        if (healthBarFillRect != null && centerTowerDamageTaker != null)
         {
             // 检查血量是否已经正确设置
             if (centerTowerDamageTaker.maxHealth <= 0 || centerTowerDamageTaker.currentHealth <= 0)
@@ -176,17 +172,14 @@ public class MainTowerHealthPanel : UIPanel
                 return;
             }
             
-            // 设置血条填充量
-            float healthPercent = centerTowerDamageTaker.currentHealth / centerTowerDamageTaker.maxHealth;
-            healthBarFill.fillAmount = healthPercent;
+            // 记录血条原始宽度
+            originalHealthBarWidth = healthBarFillRect.sizeDelta.x;
             
             // 设置血条颜色
             UpdateHealthBarColor();
             
             // 更新血量文本
             UpdateHealthText();
-            
-            Debug.Log($"主塔血条初始化完成: {centerTowerDamageTaker.currentHealth}/{centerTowerDamageTaker.maxHealth}");
         }
         else
         {
@@ -243,18 +236,33 @@ public class MainTowerHealthPanel : UIPanel
         if (centerTowerDamageTaker.maxHealth <= 0)
             return;
         
-        // 更新血条填充量
-        if (healthBarFill != null)
-        {
-            float healthPercent = centerTowerDamageTaker.currentHealth / centerTowerDamageTaker.maxHealth;
-            healthBarFill.fillAmount = healthPercent;
-        }
+        // 更新血条长度
+        UpdateHealthBarLength();
         
         // 更新血条颜色
         UpdateHealthBarColor();
         
         // 更新血量文本
         UpdateHealthText();
+    }
+    
+    /// <summary>
+    /// 更新血条长度（通过调整RectTransform的宽度）
+    /// </summary>
+    private void UpdateHealthBarLength()
+    {
+        if (healthBarFillRect == null || centerTowerDamageTaker == null)
+            return;
+        
+        float healthPercent = centerTowerDamageTaker.currentHealth / centerTowerDamageTaker.maxHealth;
+        healthPercent = Mathf.Clamp01(healthPercent); // 确保在0-1范围内
+        
+        // 计算新的宽度
+        float newWidth = originalHealthBarWidth * healthPercent;
+        
+        // 更新RectTransform的sizeDelta，只改变宽度
+        Vector2 currentSize = healthBarFillRect.sizeDelta;
+        healthBarFillRect.sizeDelta = new Vector2(newWidth, currentSize.y);
     }
     
     /// <summary>
@@ -287,22 +295,12 @@ public class MainTowerHealthPanel : UIPanel
         if (healthText != null)
         {
             healthText.text = $"{centerTowerDamageTaker.currentHealth:F0}";
-            Debug.Log($"更新当前血量文本: {healthText.text}");
-        }
-        else
-        {
-            Debug.LogWarning("healthText 组件为 null");
         }
         
         // 更新最大血量文本
         if (maxHealthText != null)
         {
             maxHealthText.text = $"{centerTowerDamageTaker.maxHealth:F0}";
-            Debug.Log($"更新最大血量文本: {maxHealthText.text}");
-        }
-        else
-        {
-            Debug.LogWarning("maxHealthText 组件为 null");
         }
     }
     

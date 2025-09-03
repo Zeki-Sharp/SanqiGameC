@@ -362,7 +362,7 @@ public class BuildingUIPanel : UIPanel
         {
             if (card != null)
             {
-                DestroyImmediate(card);
+                Destroy(card);
             }
         }
         enemyPreviewCards.Clear();

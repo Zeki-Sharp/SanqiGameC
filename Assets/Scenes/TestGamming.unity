@@ -1941,17 +1941,6 @@ Grid:
   m_CellGap: {x: 0, y: 0, z: 0}
   m_CellLayout: 2
   m_CellSwizzle: 0
---- !u!114 &1065133006 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 4818118001280241115, guid: 73fa403cbbb0a7940bd5dcba744c1347, type: 3}
-  m_PrefabInstance: {fileID: 4121824769158079657}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &1114973540
 GameObject:
   m_ObjectHideFlags: 0
@@ -5152,11 +5141,39 @@ PrefabInstance:
     - target: {fileID: 2335505123205947214, guid: 73fa403cbbb0a7940bd5dcba744c1347, type: 3}
       propertyPath: healthBarFill
       value: 
-      objectReference: {fileID: 1065133006}
+      objectReference: {fileID: 0}
     - target: {fileID: 2335505123205947214, guid: 73fa403cbbb0a7940bd5dcba744c1347, type: 3}
       propertyPath: centerTowerImage
       value: 
       objectReference: {fileID: 1742202465}
+    - target: {fileID: 3095234545044997828, guid: 73fa403cbbb0a7940bd5dcba744c1347, type: 3}
+      propertyPath: m_Color.b
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3095234545044997828, guid: 73fa403cbbb0a7940bd5dcba744c1347, type: 3}
+      propertyPath: m_Color.g
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3095234545044997828, guid: 73fa403cbbb0a7940bd5dcba744c1347, type: 3}
+      propertyPath: m_Color.r
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4189098957899508618, guid: 73fa403cbbb0a7940bd5dcba744c1347, type: 3}
+      propertyPath: m_Pivot.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4189098957899508618, guid: 73fa403cbbb0a7940bd5dcba744c1347, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 750
+      objectReference: {fileID: 0}
+    - target: {fileID: 4189098957899508618, guid: 73fa403cbbb0a7940bd5dcba744c1347, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: -375.8
+      objectReference: {fileID: 0}
+    - target: {fileID: 4189098957899508618, guid: 73fa403cbbb0a7940bd5dcba744c1347, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -0.09994507
+      objectReference: {fileID: 0}
     - target: {fileID: 4411767888177124313, guid: 73fa403cbbb0a7940bd5dcba744c1347, type: 3}
       propertyPath: m_Color.a
       value: 1

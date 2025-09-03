@@ -208,7 +208,7 @@ public class EffectCombination
                     if (oldEffect != null)
                     {
                         oldEffect.Deactivate();
-                        Object.DestroyImmediate(oldEffect);
+                        Object.Destroy(oldEffect);
                     }
                 }
                 break;
@@ -220,7 +220,7 @@ public class EffectCombination
                     if (oldEffect != null)
                     {
                         oldEffect.Deactivate();
-                        Object.DestroyImmediate(oldEffect);
+                        Object.Destroy(oldEffect);
                     }
                 }
                 break;
@@ -232,7 +232,7 @@ public class EffectCombination
                     if (oldEffect != null)
                     {
                         oldEffect.Deactivate();
-                        Object.DestroyImmediate(oldEffect);
+                        Object.Destroy(oldEffect);
                     }
                 }
                 break;
