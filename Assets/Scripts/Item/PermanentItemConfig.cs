@@ -19,7 +19,7 @@ public class PermanentItemConfig : ItemConfig
         {
             EventBus.Instance.Publish(new TowerBuffEventArgs(data.type, data.valueType, data.value));
             // BattleManager.Instance.ApplyTemporaryBuff(data.type, data.valueType, data.value);
-            Debug.Log($"已触发临时战斗增益：{ItemName} - {data.type} +{data. value}{(data.valueType == ValueType.Absolute ? "" : "%")}");
+            Debug.Log($"已触发永久战斗增益：{ItemName} - {data.type} +{data. value}{(data.valueType == ValueType.Absolute ? "" : "%")}");
         }   
     }
 }

@@ -182,10 +182,10 @@ public class BuildingUIPanel : UIPanel
         refreshButton.Initialize("刷新", GameManager.Instance.GetSystem<GameMap>().GetMapData().BlockBuildMoney.ToString(), true);
         // 更新金钱显示
         var shopSystem = GameManager.Instance.GetSystem<ShopSystem>();
-        if (shopSystem != null && moneyText != null)
-        {
-            moneyText.text = $"金钱: {shopSystem.Money}";
-        }
+        // if (shopSystem != null && moneyText != null)
+        // {
+        //     moneyText.text = $"金钱: {shopSystem.Money}";
+        // }
 
         // 更新回合信息
         var roundManager = GameManager.Instance.GetSystem<RoundManager>();

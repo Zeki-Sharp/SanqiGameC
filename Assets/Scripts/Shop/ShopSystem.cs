@@ -1,4 +1,5 @@
 using System;
+using DG.Tweening;
 using Sirenix.OdinInspector;
 using TMPro;
 using UnityEngine;
@@ -123,7 +124,9 @@ public class ShopSystem : MonoBehaviour
 
     private void OnMoneyChanged(MoneyChangedEventArgs e)
     {
-        moneyText.text = e.NewAmount.ToString();
+        DOTween.To(() => int.Parse(moneyText.text), x => {
+            moneyText.text = x.ToString("N0");
+        }, e.NewAmount, 1f).SetEase(Ease.OutQuad);
     }
 
     private void OnDestroy()

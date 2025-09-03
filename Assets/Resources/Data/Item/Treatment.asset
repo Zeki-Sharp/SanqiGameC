@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ItemName: Treatment
   ItemSprite: {fileID: 21300000, guid: 7d02e600426878e4db93c09148bad7c3, type: 3}
-  Description: "\u6240\u6709\u5854\u56DE\u590D\u5230\u6EE1\u8840"
+  Description: "\u6240\u6709\u5854\u52A050\u8840"
   Price: 15
   ItemDatas:
   - type: 5

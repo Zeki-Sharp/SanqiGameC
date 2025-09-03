@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class ItemManage : MonoBehaviour
@@ -6,7 +7,8 @@ public class ItemManage : MonoBehaviour
     public ItemGeneratorConfig itemGenerator;
     public GameObject itemPrefab;
     public GameObject itemArea;
-    private int itemLimitCount = 5;
+    [SerializeField]private int itemLimitCount = 5;
+    private List<Item> TemmporaryItemData = new List<Item>(); 
     public void GenerateItem()
     {
         ItemConfig itemConfig = itemGenerator.GetRandomItem();

@@ -1,36 +1,61 @@
 using System;
+using Sirenix.OdinInspector;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class Item : MonoBehaviour
 {
-    private ItemConfig itemConfig;
-    private Image ItemSprite;
-    private TextMeshProUGUI ItemName;
-    private TextMeshProUGUI ItemDescription;
-    private TextMeshProUGUI ItemPrice;
-    private Button UseButton;
+    [ShowInInspector]private ItemConfig itemConfig;
+    [ShowInInspector]private Image ItemSprite;
+    [ShowInInspector]private TextMeshProUGUI ItemName;
+    [ShowInInspector]  private TextMeshProUGUI ItemDescription;
+    [ShowInInspector] private TextMeshProUGUI ItemPrice;
+    [ShowInInspector]  private Button UseButton;
     private void Awake()
     {
-        if (itemConfig == null )
+        Transform spriteTransform = transform.Find("ItemSprite");
+        if (spriteTransform != null)
         {
-            ItemSprite = transform.Find("ItemSprite").GetComponent<Image>();
+            ItemSprite = spriteTransform.GetComponent<Image>();
         }
-        if (ItemName == null)
+        else
         {
-            ItemName = transform.Find("ItemName").GetComponent<TextMeshProUGUI>();
+            Debug.LogError("ItemSprite not found in Item prefab");
         }
-        if (ItemDescription == null)
+
+        Transform nameTransform = transform.Find("ItemName");
+        if (nameTransform != null)
         {
-            ItemDescription = transform.Find("ItemDescription").GetComponent<TextMeshProUGUI>();
+            ItemName = nameTransform.GetComponent<TextMeshProUGUI>();
         }
-        if (ItemPrice == null)
+        else
         {
-            ItemPrice = transform.Find("ItemPrice").GetComponent<TextMeshProUGUI>();
+            Debug.LogError("ItemName not found in Item prefab");
         }
+
+        Transform descriptionTransform = transform.Find("ItemDescription");
+        if (descriptionTransform != null)
+        {
+            ItemDescription = descriptionTransform.GetComponent<TextMeshProUGUI>();
+        }
+        else
+        {
+            Debug.LogError("ItemDescription not found in Item prefab");
+        }
+
+        Transform priceTransform = transform.Find("ItemPrice");
+        if (priceTransform != null)
+        {
+            ItemPrice = priceTransform.GetComponent<TextMeshProUGUI>();
+        }
+        else
+        {
+            Debug.LogError("ItemPrice not found in Item prefab");
+        }
+
         UseButton = GetComponent<Button>();
-        UseButton.onClick.AddListener(() =>
+        UseButton?.onClick.AddListener(() =>
         {
             if (itemConfig != null)
             {
@@ -48,13 +73,68 @@ public class Item : MonoBehaviour
         });
     }
     public void SetItem(ItemConfig itemConfig)
-    {
+    {  Transform spriteTransform = transform.Find("ItemSprite");
+        if (spriteTransform != null)
+        {
+            ItemSprite = spriteTransform.GetComponent<Image>();
+        }
+        else
+        {
+            Debug.LogError("ItemSprite not found in Item prefab");
+        }
+
+        Transform nameTransform = transform.Find("ItemName");
+        if (nameTransform != null)
+        {
+            ItemName = nameTransform.GetComponent<TextMeshProUGUI>();
+        }
+        else
+        {
+            Debug.LogError("ItemName not found in Item prefab");
+        }
+
+        Transform descriptionTransform = transform.Find("ItemDescription");
+        if (descriptionTransform != null)
+        {
+            ItemDescription = descriptionTransform.GetComponent<TextMeshProUGUI>();
+        }
+        else
+        {
+            Debug.LogError("ItemDescription not found in Item prefab");
+        }
+
+        Transform priceTransform = transform.Find("ItemPrice");
+        if (priceTransform != null)
+        {
+            ItemPrice = priceTransform.GetComponent<TextMeshProUGUI>();
+        }
+        else
+        {
+            Debug.LogError("ItemPrice not found in Item prefab");
+        }
+
         if (itemConfig != null)
         {
-            ItemName.text = itemConfig.ItemName;
-            ItemDescription.text = itemConfig.Description;
-            ItemPrice.text = $"售价：{itemConfig.Price.ToString()}";
-            ItemSprite.sprite = itemConfig.ItemSprite;
+            if (ItemName != null)
+                ItemName.text = itemConfig.ItemName;
+            else
+                Debug.LogError("ItemName is null when setting item");
+
+            if (ItemDescription != null)
+                ItemDescription.text = itemConfig.Description;
+            else
+                Debug.LogError("ItemDescription is null when setting item");
+
+            if (ItemPrice != null)
+                ItemPrice.text = $"售价：{itemConfig.Price.ToString()}";
+            else
+                Debug.LogError("ItemPrice is null when setting item");
+
+            if (ItemSprite != null)
+                ItemSprite.sprite = itemConfig.ItemSprite;
+            else
+                Debug.LogError("ItemSprite is null when setting item");
+
             this.itemConfig = itemConfig;
         }
     }

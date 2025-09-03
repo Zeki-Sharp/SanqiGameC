@@ -10,24 +10,25 @@ public class Preview_Click : MonoBehaviour
     [SerializeField] private string previewShowName;
     [SerializeField] private bool hasClick = false;
     [SerializeField] private GameMap gameMap;
+
+    [SerializeField] private int cost;
     // 放置管理器 - 通过GameManager自动获取
     private BlockPlacementManager BlockPlacementManager => GameManager.Instance?.GetSystem<BlockPlacementManager>();
 
     [SerializeField] private List<TowerData> previewTowerDatas;
     [SerializeField] private BlockGenerationConfig previewConfig;
 
+    [SerializeField] private ShopSystem shopSystem;
     void Start()
     {
-        // 引用通过属性自动获取，无需手动查找
+         shopSystem = GameManager.Instance?.GetSystem<ShopSystem>();
+         gameMap = GameManager.Instance?.GetSystem<GameMap>();
     }
 
     private void Update()
     {
         if (Input.GetMouseButtonDown(0) && !hasClick)
         {
-            var shopSystem = GameManager.Instance?.GetSystem<ShopSystem>();
-            var gameMap = GameManager.Instance?.GetSystem<GameMap>();
-            
             if (shopSystem == null || gameMap == null)
             {
                 Debug.LogError("系统未初始化");
@@ -44,7 +45,7 @@ public class Preview_Click : MonoBehaviour
                 {
                     // 计算Block的价格（根据塔位数量）
                     int towerSlots = previewConfig.GetCellCount();
-                    int cost = gameMap.GetMapData().CalculateBlockCost(towerSlots);
+                    cost = gameMap.GetMapData().CalculateBlockCost(towerSlots);
 
                     // 检查是否有足够的金币
                     if (!shopSystem.CanAfford(cost))
@@ -78,6 +79,7 @@ public class Preview_Click : MonoBehaviour
     public void ResetClickState()
     {
         hasClick = false;
+        shopSystem.AddMoney(cost);
     }
 
 }

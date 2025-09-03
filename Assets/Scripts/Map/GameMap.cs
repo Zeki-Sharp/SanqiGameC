@@ -180,7 +180,7 @@ public class GameMap : MonoBehaviour
                 if (mapDrop != null)
                 {
                     TileBase tileToUse = ((x + y) % 2 == 0) ? groundTile1 : groundTile2;
-                    mapDrop.AddDropTile(tileToUse, new Vector3Int(x, y, 0), 0.1f);
+                    mapDrop.AddDropTile(tileToUse, new Vector3Int(x, y, 0), 0.5f);
                 }
                 else
                 {
