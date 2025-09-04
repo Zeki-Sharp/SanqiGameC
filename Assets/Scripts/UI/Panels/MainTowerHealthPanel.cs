@@ -2,6 +2,8 @@ using DG.Tweening;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using UnityEngine.EventSystems;
+using System.Collections.Generic;
 
 /// <summary>
 /// 主塔血量UI面板 - 在建造阶段和战斗阶段都一直存在
@@ -19,6 +21,10 @@ public class MainTowerHealthPanel : UIPanel
     [SerializeField] private TextMeshProUGUI healthText; // 当前血量文本
     [SerializeField] private TextMeshProUGUI maxHealthText; // 最大血量文本
     
+    [Header("效果显示")]
+    [SerializeField] private Transform effectListContainer; // 效果列表容器
+    [SerializeField] private GameObject effectItemPrefab; // 效果项预制体
+    
     [Header("血条颜色设置")]
     [SerializeField] private Color highHealthColor = Color.green;
     [SerializeField] private Color mediumHealthColor = Color.yellow;
@@ -33,6 +39,7 @@ public class MainTowerHealthPanel : UIPanel
     private float lastUpdateTime;
     private bool isInitialized = false;
     private float originalHealthBarWidth; // 血条原始宽度
+    
     
     protected override void Awake()
     {
@@ -62,6 +69,10 @@ public class MainTowerHealthPanel : UIPanel
             if (allTexts.Length > 1)
                 maxHealthText = allTexts[1];
         }
+        
+        // 订阅物品事件
+        EventBus.Instance.Subscribe<ItemEvent>(UpdateEffectList);
+        EventBus.Instance.SubscribeSimple("Game_NextRound", OnGameNextRound);
     }
     
     public override void Show()
@@ -314,6 +325,68 @@ public class MainTowerHealthPanel : UIPanel
             Debug.LogWarning("maxHealthText 组件为 null");
         }
     }
+
+    public void UpdateEffectList(ItemEvent itemEvent)
+    {
+        if (itemEvent == null || itemEvent.ItemConfig == null) return;
+        DisplayActiveEffects();
+    }
+    
+    /// <summary>
+    /// 显示当前激活的物品效果
+    /// </summary>
+    private void DisplayActiveEffects()
+    {
+        // 获取物品管理系统
+        ItemManage itemManage = GameManager.Instance?.GetSystem<ItemManage>();
+        if (itemManage == null) return;
+        
+        // 获取激活的物品效果列表
+        List<ActiveItemEffect> activeItemEffects = itemManage.GetActiveItemEffects();
+        int currentRound = itemManage.GetDuration();
+        
+        // 如果没有效果容器或预制体，直接返回
+        if (effectListContainer == null || effectItemPrefab == null) return;
+        
+        // 清除现有的效果显示
+        foreach (Transform child in effectListContainer)
+        {
+            Destroy(child.gameObject);
+        }
+        
+        // 显示所有激活的效果
+        foreach (var effect in activeItemEffects)
+        {
+            GameObject effectItem = Instantiate(effectItemPrefab, effectListContainer);
+            EffectItemUI effectItemUI = effectItem.GetComponent<EffectItemUI>();
+            
+            if (effectItemUI != null)
+            {
+                effectItemUI.SetEffectData(effect.itemName, effect.itemDescription, effect.itemSprite);
+                
+                // 根据物品类型显示不同的信息
+                if (effect.itemConfig is TemmporaryItemConfig tempConfig)
+                {
+                    // 临时物品显示回合数
+                    effectItemUI.SetDurationText(currentRound, tempConfig.durationMax);
+                }
+                else
+                {
+                    // 永久物品隐藏回合数显示
+                    effectItemUI.HideDurationText();
+                }
+            }
+        }
+    }
+    
+    /// <summary>
+    /// 游戏回合更新事件处理
+    /// </summary>
+    private void OnGameNextRound()
+    {
+        // 刷新效果显示
+        DisplayActiveEffects();
+    }
     
     /// <summary>
     /// 公共方法：手动刷新UI（供外部调用）
@@ -326,6 +399,7 @@ public class MainTowerHealthPanel : UIPanel
             if (centerTowerDamageTaker != null)
             {
                 UpdateHealthDisplay();
+                DisplayActiveEffects();
             }
         }
     }
@@ -376,5 +450,12 @@ public class MainTowerHealthPanel : UIPanel
         if (centerTowerDamageTaker != null && centerTowerDamageTaker.maxHealth > 0)
             return centerTowerDamageTaker.currentHealth / centerTowerDamageTaker.maxHealth;
         return -1f;
+    }
+    
+    private void OnDestroy()
+    {
+        // 取消订阅事件
+        EventBus.Instance.Unsubscribe<ItemEvent>(UpdateEffectList);
+        EventBus.Instance.UnsubscribeSimple("Game_NextRound", OnGameNextRound);
     }
 }

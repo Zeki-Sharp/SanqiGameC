@@ -2949,6 +2949,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0cac5ce14e2841c4db191d69e82393d1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!224 &1514252226 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 5079207090663025813, guid: 73fa403cbbb0a7940bd5dcba744c1347, type: 3}
+  m_PrefabInstance: {fileID: 4121824769158079657}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1524172203
 GameObject:
   m_ObjectHideFlags: 0
@@ -3518,6 +3523,8 @@ MonoBehaviour:
   itemPrefab: {fileID: 5043634435161845799, guid: a15f24fb40fb0b747a0e191510abdd48, type: 3}
   itemArea: {fileID: 1668908911}
   itemLimitCount: 5
+  effectListContainer: {fileID: 0}
+  effectItemPrefab: {fileID: 0}
 --- !u!114 &1873727401 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 531585958800883755, guid: 3b66d0f80c3385243848c82d98b1223d, type: 3}
@@ -5170,6 +5177,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 291653651}
     m_Modifications:
+    - target: {fileID: 2335505123205947214, guid: 73fa403cbbb0a7940bd5dcba744c1347, type: 3}
+      propertyPath: effectItemPrefab
+      value: 
+      objectReference: {fileID: 2777444660093290537, guid: f55488a01be8b30419c2a46d3d3de6c0, type: 3}
+    - target: {fileID: 2335505123205947214, guid: 73fa403cbbb0a7940bd5dcba744c1347, type: 3}
+      propertyPath: effectListContainer
+      value: 
+      objectReference: {fileID: 1514252226}
     - target: {fileID: 4757313081660263503, guid: 73fa403cbbb0a7940bd5dcba744c1347, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -5279,7 +5294,8 @@ PrefabInstance:
       value: MainTowerUIPanel
       objectReference: {fileID: 0}
     m_RemovedComponents: []
-    m_RemovedGameObjects: []
+    m_RemovedGameObjects:
+    - {fileID: 6442108795290062018, guid: 73fa403cbbb0a7940bd5dcba744c1347, type: 3}
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 73fa403cbbb0a7940bd5dcba744c1347, type: 3}

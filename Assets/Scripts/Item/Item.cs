@@ -3,6 +3,7 @@ using Sirenix.OdinInspector;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Events;
 
 public class Item : MonoBehaviour
 {
@@ -12,6 +13,7 @@ public class Item : MonoBehaviour
     [ShowInInspector]  private TextMeshProUGUI ItemDescription;
     [ShowInInspector] private TextMeshProUGUI ItemPrice;
     [ShowInInspector]  private Button UseButton;
+    public ItemConfig ItemConfig => itemConfig;
     private void Awake()
     {
         Transform spriteTransform = transform.Find("ItemSprite");
@@ -62,9 +64,15 @@ public class Item : MonoBehaviour
                 if (GameManager.Instance.ShopSystem.CanAfford(itemConfig.Price))
                 {
                     GameManager.Instance.ShopSystem.SpendMoney(itemConfig.Price);
+                    
+                    // 发布物品使用事件
+                    EventBus.Instance.Publish(new ItemEvent(this));
                 }
                 else
                 {
+                    Debug.Log("金币不足，无法购买物品");
+                    // 可选：发布购买失败事件
+                    // EventBus.Instance.Publish(new ItemPurchaseFailedEvent(this, ItemPurchaseFailedEvent.Reason.InsufficientFunds));
                     return;
                 }
                 itemConfig.Use();
@@ -72,6 +80,7 @@ public class Item : MonoBehaviour
             }
         });
     }
+    
     public void SetItem(ItemConfig itemConfig)
     {  Transform spriteTransform = transform.Find("ItemSprite");
         if (spriteTransform != null)
