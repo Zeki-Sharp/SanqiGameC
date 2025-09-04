@@ -9,11 +9,12 @@ public class EffectItemUI : MonoBehaviour
 {
     [Header("UI组件引用")]
     [SerializeField] private Image effectIcon;           // 效果图标
-    // [SerializeField] private TextMeshProUGUI effectName; // 效果名称
-    // [SerializeField] private TextMeshProUGUI effectDesc; // 效果描述
-    [SerializeField] private string effectName;
-    [SerializeField] private string effectDesc;
+    [SerializeField] private TextMeshProUGUI effectName; // 效果名称
+    [SerializeField] private TextMeshProUGUI effectDesc; // 效果描述
     [SerializeField] private TextMeshProUGUI effectDuration; // 效果持续时间（回合数）
+    
+    // 引用对应的ActiveItemEffect数据
+    private ActiveItemEffect itemEffect;
     
     /// <summary>
     /// 设置效果数据显示
@@ -24,10 +25,10 @@ public class EffectItemUI : MonoBehaviour
     public void SetEffectData(string name, string description, Sprite icon)
     {
         if (effectName != null)
-            effectName = name;
+            effectName.text = name;
             
         if (effectDesc != null)
-            effectDesc = description;
+            effectDesc.text = description;
             
         if (effectIcon != null && icon != null)
             effectIcon.sprite = icon;
@@ -56,5 +57,23 @@ public class EffectItemUI : MonoBehaviour
         {
             effectDuration.gameObject.SetActive(false);
         }
+    }
+    
+    /// <summary>
+    /// 设置关联的物品效果数据
+    /// </summary>
+    /// <param name="effect">关联的物品效果数据</param>
+    public void SetItemEffect(ActiveItemEffect effect)
+    {
+        itemEffect = effect;
+    }
+    
+    /// <summary>
+    /// 获取关联的物品效果数据
+    /// </summary>
+    /// <returns>关联的物品效果数据</returns>
+    public ActiveItemEffect GetItemEffect()
+    {
+        return itemEffect;
     }
 }

@@ -8,6 +8,7 @@ public abstract class ItemConfig : ScriptableObject
 {
     public string ItemName;
     public Sprite ItemSprite;
+    public Color ItemColor;
     [MultiLineProperty]
     public string Description;
     public int Price;

@@ -50,6 +50,7 @@ public class ItemManage : MonoBehaviour
         {
             map = GameManager.Instance?.GetSystem<GameMap>();
         }
+        EventBus.Instance.SubscribeSimple("Game_NextRound", OnGame_NextRound);
         EventBus.Instance.Subscribe<ItemEvent>(UpdateEffectList);
     }
 
@@ -130,6 +131,7 @@ public class ItemManage : MonoBehaviour
 
     private void OnDestroy()
     {
+        EventBus.Instance.UnsubscribeSimple("Game_NextRound", OnGame_NextRound);
         EventBus.Instance.Unsubscribe<ItemEvent>(UpdateEffectList);
     }
     
@@ -139,7 +141,7 @@ public class ItemManage : MonoBehaviour
     private void UpdateEffectList(ItemEvent itemEvent)
     {
         if (itemEvent == null || itemEvent.ItemConfig == null) return;
-    
+        
         // 创建新的激活效果
         ActiveItemEffect activeEffect = new ActiveItemEffect
         {
@@ -148,15 +150,15 @@ public class ItemManage : MonoBehaviour
             itemSprite = itemEvent.ItemConfig.ItemSprite,
             itemConfig = itemEvent.ItemConfig
         };
-    
+        
         // 添加到激活效果列表
         activeItemEffects.Add(activeEffect);
-    
-        // 显式调用MainTowerHealthPanel的更新方法
-        var mainTowerPanel = UIManager.Instance.GetPanel<MainTowerHealthPanel>();
+        
+        // 调用MainTowerHealthPanel中的DisplayActiveEffects方法更新UI显示
+        MainTowerHealthPanel mainTowerPanel = UIManager.Instance?.GetPanel<MainTowerHealthPanel>();
         if (mainTowerPanel != null)
         {
-            mainTowerPanel.UpdateEffectList(itemEvent);
+            mainTowerPanel.DisplayActiveEffects();
         }
     }
     

@@ -326,16 +326,18 @@ public class MainTowerHealthPanel : UIPanel
         }
     }
 
-    public void UpdateEffectList(ItemEvent itemEvent)
+    private void UpdateEffectList(ItemEvent itemEvent)
     {
         if (itemEvent == null || itemEvent.ItemConfig == null) return;
+        
+        // 刷新效果显示
         DisplayActiveEffects();
     }
     
     /// <summary>
     /// 显示当前激活的物品效果
     /// </summary>
-    private void DisplayActiveEffects()
+    public void DisplayActiveEffects()
     {
         // 获取物品管理系统
         ItemManage itemManage = GameManager.Instance?.GetSystem<ItemManage>();
@@ -363,6 +365,8 @@ public class MainTowerHealthPanel : UIPanel
             if (effectItemUI != null)
             {
                 effectItemUI.SetEffectData(effect.itemName, effect.itemDescription, effect.itemSprite);
+                // 设置关联的物品效果数据
+                effectItemUI.SetItemEffect(effect);
                 
                 // 根据物品类型显示不同的信息
                 if (effect.itemConfig is TemmporaryItemConfig tempConfig)

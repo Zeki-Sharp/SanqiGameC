@@ -8,5 +8,6 @@ public class ActiveItemEffect
     public string itemName;
     public string itemDescription;
     public Sprite itemSprite;
+    public Color itemColor;
     public ItemConfig itemConfig; // 添加itemConfig字段
 }
