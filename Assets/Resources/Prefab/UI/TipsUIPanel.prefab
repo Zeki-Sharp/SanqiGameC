@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 6758181158982516131}
   - component: {fileID: 553724124253226682}
   - component: {fileID: 6014840097500094490}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: TowerImage
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -86,7 +86,7 @@ GameObject:
   - component: {fileID: 2919126077089620105}
   - component: {fileID: 1638748216023226108}
   - component: {fileID: 5940192441960807073}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: level
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -223,7 +223,9 @@ GameObject:
   - component: {fileID: 2319927550551535223}
   - component: {fileID: 5365108302629955769}
   - component: {fileID: 4010896280061367459}
-  m_Layer: 0
+  - component: {fileID: 1234567890123456789}
+  - component: {fileID: 9876543210987654321}
+  m_Layer: 5
   m_Name: TipsUIPanel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -306,6 +308,44 @@ CanvasGroup:
   m_Interactable: 1
   m_BlocksRaycasts: 1
   m_IgnoreParentGroups: 0
+--- !u!223 &1234567890123456789
+Canvas:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3158024780732800519}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_RenderMode: 0
+  m_Camera: {fileID: 0}
+  m_PlaneDistance: 100
+  m_PixelPerfect: 0
+  m_ReceivesEvents: 1
+  m_OverrideSorting: 1
+  m_OverridePixelPerfect: 0
+  m_SortingBucketNormalizedSize: 0
+  m_AdditionalShaderChannelsFlag: 0
+  m_SortingLayerID: 0
+  m_SortingOrder: 100
+  m_TargetDisplay: 0
+--- !u!114 &9876543210987654321
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3158024780732800519}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dc42784cf147c0c48a680349fa168899, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_IgnoreReversedGraphics: 1
+  m_BlockingObjects: 0
+  m_BlockingMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
 --- !u!1 &5200956886706388814
 GameObject:
   m_ObjectHideFlags: 0
@@ -317,7 +357,7 @@ GameObject:
   - component: {fileID: 4582861513291135391}
   - component: {fileID: 5663987014734064572}
   - component: {fileID: 4183555206129755540}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: Fill
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -392,7 +432,7 @@ GameObject:
   - component: {fileID: 692627288090011493}
   - component: {fileID: 5647439966593122897}
   - component: {fileID: 537838828189017556}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: TowerName
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -528,7 +568,7 @@ GameObject:
   - component: {fileID: 7100107696940012823}
   - component: {fileID: 8499333521824745224}
   - component: {fileID: 2662369748522615370}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: describe
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -664,7 +704,7 @@ GameObject:
   - component: {fileID: 6822742210394790713}
   - component: {fileID: 6409004815334594396}
   - component: {fileID: 8232037091324634035}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: Handle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -738,7 +778,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1374957691719792902}
   - component: {fileID: 1591302093867467936}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: Health Bar
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -827,7 +867,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2991336937856349315}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: Fill Area
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -865,7 +905,7 @@ GameObject:
   - component: {fileID: 4684355324161441009}
   - component: {fileID: 8353187362887726563}
   - component: {fileID: 1370494209707143709}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: Health Text
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1001,7 +1041,7 @@ GameObject:
   - component: {fileID: 4391442270140520163}
   - component: {fileID: 2874659086618891295}
   - component: {fileID: 6651388615015580816}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: Max Health Text
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1137,7 +1177,7 @@ GameObject:
   - component: {fileID: 2803280538368834548}
   - component: {fileID: 4007403788238482431}
   - component: {fileID: 8790928216759042227}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: Background
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1210,7 +1250,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5233937248386090935}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: Handle Slide Area
   m_TagString: Untagged
   m_Icon: {fileID: 0}
