@@ -178,9 +178,9 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -2001380155
-  m_SortingLayer: 5
+  m_SortingLayer: 6
   m_SortingOrder: 1
-  m_Sprite: {fileID: -2413806693520163455, guid: a86470a33a6bf42c4b3595704624658b, type: 3}
+  m_Sprite: {fileID: 1408551398379264597, guid: 070510558fd017b4697029c1232fe770, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -260,7 +260,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 66da190bf5271794a8260a0bb901174b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  bulletConfig: {fileID: 11400000, guid: 834d67b011e3c7144ad4ed8ac70e5225, type: 2}
+  bulletConfig: {fileID: 11400000, guid: ec8e31838e4c8e242a930307cc159f5d, type: 2}
   owner: {fileID: 0}
   targetTags:
   - Enemy
@@ -284,6 +284,12 @@ MonoBehaviour:
     effectFx: {fileID: 0}
     effectFxDuration: 0
     sfx: {fileID: 0}
+    healAmount: 0
+    healInterval: 0
+    healRangeType: 0
+    healEffectType: 0
+    healEffectPrefab: {fileID: 0}
+    healEffectOffset: {x: 0, y: 0.1, z: 0}
 --- !u!114 &-4261691411315826384
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -323,7 +329,7 @@ MonoBehaviour:
   callMethod: TestMessage
   messageUpward: 1
   ownerReference: {fileID: 0}
-  damage: 100
+  damage: 0
   speed: 6
   lifeTime: 10
   endDelay: 0
@@ -363,6 +369,9 @@ MonoBehaviour:
     flipAxis: 1
   rigidBody: {fileID: 0}
   local: 1
+  startPosition: {x: 0, y: 0, z: 0}
+  targetObject: {fileID: 0}
+  hasUpdatedLayer: 0
 --- !u!1 &6488420274107631191
 GameObject:
   m_ObjectHideFlags: 0
@@ -438,7 +447,7 @@ TrailRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -2001380155
-  m_SortingLayer: 5
+  m_SortingLayer: 6
   m_SortingOrder: 0
   m_Time: 2
   m_PreviewTimeScale: 1

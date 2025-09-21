@@ -13,10 +13,12 @@ MonoBehaviour:
   m_Name: Close
   m_EditorClassIdentifier: 
   enemyName: Close
-  enemySprite: {fileID: 7220014039845366251, guid: b62d3036f6510dd48bec34916b3e7ec1, type: 3}
+  enemySprite: {fileID: 21300000, guid: c7a2ce5d7fb4d3b46b9610c3eed3d352, type: 3}
+  description: "\u654C\u4EBA\u63CF\u8FF0"
   maxHealth: 30
   moveSpeed: 1
   attackRange: 0.5
   attackBehavior: {fileID: 11400000, guid: b98a1bd3ac1870a4290ca621ffea98f4, type: 2}
   goldReward: 10
   enemyPrefab: {fileID: 9133360019857942620, guid: 8e19af0d194bc28419cddd955b2b213c, type: 3}
+  animatorController: {fileID: 9100000, guid: beb91a3e78d1ac246a49ea7833617a98, type: 2}

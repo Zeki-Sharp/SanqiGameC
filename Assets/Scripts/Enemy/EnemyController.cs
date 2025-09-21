@@ -182,6 +182,14 @@ public class EnemyController : MonoBehaviour
             damageTaker.maxHealth = newData.MaxHealth;
             damageTaker.currentHealth = newData.MaxHealth;
         }
+        
+        // 设置动画控制器
+        var animator = GetComponent<Animator>();
+        if (animator != null && newData.AnimatorController != null)
+        {
+            animator.runtimeAnimatorController = newData.AnimatorController;
+        }
+        
         return true;
     }
 

@@ -28,6 +28,9 @@ public class EnemyData : ScriptableObject
     [Header("配置")]
     [SerializeField] private GameObject enemyPrefab;
     
+    [Header("动画配置")]
+    [SerializeField] private RuntimeAnimatorController animatorController;
+    
     // 公共属性
     public string EnemyName => enemyName;
     public Sprite EnemySprite => enemySprite;
@@ -38,4 +41,5 @@ public class EnemyData : ScriptableObject
     public IAttackBehavior AttackBehavior => attackBehavior as IAttackBehavior;
     public int GoldReward => goldReward;
     public GameObject EnemyPrefab => enemyPrefab;
+    public RuntimeAnimatorController AnimatorController => animatorController;
 } 
