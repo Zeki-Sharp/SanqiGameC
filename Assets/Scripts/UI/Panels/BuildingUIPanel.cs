@@ -39,6 +39,12 @@ public class BuildingUIPanel : UIPanel
         if (moneyText == null)
             moneyText = GetComponentInChildren<TextMeshProUGUI>();
 
+        // 订阅事件
+        if (EventBus.Instance != null)
+        {
+            EventBus.Instance.Subscribe<GamePhaseChangedEventArgs>(OnGamePhaseChanged);
+            EventBus.Instance.SubscribeSimple("Game_NextRound", OnNextRound);
+        }
      
         Debug.Log($"BuildingUIPanel Awake - startCombatButton: {startCombatButton}");
     }
@@ -231,7 +237,7 @@ public class BuildingUIPanel : UIPanel
         // 清理现有预览
         ClearEnemyPreview();
 
-        // 获取当前关卡敌人信息
+        // 获取当前要打的关卡敌人信息
         var currentRoundEnemies = GetCurrentRoundEnemies();
         if (currentRoundEnemies == null || currentRoundEnemies.Count == 0)
         {
@@ -292,7 +298,7 @@ public class BuildingUIPanel : UIPanel
     }
 
     /// <summary>
-    /// 获取当前关卡敌人信息
+    /// 获取当前要打的关卡敌人信息
     /// </summary>
     private List<EnemySpawnInfo> GetCurrentRoundEnemies()
     {
@@ -301,7 +307,7 @@ public class BuildingUIPanel : UIPanel
         var roundManager = GameManager.Instance.GetSystem<RoundManager>();
         if (roundManager == null) return null;
 
-        // 获取当前关卡配置
+        // 获取当前要打的关卡配置
         int currentRoundNumber = roundManager.CurrentRoundNumber;
         
         // 通过反射获取私有字段roundConfigs
@@ -389,6 +395,42 @@ public class BuildingUIPanel : UIPanel
         if (startCombatButton != null)
         {
             startCombatButton.interactable = interactable;
+        }
+    }
+
+    /// <summary>
+    /// 处理游戏阶段变化事件
+    /// </summary>
+    private void OnGamePhaseChanged(GamePhaseChangedEventArgs e)
+    {
+        // 当切换到建设阶段时，更新敌人预览
+        if (e.NewPhase == GamePhase.BuildingPhase && isVisible)
+        {
+            Debug.Log("BuildingUIPanel: 检测到切换到建设阶段，更新敌人预览");
+            GenerateEnemyPreview();
+        }
+    }
+
+    /// <summary>
+    /// 处理下一回合事件
+    /// </summary>
+    private void OnNextRound()
+    {
+        // 当回合数变化时，如果当前在建设阶段，更新敌人预览
+        if (isVisible)
+        {
+            Debug.Log("BuildingUIPanel: 检测到回合数变化，更新敌人预览");
+            GenerateEnemyPreview();
+        }
+    }
+
+    private void OnDestroy()
+    {
+        // 取消订阅事件
+        if (EventBus.Instance != null)
+        {
+            EventBus.Instance.Unsubscribe<GamePhaseChangedEventArgs>(OnGamePhaseChanged);
+            EventBus.Instance.UnsubscribeSimple("Game_NextRound", OnNextRound);
         }
     }
 } 
