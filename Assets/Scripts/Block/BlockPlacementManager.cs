@@ -519,7 +519,7 @@ public class BlockPlacementManager : MonoBehaviour
                 {
                     tower.SetAsShowAreaTower(true);
                 }
-                
+                AudioManager.Instance.PlayBuildSound();
                 Debug.Log($"塔生成成功: {tower.name}, 位置: {localCoord}");
             }
             else
