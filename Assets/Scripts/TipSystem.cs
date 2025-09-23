@@ -93,22 +93,34 @@ public class TipSystem : MonoBehaviour
 
     private void Update()
     {
-        // single jitter guard
-        if (Vector3.Distance(Input.mousePosition, _lastMousePos) < 2f) return;
-        _lastMousePos = Input.mousePosition;
+        var mouse = Input.mousePosition;
 
-        // phase guard
+        // 面板可见时，每帧都根据鼠标更新位置（不受防抖影响）
+        if (isVisible && _currentTower != null && TipMenu != null && TipMenu.activeInHierarchy)
+            SetTipPosition(mouse);
+
+        // 阶段限制
         if (GameStateManager.Instance != null &&
             (GameStateManager.Instance.IsInPassPhase ||
              GameStateManager.Instance.IsInVictoryPhase ||
              blockPlacementManager.IsPlacing))
         {
             HideTip();
+            _lastMousePos = mouse; // 记得更新，防止下帧误判
             return;
         }
 
-        UpdateTip();
+        // 只对“重检测”（射线、UI 命中判定等）做防抖节流
+        if ((mouse - _lastMousePos).sqrMagnitude < 1f)  // 1 像素阈值更温和
+        {
+            // 已在上面更新了位置，这里可以直接返回
+            return;
+        }
+
+        _lastMousePos = mouse;
+        UpdateTip();   // 只有明显移动才做检测
     }
+
 
     private bool IsPointerOverTransform(Transform root)
     {
@@ -558,60 +570,71 @@ public class TipSystem : MonoBehaviour
         HideTip();
     }
 
-    private void SetTipPosition(Vector3 screenPosition)
+    /// <summary>
+    /// 设置提示框在屏幕上的位置
+    /// </summary>
+    /// <param name="screenPosition">提示框需要显示的屏幕坐标位置</param>
+   private void SetTipPosition(Vector3 screenPosition)
+{
+    var tipRect = TipMenu.GetComponent<RectTransform>();
+    if (tipRect == null) return;
+
+    // 关键：使用 Tip 的父 RectTransform 做坐标转换与边界约束
+    var parentRect = tipRect.parent as RectTransform;
+    if (parentRect == null) return;
+
+    // 用所在 Canvas 的相机（Screen Space - Overlay 时为 null）
+    var canvas = parentRect.GetComponentInParent<Canvas>();
+    Camera uiCam = (canvas != null && canvas.renderMode == RenderMode.ScreenSpaceOverlay)
+        ? null
+        : (canvas != null ? (canvas.worldCamera != null ? canvas.worldCamera : Camera.main) : null);
+
+    // 把屏幕坐标转到“父 RectTransform”局部坐标
+    if (!RectTransformUtility.ScreenPointToLocalPointInRectangle(parentRect, screenPosition, uiCam, out var localPoint))
+        return;
+
+    // 偏移逻辑（保持你的写法）
+    Vector2 offset = previewOffset;
+    if (enableSmartOffset)
     {
-        RectTransform tipRect = TipMenu.GetComponent<RectTransform>();
-        RectTransform canvasRect = TipMenu.GetComponentInParent<Canvas>()?.GetComponent<RectTransform>();
-        if (tipRect == null || canvasRect == null) return;
+        Vector2 screenSize = new Vector2(Screen.width, Screen.height);
+        if (screenPosition.x > screenSize.x - edgeThreshold) offset.x = -Mathf.Abs(offset.x) - smartOffsetDistance;
+        else if (screenPosition.x < edgeThreshold) offset.x = Mathf.Abs(offset.x) + smartOffsetDistance;
 
-        var canvas = canvasRect.GetComponent<Canvas>();
-        Camera uiCam = canvas.renderMode == RenderMode.ScreenSpaceOverlay ? null : Camera.main;
-
-        if (!RectTransformUtility.ScreenPointToLocalPointInRectangle(canvasRect, screenPosition, uiCam,
-                out Vector2 localPoint))
-            return;
-
-        Vector2 offset = previewOffset;
-
-        if (enableSmartOffset)
-        {
-            Vector2 screenSize = new Vector2(Screen.width, Screen.height);
-            if (screenPosition.x > screenSize.x - edgeThreshold) offset.x = -Mathf.Abs(offset.x) - smartOffsetDistance;
-            else if (screenPosition.x < edgeThreshold) offset.x = Mathf.Abs(offset.x) + smartOffsetDistance;
-
-            if (screenPosition.y > screenSize.y - edgeThreshold) offset.y = -Mathf.Abs(offset.y) - smartOffsetDistance;
-            else if (screenPosition.y < edgeThreshold) offset.y = Mathf.Abs(offset.y) + smartOffsetDistance;
-        }
-
-        if (enableDynamicOffset)
-        {
-            Vector2 screenSize = new Vector2(Screen.width, Screen.height);
-            Vector2 relativePos = new Vector2(screenPosition.x / screenSize.x, screenPosition.y / screenSize.y);
-            float centerInfluence =
-                1f - Mathf.Max(Mathf.Abs(relativePos.x - 0.5f) * 2f, Mathf.Abs(relativePos.y - 0.5f) * 2f);
-            float dynamicAmount = Mathf.Lerp(maxDynamicOffset, minDynamicOffset, centerInfluence);
-
-            if (Mathf.Abs(offset.x) > 0.1f)
-                offset.x = offset.x > 0 ? Mathf.Max(offset.x, dynamicAmount) : Mathf.Min(offset.x, -dynamicAmount);
-            if (Mathf.Abs(offset.y) > 0.1f)
-                offset.y = offset.y > 0 ? Mathf.Max(offset.y, dynamicAmount) : Mathf.Min(offset.y, -dynamicAmount);
-        }
-
-        Vector2 targetPos = localPoint + offset;
-
-        Vector2 tipSize = tipRect.rect.size;
-        Vector2 canvasSize = canvasRect.rect.size;
-        float halfW = tipSize.x * 0.5f;
-        float halfH = tipSize.y * 0.5f;
-
-        tipRect.anchoredPosition = new Vector2(
-            Mathf.Clamp(targetPos.x, -canvasSize.x * 0.5f + halfW, canvasSize.x * 0.5f - halfW),
-            Mathf.Clamp(targetPos.y, -canvasSize.y * 0.5f + halfH, canvasSize.y * 0.5f - halfH)
-        );
-
-        if (showDebugInfo)
-        {
-            Debug.Log($"[TipSystem] mouse: {screenPosition}, pos: {tipRect.anchoredPosition}, visible: {isVisible}, current: {(_currentTower ? _currentTower.name : "null")}");
-        }
+        if (screenPosition.y > screenSize.y - edgeThreshold) offset.y = -Mathf.Abs(offset.y) - smartOffsetDistance;
+        else if (screenPosition.y < edgeThreshold) offset.y = Mathf.Abs(offset.y) + smartOffsetDistance;
     }
+    if (enableDynamicOffset)
+    {
+        Vector2 screenSize = new Vector2(Screen.width, Screen.height);
+        Vector2 relativePos = new Vector2(screenPosition.x / screenSize.x, screenPosition.y / screenSize.y);
+        float centerInfluence = 1f - Mathf.Max(Mathf.Abs(relativePos.x - 0.5f) * 2f, Mathf.Abs(relativePos.y - 0.5f) * 2f);
+        float dynamicAmount = Mathf.Lerp(maxDynamicOffset, minDynamicOffset, centerInfluence);
+
+        if (Mathf.Abs(offset.x) > 0.1f) offset.x = offset.x > 0 ? Mathf.Max(offset.x, dynamicAmount) : Mathf.Min(offset.x, -dynamicAmount);
+        if (Mathf.Abs(offset.y) > 0.1f) offset.y = offset.y > 0 ? Mathf.Max(offset.y, dynamicAmount) : Mathf.Min(offset.y, -dynamicAmount);
+    }
+
+    // 目标位置（父坐标系）
+    Vector2 targetPos = localPoint + offset;
+
+    // 用父 rect 做边界裁剪（不是根 Canvas）
+    Vector2 tipSize = tipRect.rect.size;
+    Vector2 parentSize = parentRect.rect.size;
+    float halfW = tipSize.x * 0.5f;
+    float halfH = tipSize.y * 0.5f;
+
+    Vector2 clamped = new Vector2(
+        Mathf.Clamp(targetPos.x, -parentSize.x * 0.5f + halfW, parentSize.x * 0.5f - halfW),
+        Mathf.Clamp(targetPos.y, -parentSize.y * 0.5f + halfH, parentSize.y * 0.5f - halfH)
+    );
+
+    tipRect.anchoredPosition = clamped;
+
+    if (showDebugInfo)
+    {
+        Debug.Log($"[TipSystem] screen={screenPosition} local(parent)={localPoint} -> anchored={clamped}");
+    }
+}
+
 }

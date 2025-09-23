@@ -972,7 +972,7 @@ public void Initialize(TowerData data, Vector3Int pos, bool hasCheck = false, bo
         
         // 设置子弹伤害
         SetBulletDamage();
-        
+        AudioManager.Instance.PlayDamageSound();
         // 使用RaycastPro系统发射子弹
         bulletCaster.Cast(0);
     }

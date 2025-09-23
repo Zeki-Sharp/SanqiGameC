@@ -474,6 +474,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _musicSource: {fileID: 0}
+  _buildingBGM: {fileID: 8300000, guid: 0e7d6ba341ff8374389b4372bb6b148e, type: 3}
+  _combatBGM: {fileID: 8300000, guid: b19eeee3942a74f4a877d1a16e42f024, type: 3}
   _victorySound: {fileID: 8300000, guid: a014a5e22e9657140aa8557cfbb6acac, type: 3}
   _gameOverSound: {fileID: 8300000, guid: b41babd37b45df74b96136b041db185b, type: 3}
   _buttonClickSound: {fileID: 8300000, guid: a977d98f94a66444db6f05a0a57db524, type: 3}
@@ -571,7 +573,7 @@ Canvas:
   m_GameObject: {fileID: 328495925}
   m_Enabled: 1
   serializedVersion: 3
-  m_RenderMode: 1
+  m_RenderMode: 0
   m_Camera: {fileID: 2058614372}
   m_PlaneDistance: 100
   m_PixelPerfect: 0
