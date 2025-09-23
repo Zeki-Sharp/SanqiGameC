@@ -654,6 +654,8 @@ public void Initialize(TowerData data, Vector3Int pos, bool hasCheck = false, bo
             {
                 // 替换现有塔
                 DeleteOldTower(existingTower.gameObject);
+                //播放升级音效
+                AudioManager.Instance.PlayReplaceSound();
                 Debug.Log($"检测到替换: {newTowerData.TowerName} -> {existingTower.TowerData.TowerName}");
                 return TowerCheckResult.ShouldDelete;
             }
