@@ -12,9 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1f556f0894dd32c4691f268d4766ac85, type: 3}
   m_Name: Slow
   m_EditorClassIdentifier: 
-  enemyName: Slow
-  enemySprite: {fileID: 4448676462945974952, guid: 5d37dfcbd2b9d594bb68f9b5384a5306, type: 3}
-  description: "\u654C\u4EBA\u63CF\u8FF0"
+  enemyName: "\u5B64\u72EC"
+  enemySprite: {fileID: 21300000, guid: e2778fd7b9d53ec449bf04bda85e214d, type: 3}
+  description: "\u88AB\u5C01\u5B58\u4E8E\u900F\u660E\u7684\u58F3\u4E2D\uFF0C\u8FDF\u7F13\u800C\u7B28\u62D9\uFF0C\u8BA9\u7A7A\u6C14\u90FD\u53D8\u5F97\u6C89\u91CD\u3002"
   maxHealth: 50
   moveSpeed: 0.6
   attackRange: 0.5

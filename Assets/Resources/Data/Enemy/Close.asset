@@ -12,9 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1f556f0894dd32c4691f268d4766ac85, type: 3}
   m_Name: Close
   m_EditorClassIdentifier: 
-  enemyName: Close
-  enemySprite: {fileID: 21300000, guid: c7a2ce5d7fb4d3b46b9610c3eed3d352, type: 3}
-  description: "\u654C\u4EBA\u63CF\u8FF0"
+  enemyName: "\u6076\u610F"
+  enemySprite: {fileID: 21300000, guid: 9e2741310cbbc6b4db9b5072e75cc430, type: 3}
+  description: "\u6251\u9762\u800C\u6765\uFF0C\u50CF\u4E00\u56E2\u6495\u54AC\u7684\u9634\u5F71\uFF0C\u8FC5\u901F\u64A9\u8D77\u5FC3\u5E95\u7684\u523A\u75DB\u3002"
   maxHealth: 30
   moveSpeed: 1
   attackRange: 0.5
