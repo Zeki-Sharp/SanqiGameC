@@ -224,7 +224,7 @@ GameObject:
   - component: {fileID: 5365108302629955769}
   - component: {fileID: 4010896280061367459}
   - component: {fileID: 1234567890123456789}
-  - component: {fileID: 9876543210987654321}
+  - component: {fileID: 9223372036854775807}
   m_Layer: 5
   m_Name: TipsUIPanel
   m_TagString: Untagged
@@ -325,11 +325,13 @@ Canvas:
   m_OverrideSorting: 1
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
+  m_VertexColorAlwaysGammaSpace: 0
   m_AdditionalShaderChannelsFlag: 0
+  m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
   m_SortingOrder: 100
   m_TargetDisplay: 0
---- !u!114 &9876543210987654321
+--- !u!114 &9223372036854775807
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -345,7 +347,7 @@ MonoBehaviour:
   m_BlockingObjects: 0
   m_BlockingMask:
     serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 247
 --- !u!1 &5200956886706388814
 GameObject:
   m_ObjectHideFlags: 0
