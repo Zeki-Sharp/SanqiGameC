@@ -816,6 +816,8 @@ public void Initialize(TowerData data, Vector3Int pos, bool hasCheck = false, bo
         
         // 播放升级特效
         PlayUpgradeEffect();
+        //播放升级音效
+        AudioManager.Instance.PlayLevelUpSound();
     }
 
     private GameObject FindNearestEnemyInRange()
@@ -1035,7 +1037,6 @@ public void Initialize(TowerData data, Vector3Int pos, bool hasCheck = false, bo
     {
         
     }
-    
     /// <summary>
     /// 播放升级特效
     /// </summary>
