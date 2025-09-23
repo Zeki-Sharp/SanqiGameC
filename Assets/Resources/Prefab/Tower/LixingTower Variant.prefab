@@ -64,7 +64,8 @@ PrefabInstance:
       propertyPath: m_Name
       value: LixingTower Variant
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: -5326274984438563663, guid: 8dc11cd1dfb10b0458a98588f73496b4, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
