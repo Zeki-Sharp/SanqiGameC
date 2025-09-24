@@ -45,6 +45,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   config: {fileID: 0}
-  worldPosition: {x: 0, y: 0}
+  cellPosition: {x: 0, y: 0, z: 0}
   canBeOverridden: 1
   towerPrefab: {fileID: 8732031508292489554, guid: 8dc11cd1dfb10b0458a98588f73496b4, type: 3}

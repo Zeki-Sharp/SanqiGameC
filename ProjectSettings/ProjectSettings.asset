@@ -667,7 +667,23 @@ PlayerSettings:
   webGLCloseOnQuit: 0
   webWasm2023: 0
   scriptingDefineSymbols:
-    Standalone: ODIN_INSPECTOR;ODIN_INSPECTOR_3;ODIN_INSPECTOR_3_1;ODIN_INSPECTOR_3_2;ODIN_INSPECTOR_3_3
+    Android: DOTWEEN
+    EmbeddedLinux: DOTWEEN
+    GameCoreScarlett: DOTWEEN
+    GameCoreXboxOne: DOTWEEN
+    LinuxHeadlessSimulation: DOTWEEN
+    Nintendo Switch: DOTWEEN
+    PS4: DOTWEEN
+    PS5: DOTWEEN
+    QNX: DOTWEEN
+    ReservedCFE: DOTWEEN
+    Standalone: ODIN_INSPECTOR;ODIN_INSPECTOR_3;ODIN_INSPECTOR_3_1;ODIN_INSPECTOR_3_2;ODIN_INSPECTOR_3_3;DOTWEEN
+    VisionOS: DOTWEEN
+    WebGL: DOTWEEN
+    Windows Store Apps: DOTWEEN
+    XboxOne: DOTWEEN
+    iPhone: DOTWEEN
+    tvOS: DOTWEEN
   additionalCompilerArguments: {}
   platformArchitecture: {}
   scriptingBackend:
@@ -685,7 +701,7 @@ PlayerSettings:
   gcIncremental: 1
   gcWBarrierValidation: 0
   apiCompatibilityLevelPerPlatform: {}
-  editorAssembliesCompatibilityLevel: 1
+  editorAssembliesCompatibilityLevel: 2
   m_RenderingPath: 1
   m_MobileRenderingPath: 1
   metroPackageName: My project
@@ -762,15 +778,15 @@ PlayerSettings:
   hmiCpuConfiguration: 
   hmiLogStartupTiming: 0
   qnxGraphicConfPath: 
-  apiCompatibilityLevel: 6
+  apiCompatibilityLevel: 3
   captureStartupLogs: {}
   activeInputHandler: 2
   windowsGamepadBackendHint: 0
-  cloudProjectId: d08842a0-a57d-46a5-a731-23570576c2b2
+  cloudProjectId: c256063b-ab2b-485a-b7e9-4ca0d35f1736
   framebufferDepthMemorylessMode: 0
   qualitySettingsNames: []
-  projectName: My project
-  organizationId: zhouziqi2017
+  projectName: SanqiGameC
+  organizationId: sanqigameinnovationcompetition
   cloudEnabled: 0
   legacyClampBlendShapeWeights: 0
   hmiLoadingImage: {fileID: 0}

@@ -9,9 +9,38 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 56953b05fd90c9c4f9e663f9eaed1fed, type: 3}
+  m_Script: {fileID: 11500000, guid: 9455278009394e10b11679879651afd0, type: 3}
   m_Name: Map_01
   m_EditorClassIdentifier: 
   centerTower: {fileID: 7002921581114174909, guid: 3c575f98f3a079743b33b7a924a013a8, type: 3}
-  BlockPrefab: {fileID: 8190983881543204575, guid: 9cc02b47670998348940085eed0862ba, type: 3}
-  BlockGenerationSettings: {fileID: 11400000, guid: ca8e674e631e1f54bba8c3d5b2aa7e3f, type: 2}
+  blockPrefab: {fileID: 8190983881543204575, guid: 9cc02b47670998348940085eed0862ba, type: 3}
+  blockGenerationSettings: {fileID: 11400000, guid: ca8e674e631e1f54bba8c3d5b2aa7e3f, type: 2}
+  itemGeneratorConfig: {fileID: 11400000, guid: 1ff44a53700398f499f052cfbb234722, type: 2}
+  MapDatas:
+  - id: 0
+    name: 
+    description: 
+    difficulty: 0
+    itemLimitCount: 2
+    max: 2
+    towerHealthMultiplier: 1
+    towerAttackMultiplier: 1
+    towerAttackRangeMultiplier: 1
+    towerAttackSpeedMultiplier: 1
+    towerPhysicAttackMultiplier: 1
+    towerAttackIntervalMultiplier: 1
+    towerDamageMultiplier: 1
+    maxEnemy: 2
+    enemyHealthMultiplier: 1
+    enemyAttackMultiplier: 1
+    startingMoney: 40
+    itemRefreshMoney: 3
+    blockDestroyMoney: 7
+    blockBuildMoney: 2
+    baseRefreshCost: 3
+    maxRefreshCost: 5
+    refreshCostIncrement: 1
+    maxRefreshPerRound: 3
+    itemBaseCost: 15
+    blockBaseCost: 5
+    maxBlockSlots: 20

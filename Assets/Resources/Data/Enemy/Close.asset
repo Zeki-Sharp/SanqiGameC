@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1f556f0894dd32c4691f268d4766ac85, type: 3}
+  m_Name: Close
+  m_EditorClassIdentifier: 
+  enemyName: "\u6076\u610F"
+  enemySprite: {fileID: 21300000, guid: 9e2741310cbbc6b4db9b5072e75cc430, type: 3}
+  description: "\u6251\u9762\u800C\u6765\uFF0C\u50CF\u4E00\u56E2\u6495\u54AC\u7684\u9634\u5F71\uFF0C\u8FC5\u901F\u64A9\u8D77\u5FC3\u5E95\u7684\u523A\u75DB\u3002"
+  maxHealth: 30
+  moveSpeed: 1
+  attackRange: 0.5
+  attackBehavior: {fileID: 11400000, guid: b98a1bd3ac1870a4290ca621ffea98f4, type: 2}
+  goldReward: 10
+  enemyPrefab: {fileID: 9133360019857942620, guid: 8e19af0d194bc28419cddd955b2b213c, type: 3}
+  animatorController: {fileID: 9100000, guid: beb91a3e78d1ac246a49ea7833617a98, type: 2}

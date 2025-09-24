@@ -1,31 +1,37 @@
 using UnityEngine;
 using System.Collections.Generic;
+using RaycastPro.Bullets2D;
+using RaycastPro.Casters2D;
 using Sirenix.OdinInspector;
 using UnityEngine.Tilemaps;
 
 public class GameMap : MonoBehaviour
 {
-    [Header("地图配置")]
-    [SerializeField] private int mapWidth = 20;
+    [Header("地图配置")] [SerializeField] private int mapWidth = 20;
     [SerializeField] private int mapHeight = 15;
     [SerializeField] private float cellSize = 1f;
-    [SerializeField] private MapData mapData;
+    [SerializeField] private MapConfig mapConfig;
 
-    [Header("地图状态")]
-    private bool[] occupiedCells; // 记录哪些格子被占用
-    private Dictionary<Vector2Int, Block> placedBlocks = new Dictionary<Vector2Int, Block>();
+    [SerializeField] private DifficultyLevel difficultyLevel = DifficultyLevel.Easy;
 
-    [Header("Tilemap可视化")]
-    public Tilemap tilemap; // 拖拽赋值
+    // 以cell坐标为key的占用字典
+    [ShowInInspector] private OccupiedCellSet occupiedCells = new OccupiedCellSet();
+    [ShowInInspector] private Dictionary<Vector3Int, Block> placedBlocks = new Dictionary<Vector3Int, Block>();
+
+    [Header("Tilemap可视化")] public Tilemap tilemap; // 拖拽赋值
     public TileBase groundTile; // 拖拽你的grass瓦片
+    [Header("交错地砖配置")] [SerializeField] private Tile groundTile1; // 地砖1
+    [SerializeField] private Tile groundTile2; // 地砖2
+    [SerializeField] private bool useAlternatingTiles = true; // 是否使用交错地砖
 
-    [Header("预制体生成区域")]
-    [SerializeField, LabelText("塔的生成区域物体名")]
+    [Header("预制体生成区域")] [SerializeField, LabelText("塔的生成区域物体名")]
     private string towerAreaName = "TowerArea";
-    private Transform towerArea;
 
-    public static GameMap instance;
-    private static readonly object lockObj = new object();
+    [SerializeField] private Transform towerArea;
+    [SerializeField] private BulletManager bulletManager;
+
+    [SerializeField] private MapDrop mapDrop;
+    // 移除传统单例模式，改为通过GameManager注册
 
     // 公共属性
     public int MapWidth => mapWidth;
@@ -34,27 +40,35 @@ public class GameMap : MonoBehaviour
 
     private void Awake()
     {
-        lock (lockObj)
+        // 注册到GameManager
+        if (GameManager.Instance != null)
         {
-            if (instance == null)
-                instance = this;
+            GameManager.Instance.RegisterSystem(this);
         }
 
+        if (mapDrop == null)
+        {
+            mapDrop = this.GetComponent<MapDrop>();
+        }
+
+        bulletManager = GameManager.Instance.GetSystem<BulletManager>();
         if (!InitializeScene())
             return;
-
         InitializeMap();
-        Debug.Log(tilemap.cellSize);
 
-        BoundsInt bounds = tilemap.cellBounds;
-        Vector3 worldMin = tilemap.CellToWorld(bounds.min);
-        Vector3 worldMax = tilemap.CellToWorld(bounds.max);
-        Debug.Log($"世界坐标范围: Min = {worldMin}，Max = {worldMax}");
+
+        var (worldMin, worldMax) = MapUtility.GetTilemapWorldBounds(tilemap);
+        // Debug.Log($"世界坐标范围: Min = {worldMin}，Max = {worldMax}");
+    }
+
+    public MapConfig GetMapConfig()
+    {
+        return mapConfig;
     }
 
     public MapData GetMapData()
     {
-        return mapData;
+        return mapConfig.GetMapData(difficultyLevel);
     }
 
 #if UNITY_EDITOR
@@ -79,6 +93,7 @@ public class GameMap : MonoBehaviour
             Debug.LogError("未找到塔生成区域");
             return false;
         }
+
         return true;
     }
 
@@ -88,6 +103,7 @@ public class GameMap : MonoBehaviour
         {
             towerArea = GameObject.Find(towerAreaName)?.transform;
         }
+
         return towerArea;
     }
 
@@ -96,7 +112,7 @@ public class GameMap : MonoBehaviour
     /// </summary>
     private void InitializeMap()
     {
-        occupiedCells = new bool[mapWidth * mapHeight];
+        occupiedCells.Clear();
         placedBlocks.Clear();
 
         // 清空Tilemap
@@ -104,49 +120,107 @@ public class GameMap : MonoBehaviour
             tilemap.ClearAllTiles();
 
         // 填充Tilemap
-        if (tilemap != null && groundTile != null)
+        if (tilemap != null)
         {
-            for (int x = 0; x < mapWidth; x++)
+            if (useAlternatingTiles && groundTile1 != null && groundTile2 != null)
             {
-                for (int y = 0; y < mapHeight; y++)
+                // 使用交错地砖模式
+                FillMapWithAlternatingTiles();
+            }
+            else if (groundTile != null)
+            {
+                // 使用单一地砖模式（保持原有逻辑）
+                FillMapWithSingleTile();
+            }
+            else
+            {
+                Debug.LogWarning("未分配地砖资源，无法初始化地图");
+            }
+        }
+        mapDrop.onAllDropsCompleted.AddListener(ResetCenterTower);
+        //
+        // ResetCenterTower();
+    }
+
+    public void ResetCenterTower()
+    {
+        if (GameObject.FindGameObjectWithTag("CenterTower") != null)
+        {
+            return;
+        }
+        GameObject centerTower = Instantiate(mapConfig.centerTower, towerArea);
+        Vector3Int centerCell = CoordinateUtility.GetCenterCell(mapWidth, mapHeight); // 新增方法，返回cell坐标
+        PlaceBlock(centerCell, centerTower.GetComponent<Block>(), tilemap);
+        centerTower.GetComponent<BasicCaster2D>().poolManager = bulletManager.GetPoolManager();
+    }
+
+    /// <summary>
+    /// 使用单一地砖填充地图
+    /// </summary>
+    private void FillMapWithSingleTile()
+    {
+        for (int x = 0; x < mapWidth; x++)
+        {
+            for (int y = 0; y < mapHeight; y++)
+            {
+                tilemap.SetTile(new Vector3Int(x, y, 0), groundTile);
+            }
+        }
+    }
+
+    /// <summary>
+    /// 使用交错地砖填充地图
+    /// </summary>
+    private void FillMapWithAlternatingTiles()
+    {
+        for (int x = 0; x < mapWidth; x++)
+        {
+            for (int y = 0; y < mapHeight; y++)
+            {
+                if (mapDrop != null)
                 {
-                    tilemap.SetTile(new Vector3Int(x, y, 0), groundTile);
+                    TileBase tileToUse = ((x + y) % 2 == 0) ? groundTile1 : groundTile2;
+                    mapDrop.AddDropTile(tileToUse, new Vector3Int(x, y, 0), 0.5f);
+                }
+                else
+                {
+                    // 交错排列：棋盘格模式，相邻格子使用不同地砖
+                    TileBase tileToUse = ((x + y) % 2 == 0) ? groundTile1 : groundTile2;
+                    tilemap.SetTile(new Vector3Int(x, y, 0), tileToUse);
                 }
             }
         }
-
-        Debug.Log($"地图初始化完成: {mapWidth}x{mapHeight}, 格子大小: {cellSize}");
-
-        // 创建中心塔
-        GameObject centerTower = Instantiate(mapData.centerTower, towerArea);
-        PlaceBlock(BaseUtility.GetCenter(mapWidth, mapHeight), centerTower.GetComponent<Block>());
-        Debug.Log($"中心塔已创建,位置 {BaseUtility.GetCenter(mapWidth, mapHeight)}");
+        
+        // 如果有MapDrop组件，启动所有掉落动画
+        if (mapDrop != null)
+        {
+            mapDrop.StartAllDrops();
+        }
     }
 
     /// <summary>
     /// 检查指定位置是否可以放置方块
     /// </summary>
-    /// <param name="position">方块左下角的世界坐标</param>
-    /// <param name="shape">方块形状</param>
+    /// <param name="cellPos">方块左下角的cell坐标</param>
+    /// <param name="config">方块生成配置</param>
     /// <returns>是否可以放置</returns>
-    public bool CanPlaceBlock(Vector2Int position, BlockGenerationConfig config)
+    public bool CanPlaceBlock(Vector3Int cellPos, BlockGenerationConfig config, Tilemap tilemap)
     {
         if (config == null || config.CellCount <= 0)
             return false;
 
         foreach (Vector2Int coord in config.Coordinates)
         {
-            Vector2Int worldCoord = position + coord;
+            Vector3Int cell = cellPos + new Vector3Int(coord.x, coord.y, 0);
 
             // 检查是否超出地图边界
-            if (worldCoord.x < 0 || worldCoord.x >= mapWidth ||
-                worldCoord.y < 0 || worldCoord.y >= mapHeight)
+            if (!tilemap.HasTile(cell))
             {
                 return false;
             }
 
             // 检查格子是否已被占用
-            if (occupiedCells[worldCoord.x + worldCoord.y * mapWidth])
+            if (occupiedCells.Contains(cell))
             {
                 return false;
             }
@@ -158,10 +232,10 @@ public class GameMap : MonoBehaviour
     /// <summary>
     /// 放置方块到地图上
     /// </summary>
-    /// <param name="position">方块左下角的世界坐标</param>
+    /// <param name="cellPos">方块左下角的cell坐标</param>
     /// <param name="block">要放置的方块</param>
     /// <returns>是否放置成功</returns>
-    public bool PlaceBlock(Vector2Int position, Block block)
+    public bool PlaceBlock(Vector3Int cellPos, Block block, Tilemap tilemap)
     {
         if (block == null || block.Config == null)
         {
@@ -169,123 +243,93 @@ public class GameMap : MonoBehaviour
             return false;
         }
 
-        // if (!CanPlaceBlock(position, block.Config))
-        // {
-        //     Debug.LogWarning($"无法在位置 ({position.x}, {position.y}) 放置方块");
-        //     return false;
-        // }
-
-        // 标记格子为已占用
-        foreach (Vector2Int coord in block.Config.Coordinates)
+        if (!CanPlaceBlock(cellPos, block.Config, tilemap))
         {
-            Vector2Int worldCoord = position + coord;
-            occupiedCells[worldCoord.x + worldCoord.y * mapWidth] = true;
-        }
-
-        // 设置方块位置并添加到地图
-        block.SetWorldPosition(position, tilemap);
-        placedBlocks[position] = block;
-
-        Debug.Log($"方块成功放置到位置 ({position.x}, {position.y})");
-        return true;
-    }
-    /// <summary>
-    /// 放置方块到地图上
-    /// </summary>
-    /// <param name="position">方块左下角的世界坐标</param>
-    /// <param name="block">要放置的方块</param>
-    /// <returns>是否放置成功</returns>
-    public bool PlaceBlock(Vector2Int position, Block block,Tilemap tilemap)
-    {
-        if (block == null || block.Config == null)
-        {
-            Debug.LogError("方块或形状为空，无法放置");
+            Debug.LogWarning($"无法在位置 ({cellPos.x}, {cellPos.y}) 放置方块");
             return false;
         }
 
-        // if (!CanPlaceBlock(position, block.Config))
-        // {
-        //     Debug.LogWarning($"无法在位置 ({position.x}, {position.y}) 放置方块");
-        //     return false;
-        // }
+        var coordinates = block.Config.GetCellCoords();
+
+        if (coordinates == null || coordinates.Length == 0)
+        {
+            return false;
+        }
 
         // 标记格子为已占用
-        foreach (Vector2Int coord in block.Config.Coordinates)
+        foreach (Vector2Int coord in coordinates)
         {
-            Vector2Int worldCoord = position + coord;
-            occupiedCells[worldCoord.x + worldCoord.y * mapWidth] = true;
+            Vector3Int cell = cellPos + new Vector3Int(coord.x, coord.y, 0);
+            Debug.Log($"[GameMap Debug] 标记格子 {cell} 为已占用");
+
+
+            var occupiedCell = new OccupiedCell(cell, !block.CanBeOverridden);
+
+            bool addResult = occupiedCells.Add(occupiedCell);
         }
 
         // 设置方块位置并添加到地图
-        block.SetWorldPosition(position, tilemap);
-        placedBlocks[position] = block;
+        block.SetCellPosition(cellPos, tilemap);
+        placedBlocks[cellPos] = block;
 
-        Debug.Log($"方块成功放置到位置 ({position.x}, {position.y})");
+
         return true;
     }
+
     /// <summary>
     /// 移除方块
     /// </summary>
-    /// <param name="position">方块左下角的世界坐标</param>
+    /// <param name="cellPos">方块左下角的cell坐标</param>
+    /// <param name="block">要移除的方块</param>
     /// <returns>是否移除成功</returns>
-    public bool RemoveBlock(Vector2Int position)
+    public bool RemoveBlock(Vector3Int cellPos, Block block)
     {
-        if (!placedBlocks.ContainsKey(position))
+        if (block == null || block.Config == null)
         {
-            Debug.LogWarning($"位置 ({position.x}, {position.y}) 没有方块");
+            Debug.LogWarning($"方块或配置为空，无法移除");
             return false;
         }
 
-        Block block = placedBlocks[position];
-        if (block.Config != null)
+        // 修复：使用GetCellCoords()而不是Coordinates
+        var coordinates = block.Config.GetCellCoords();
+        if (coordinates != null)
         {
             // 取消标记格子占用
-            foreach (Vector2Int coord in block.Config.Coordinates)
+            foreach (Vector2Int coord in coordinates)
             {
-                Vector2Int worldCoord = position + coord;
-                if (worldCoord.x >= 0 && worldCoord.x < mapWidth &&
-                    worldCoord.y >= 0 && worldCoord.y < mapHeight)
-                {
-                    occupiedCells[worldCoord.x + worldCoord.y * mapWidth] = false;
-                }
+                Vector3Int cell = cellPos + new Vector3Int(coord.x, coord.y, 0);
+                occupiedCells.Remove(cell);
             }
         }
 
         // 销毁方块GameObject
-        if (block.gameObject != null)
+        if (block.gameObject != null && block.gameObject.scene.IsValid())
         {
             Destroy(block.gameObject);
         }
 
-        placedBlocks.Remove(position);
-        Debug.Log($"方块从位置 ({position.x}, {position.y}) 移除");
+        placedBlocks.Remove(cellPos);
         return true;
     }
 
     /// <summary>
     /// 获取指定位置的方块
     /// </summary>
-    /// <param name="position">世界坐标</param>
+    /// <param name="cellPos">cell坐标</param>
     /// <returns>方块实例，如果没有则返回null</returns>
-    public Block GetBlockAt(Vector2Int position)
+    public Block GetBlockAt(Vector3Int cellPos)
     {
-        return placedBlocks.ContainsKey(position) ? placedBlocks[position] : null;
+        return placedBlocks.ContainsKey(cellPos) ? placedBlocks[cellPos] : null;
     }
 
     /// <summary>
     /// 检查指定位置是否被占用
     /// </summary>
-    /// <param name="position">世界坐标</param>
+    /// <param name="cellPos">cell坐标</param>
     /// <returns>是否被占用</returns>
-    public bool IsCellOccupied(Vector2Int position)
+    public bool IsCellOccupied(Vector3Int cellPos)
     {
-        if (position.x < 0 || position.x >= mapWidth ||
-            position.y < 0 || position.y >= mapHeight)
-        {
-            return true; // 超出边界视为被占用
-        }
-
-        return occupiedCells[position.x + position.y * mapWidth];
+        return occupiedCells.Contains(cellPos);
     }
 
     /// <summary>
@@ -293,31 +337,28 @@ public class GameMap : MonoBehaviour
     /// </summary>
     /// <param name="worldPosition">世界坐标</param>
     /// <returns>地图格子坐标</returns>
-    public Vector2Int WorldToGridPosition(Vector3 worldPosition)
+    public Vector3Int WorldToCellPosition(Vector3 worldPosition)
     {
-        Vector3Int cell = tilemap.WorldToCell(worldPosition);
-        return new Vector2Int(cell.x, cell.y);
+        return CoordinateUtility.WorldToCellPosition(tilemap, worldPosition);
     }
 
     /// <summary>
     /// 将地图格子坐标转换为世界坐标
     /// </summary>
-    /// <param name="gridPosition">地图格子坐标</param>
+    /// <param name="cellPos">cell坐标</param>
     /// <returns>世界坐标</returns>
-    public Vector3 GridToWorldPosition(Vector2Int gridPosition)
+    public Vector3 CellToWorldPosition(Vector3Int cellPos)
     {
-        // Tilemap的CellToWorld返回的是格子左下角，通常需要加上tilemap.cellSize/2才能到中心
-        Vector3 cellOrigin = tilemap.CellToWorld(new Vector3Int(gridPosition.x, gridPosition.y, 0));
-        return cellOrigin + tilemap.cellSize / 2f;
+        return CoordinateUtility.CellToWorldPosition(tilemap, cellPos);
     }
 
     /// <summary>
     /// 获取地图上所有已放置的方块
     /// </summary>
     /// <returns>方块字典</returns>
-    public Dictionary<Vector2Int, Block> GetAllPlacedBlocks()
+    public Dictionary<Vector3Int, Block> GetAllPlacedBlocks()
     {
-        return new Dictionary<Vector2Int, Block>(placedBlocks);
+        return new Dictionary<Vector3Int, Block>(placedBlocks);
     }
 
     /// <summary>
@@ -336,7 +377,6 @@ public class GameMap : MonoBehaviour
 
         // 重新初始化
         InitializeMap();
-        Debug.Log("地图已清空");
     }
 
     /// <summary>
@@ -344,29 +384,8 @@ public class GameMap : MonoBehaviour
     /// </summary>
     private void OnDrawGizmos()
     {
-        if (tilemap == null) return;
-
-        // 绘制地图边界
-        Gizmos.color = Color.yellow;
-        Vector3 min = tilemap.CellToWorld(new Vector3Int(0, 0, 0));
-        Vector3 max = tilemap.CellToWorld(new Vector3Int(mapWidth, mapHeight, 0));
-        Vector3 center = (min + max) / 2f;
-        Vector3 size = new Vector3(Mathf.Abs(max.x - min.x), Mathf.Abs(max.y - min.y), 0.1f);
-        Gizmos.DrawWireCube(center, size);
-
-        // 绘制被占用的格子
-        Gizmos.color = Color.red;
-        for (int x = 0; x < mapWidth; x++)
-        {
-            for (int y = 0; y < mapHeight; y++)
-            {
-                if (occupiedCells != null && occupiedCells[x + y * mapWidth])
-                {
-                    Vector3 cellCenter = GridToWorldPosition(new Vector2Int(x, y));
-                    Gizmos.DrawWireCube(cellCenter, tilemap.cellSize * 0.8f);
-                }
-            }
-        }
+        // Gizmos.color = Color.red;
+        // Gizmos.DrawWireCube(tilemap.GetCellCenterWorld(new Vector3Int(0, 0, 0)), tilemap.cellSize * 0.5f);
     }
 
     /// <summary>
@@ -376,5 +395,118 @@ public class GameMap : MonoBehaviour
     public Tilemap GetTilemap()
     {
         return tilemap;
+    }
+
+    /// <summary>
+    /// 刷新
+    /// </summary>
+    public void RefreshWithMoney()
+    {
+        var shopSystem = GameManager.Instance?.GetSystem<ShopSystem>();
+        var itemManage = GameManager.Instance?.GetSystem<ItemManage>();
+
+        if (shopSystem != null && itemManage != null && shopSystem.CanAfford(GetMapData().ItemRefreshMoney))
+        {
+            shopSystem.SpendMoney(GetMapData().ItemRefreshMoney);
+            var previewAreaController = GameManager.Instance?.GetSystem<PreviewAreaController>();
+            if (previewAreaController != null)
+            {
+                previewAreaController.RefreshShowArea();
+            }
+
+            itemManage.ShowItem();
+        }
+    }
+
+    /// <summary>
+    /// 重置地图到初始状态
+    /// </summary>
+    public void ResetMap()
+    {
+        // 清空并重新初始化地图
+        ClearMap();
+
+        // 重置预览区域
+        var previewAreaController = GameManager.Instance?.GetSystem<PreviewAreaController>();
+        if (previewAreaController != null)
+        {
+            previewAreaController.RefreshShowArea();
+        }
+
+        // 重置物品系统
+        var itemManage = GameManager.Instance?.GetSystem<ItemManage>();
+        if (itemManage != null)
+        {
+            itemManage.ShowItem(false);
+        }
+    }
+}
+
+[System.Serializable]
+public class OccupiedCell
+{
+    public Vector3Int CellPosition;
+    public bool IsOccupied;
+
+    public OccupiedCell()
+    {
+    }
+
+    public OccupiedCell(Vector3Int cellPosition, bool isOccupied)
+    {
+        CellPosition = cellPosition;
+        IsOccupied = isOccupied;
+    }
+
+    public override bool Equals(object obj)
+    {
+        if (obj is OccupiedCell other)
+        {
+            return CellPosition.Equals(other.CellPosition);
+        }
+
+        return false;
+    }
+
+    public override int GetHashCode()
+    {
+        return CellPosition.GetHashCode();
+    }
+}
+
+public class OccupiedCellSet : HashSet<OccupiedCell>
+{
+    public new bool Add(OccupiedCell item)
+    {
+        bool result = base.Add(item);
+
+
+        return result;
+    }
+
+    public bool Contains(Vector3Int position)
+    {
+        foreach (var cell in this)
+        {
+            if (cell.CellPosition == position)
+            {
+                return cell.IsOccupied;
+            }
+        }
+
+        return false;
+    }
+
+    public bool Remove(Vector3Int position)
+    {
+        foreach (var cell in this)
+        {
+            if (cell.CellPosition == position)
+            {
+                return base.Remove(cell);
+            }
+        }
+
+        return false;
     }
 }
