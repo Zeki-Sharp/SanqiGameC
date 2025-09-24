@@ -2908,6 +2908,10 @@ PrefabInstance:
       propertyPath: m_AnchorMax.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4582861513291135391, guid: 06856fd3b8abd8048bd23c6a05685d7e, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6014840097500094490, guid: 06856fd3b8abd8048bd23c6a05685d7e, type: 3}
       propertyPath: m_Sprite
       value: 
@@ -2999,6 +3003,14 @@ PrefabInstance:
     - target: {fileID: 6822742210394790713, guid: 06856fd3b8abd8048bd23c6a05685d7e, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6822742210394790713, guid: 06856fd3b8abd8048bd23c6a05685d7e, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9223372036854775807, guid: 06856fd3b8abd8048bd23c6a05685d7e, type: 3}
+      propertyPath: m_BlockingMask.m_Bits
+      value: 247
       objectReference: {fileID: 0}
     - target: {fileID: 9223372036854775807, guid: 06856fd3b8abd8048bd23c6a05685d7e, type: 3}
       propertyPath: m_BlockingMask.m_Bits
