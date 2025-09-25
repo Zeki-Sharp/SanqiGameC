@@ -173,7 +173,7 @@ public class CombatUIPanel : UIPanel
         int minutes = Mathf.FloorToInt(remainingTime / 60);
         int seconds = Mathf.FloorToInt(remainingTime % 60);
         
-        timeText.text = $"时间: {minutes:00}:{seconds:00}";
+        timeText.text = $"{minutes:00}:{seconds:00}";
     }
 
     /// <summary>
