@@ -2749,6 +2749,22 @@ PrefabInstance:
       propertyPath: m_margin.z
       value: -7.9240723
       objectReference: {fileID: 0}
+    - target: {fileID: 3501465559974036853, guid: 0f9fc594c12532041a9a53501ddd02f9, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3501465559974036853, guid: 0f9fc594c12532041a9a53501ddd02f9, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3501465559974036853, guid: 0f9fc594c12532041a9a53501ddd02f9, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3501465559974036853, guid: 0f9fc594c12532041a9a53501ddd02f9, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4065144525869062200, guid: 0f9fc594c12532041a9a53501ddd02f9, type: 3}
       propertyPath: m_Name
       value: "\u4E0B\u65B9\u95F4\u9694"
