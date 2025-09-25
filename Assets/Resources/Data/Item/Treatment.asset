@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 913e5eea40f24a0096ab989745dc2613, type: 3}
   m_Name: Treatment
   m_EditorClassIdentifier: 
-  ItemName: Treatment
+  ItemName: "\u6DF1\u547C\u5438"
   ItemSprite: {fileID: 34125146, guid: f04510ddea362b443b7f6df1fc9d5964, type: 3}
   ItemColor: {r: 0, g: 0, b: 0, a: 0}
   Description: "\u6240\u6709\u5854\u52A050\u8840"
