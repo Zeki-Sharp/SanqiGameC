@@ -51,7 +51,7 @@ public class AudioManager : MonoBehaviour
     private Dictionary<SoundType, AudioSource> _loopingSources = new Dictionary<SoundType, AudioSource>();
     
     // 当前播放的BGM类型
-    private GamePhase _currentBGMPhase = GamePhase.BuildingPhase;
+    private GamePhase _currentBGMPhase = GamePhase.DefeatPhase; // 初始化为无效状态，确保第一次调用能播放BGM
 
     // 音效类型枚举
     public enum SoundType

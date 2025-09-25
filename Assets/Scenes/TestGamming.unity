@@ -474,8 +474,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _musicSource: {fileID: 0}
-  _buildingBGM: {fileID: 8300000, guid: 0e7d6ba341ff8374389b4372bb6b148e, type: 3}
-  _combatBGM: {fileID: 8300000, guid: b19eeee3942a74f4a877d1a16e42f024, type: 3}
+  _buildingBGM: {fileID: 8300000, guid: 3510321f5c514fc45a97ce55eeb99a1e, type: 3}
+  _combatBGM: {fileID: 8300000, guid: 37cd6f9d105881b4da19e21ee34af300, type: 3}
   _victorySound: {fileID: 8300000, guid: a014a5e22e9657140aa8557cfbb6acac, type: 3}
   _gameOverSound: {fileID: 8300000, guid: b41babd37b45df74b96136b041db185b, type: 3}
   _buttonClickSound: {fileID: 8300000, guid: a977d98f94a66444db6f05a0a57db524, type: 3}
@@ -2908,10 +2908,6 @@ PrefabInstance:
       propertyPath: m_AnchorMax.y
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 4582861513291135391, guid: 06856fd3b8abd8048bd23c6a05685d7e, type: 3}
-      propertyPath: m_AnchorMax.y
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 6014840097500094490, guid: 06856fd3b8abd8048bd23c6a05685d7e, type: 3}
       propertyPath: m_Sprite
       value: 
@@ -3003,14 +2999,6 @@ PrefabInstance:
     - target: {fileID: 6822742210394790713, guid: 06856fd3b8abd8048bd23c6a05685d7e, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6822742210394790713, guid: 06856fd3b8abd8048bd23c6a05685d7e, type: 3}
-      propertyPath: m_AnchorMax.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 9223372036854775807, guid: 06856fd3b8abd8048bd23c6a05685d7e, type: 3}
-      propertyPath: m_BlockingMask.m_Bits
-      value: 247
       objectReference: {fileID: 0}
     - target: {fileID: 9223372036854775807, guid: 06856fd3b8abd8048bd23c6a05685d7e, type: 3}
       propertyPath: m_BlockingMask.m_Bits
