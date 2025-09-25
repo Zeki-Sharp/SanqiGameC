@@ -13,10 +13,12 @@ MonoBehaviour:
   m_Name: 02
   m_EditorClassIdentifier: 
   ItemName: 02
-  ItemSprite: {fileID: 0}
+  ItemSprite: {fileID: 1311897361, guid: f04510ddea362b443b7f6df1fc9d5964, type: 3}
+  ItemColor: {r: 0, g: 0, b: 0, a: 0}
   Description: "\u4E0B\u8F6E\u653B\u901F\u52A015%"
   Price: 15
   ItemDatas:
   - type: 2
     valueType: 0
     value: 15
+  durationMax: 0
