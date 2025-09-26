@@ -63,7 +63,7 @@ public class BlockTestManager : MonoBehaviour
     {
         BlockGenerationConfig config = mapConfig.blockGenerationSettings.GetRandomShape();
         List<TowerData> towerDatas = new List<TowerData>();
-
+        GameStateManager.Instance.SwitchToBuildingPhase();
         foreach (var vector2 in config.GetCellCoords())
         {
             var tower = mapConfig.blockGenerationSettings.GetRandomTower();

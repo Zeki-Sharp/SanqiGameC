@@ -12,6 +12,10 @@ public class AudioManager : MonoBehaviour
     [Header("音频源设置")]
     [SerializeField] private AudioSource _musicSource;      // 背景音乐
 
+    [Header("背景音乐")]
+    [SerializeField] private AudioClip _buildingBGM;        // 建设阶段BGM
+    [SerializeField] private AudioClip _combatBGM;          // 战斗阶段BGM
+
     [Header("游戏流程音效")]
     [SerializeField] private AudioClip _victorySound;       // 游戏胜利
     [SerializeField] private AudioClip _gameOverSound;      // 游戏失败
@@ -34,12 +38,20 @@ public class AudioManager : MonoBehaviour
     [Range(0f, 1f)] public float MasterVolume = 1f;
     [Range(0f, 1f)] public float MusicVolume = 0.7f;
     [Range(0f, 1f)] public float SfxVolume = 1f;
+    
+    // 上次音量值，用于检测变化
+    private float _lastMasterVolume = 1f;
+    private float _lastMusicVolume = 0.7f;
+    private float _lastSfxVolume = 1f;
 
     // 音频库字典
     private Dictionary<SoundType, AudioClip> _soundLibrary;
 
     // 正在循环的音效
     private Dictionary<SoundType, AudioSource> _loopingSources = new Dictionary<SoundType, AudioSource>();
+    
+    // 当前播放的BGM类型
+    private GamePhase _currentBGMPhase = GamePhase.BuildingPhase;
 
     // 音效类型枚举
     public enum SoundType
@@ -217,6 +229,43 @@ public class AudioManager : MonoBehaviour
     {
         if (_musicSource != null) _musicSource.UnPause();
     }
+    
+    /// <summary>
+    /// 根据游戏阶段播放对应的BGM
+    /// </summary>
+    /// <param name="gamePhase">游戏阶段</param>
+    public void PlayBGMForPhase(GamePhase gamePhase)
+    {
+        // 如果当前已经播放对应阶段的BGM，则不重复播放
+        if (_currentBGMPhase == gamePhase) return;
+        
+        _currentBGMPhase = gamePhase;
+        
+        switch (gamePhase)
+        {
+            case GamePhase.BuildingPhase:
+            case GamePhase.PassPhase:
+                if (_buildingBGM != null)
+                {
+                    PlayMusic(_buildingBGM);
+                }
+                break;
+            case GamePhase.CombatPhase:
+                if (_combatBGM != null)
+                {
+                    PlayMusic(_combatBGM);
+                }
+                break;
+            case GamePhase.VictoryPhase:
+                StopMusic();
+                PlayVictorySound();
+                break;
+            case GamePhase.DefeatPhase:
+                StopMusic();
+                PlayGameOverSound();
+                break;
+        }
+    }
     #endregion
 
     #region 便捷方法
@@ -228,6 +277,8 @@ public class AudioManager : MonoBehaviour
     public void PlayBuildSound() { PlaySound(SoundType.Build); }
     public void PlayLevelUpSound() { PlaySound(SoundType.LevelUp); }
     public void PlayReplaceSound() { PlaySound(SoundType.Replace); }
+    public void PlayAttackSound() { PlaySound(SoundType.Attack); }
+    public void PlayDamageSound() { PlaySound(SoundType.Damage); }
 
     // 循环播放（手动停止）
     public void PlayAttackSound(GameObject owner) { PlayLoopingSound(SoundType.Attack, owner); }
@@ -270,4 +321,18 @@ public class AudioManager : MonoBehaviour
         }
     }
     #endregion
+
+    private void Update()
+    {
+        // 检查音量是否发生变化，如果变化则更新所有音量
+        if (_lastMasterVolume != MasterVolume || 
+            _lastMusicVolume != MusicVolume || 
+            _lastSfxVolume != SfxVolume)
+        {
+            _lastMasterVolume = MasterVolume;
+            _lastMusicVolume = MusicVolume;
+            _lastSfxVolume = SfxVolume;
+            UpdateAllVolumes();
+        }
+    }
 }

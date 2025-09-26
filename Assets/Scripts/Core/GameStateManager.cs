@@ -23,6 +23,7 @@ public class GameStateManager : MonoBehaviour
     
     // 单例模式
     private static GameStateManager instance;
+
     public static GameStateManager Instance
     {
         get
@@ -66,7 +67,7 @@ public class GameStateManager : MonoBehaviour
         EventBus.Instance.Subscribe<VictoryConditionMetEventArgs>(OnVictoryConditionMet);
         EventBus.Instance.Subscribe<DefeatConditionMetEventArgs>(OnDefeatConditionMet);
     }
-    
+
     private void Start()
     {
         // 延迟初始化，确保UIManager已经初始化完成
@@ -100,6 +101,9 @@ public class GameStateManager : MonoBehaviour
             UIManager.SwitchToPhase(GamePhase.BuildingPhase);
         }
         
+        // 播放初始BGM
+        AudioManager.Instance?.PlayBGMForPhase(GamePhase.BuildingPhase);
+        
         Debug.Log("游戏状态管理器初始化完成，当前状态：建设阶段");
     }
     
@@ -124,6 +128,9 @@ public class GameStateManager : MonoBehaviour
         // 更新UI
         if (UIManager != null)
             UIManager.SwitchToPhase(GamePhase.BuildingPhase);
+            
+        // 播放建设阶段BGM
+        AudioManager.Instance?.PlayBGMForPhase(GamePhase.BuildingPhase);
             
         Debug.Log($"游戏状态切换：{oldPhase} → 建设阶段");
     }
@@ -156,6 +163,9 @@ public class GameStateManager : MonoBehaviour
         if (UIManager != null)
             UIManager.SwitchToPhase(GamePhase.CombatPhase);
             
+        // 播放战斗阶段BGM
+        AudioManager.Instance?.PlayBGMForPhase(GamePhase.CombatPhase);
+            
         Debug.Log($"游戏状态切换：{oldPhase} → 战斗阶段");
     }
     
@@ -180,6 +190,9 @@ public class GameStateManager : MonoBehaviour
         // 更新UI
         if (UIManager != null)
             UIManager.SwitchToPhase(GamePhase.PassPhase);
+            
+        // 播放建设阶段BGM（通过阶段使用建设阶段BGM）
+        AudioManager.Instance?.PlayBGMForPhase(GamePhase.PassPhase);
             
         Debug.Log($"游戏状态切换：{oldPhase} → 通过阶段");
 
@@ -223,6 +236,9 @@ public class GameStateManager : MonoBehaviour
         // 更新UI
         if (UIManager != null)
             UIManager.SwitchToPhase(GamePhase.VictoryPhase);
+            
+        // 停止播放BGM
+        AudioManager.Instance?.PlayBGMForPhase(GamePhase.VictoryPhase);
             
         Debug.Log($"游戏状态切换：{oldPhase} → 胜利阶段");
     }
@@ -293,6 +309,9 @@ public class GameStateManager : MonoBehaviour
         if (UIManager != null)
             UIManager.SwitchToPhase(GamePhase.DefeatPhase);
             
+        // 停止播放BGM
+        AudioManager.Instance?.PlayBGMForPhase(GamePhase.DefeatPhase);
+            
         Debug.Log($"游戏状态切换：{oldPhase} → 失败阶段");
     }
     
@@ -342,4 +361,4 @@ public class GamePhaseChangedEventArgs : EventArgs
 {
     public GamePhase OldPhase;
     public GamePhase NewPhase;
-} 
+}
