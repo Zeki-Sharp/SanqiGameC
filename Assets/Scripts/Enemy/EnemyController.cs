@@ -353,7 +353,7 @@ public class EnemyController : MonoBehaviour
             int goldReward = data != null ? data.GoldReward : 10;
             EventBus.Instance.Publish(new EnemyDeathEventArgs(gameObject, goldReward, transform.position));
         }
-        Destroy(gameObject);
+        //Destroy(gameObject);
     }
 
     /// <summary>
