@@ -86,6 +86,7 @@ public class Tower : MonoBehaviour
             }
             
             towerLayerMask = LayerMask.GetMask("Tower");
+            
             // 启动治疗效果（如果是治疗塔）
             StartHealEffect();
             
@@ -343,6 +344,7 @@ public class Tower : MonoBehaviour
     private void OnTowerDeath()
     {
         Debug.Log($"塔 {this.name} 被摧毁");
+        
         // 从Block中移除塔的引用
         if (cachedBlock != null)
         {
@@ -970,7 +972,7 @@ public void Initialize(TowerData data, Vector3Int pos, bool hasCheck = false, bo
         
         // 设置子弹伤害
         SetBulletDamage();
-        AudioManager.Instance.PlayAttackSound();
+        AudioManager.Instance.PlayDamageSound(gameObject);
         // 使用RaycastPro系统发射子弹
         bulletCaster.Cast(0);
     }
