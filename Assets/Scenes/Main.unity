@@ -3065,6 +3065,18 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 328495929}
     m_Modifications:
+    - target: {fileID: 537838828189017556, guid: 06856fd3b8abd8048bd23c6a05685d7e, type: 3}
+      propertyPath: m_fontAsset
+      value: 
+      objectReference: {fileID: 11400000, guid: 9b64d721cbd563b42afee56e8004961e, type: 2}
+    - target: {fileID: 537838828189017556, guid: 06856fd3b8abd8048bd23c6a05685d7e, type: 3}
+      propertyPath: m_sharedMaterial
+      value: 
+      objectReference: {fileID: -2882453908859745636, guid: 9b64d721cbd563b42afee56e8004961e, type: 2}
+    - target: {fileID: 537838828189017556, guid: 06856fd3b8abd8048bd23c6a05685d7e, type: 3}
+      propertyPath: m_hasFontAssetChanged
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3158024780732800519, guid: 06856fd3b8abd8048bd23c6a05685d7e, type: 3}
       propertyPath: m_Name
       value: TipsUIPanel
@@ -4622,8 +4634,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: "\u6E38\u620F\u6682\u505C"
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 089ddbb4d0e14164a961cb12f839b49e, type: 2}
-  m_sharedMaterial: {fileID: -8075356210350595809, guid: 089ddbb4d0e14164a961cb12f839b49e, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 9b64d721cbd563b42afee56e8004961e, type: 2}
+  m_sharedMaterial: {fileID: -2882453908859745636, guid: 9b64d721cbd563b42afee56e8004961e, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -6475,6 +6487,10 @@ PrefabInstance:
     - target: {fileID: 5761948090894293757, guid: 8beaaea1ab70ea34493920f1d856b849, type: 3}
       propertyPath: m_IsActive
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5858522543693270165, guid: 8beaaea1ab70ea34493920f1d856b849, type: 3}
+      propertyPath: m_text
+      value: "\u4E3B\u83DC\u5355\u4E2D\u56FD"
       objectReference: {fileID: 0}
     - target: {fileID: 5858522543693270165, guid: 8beaaea1ab70ea34493920f1d856b849, type: 3}
       propertyPath: m_fontAsset
