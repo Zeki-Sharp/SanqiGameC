@@ -30,7 +30,7 @@ public class AudioManager : MonoBehaviour
     [BoxGroup("塔音效")][SerializeField] private AudioClip _towerDamageSound;        // 塔受击音效（循环）
     [BoxGroup("塔音效")][SerializeField] private AudioClip _towerBrokenSound;        // 塔摧毁音效（单次）
     [BoxGroup("敌人音效")][SerializeField] private AudioClip _enemyDamageSound;        // 塔受击音效（循环）
-    [BoxGroup("敌人音效")][SerializeField] private AudioClip _enemyBrokenSound;        // 塔摧毁音效（单次）
+    [BoxGroup("敌人音效")][SerializeField] private AudioClip _enemyDeathSound;        // 塔摧毁音效（单次）
     [SerializeField] private AudioClip _footstepSound;      // 敌人行走音效（循环）
 
     [Header("建造系统音效")]
@@ -80,7 +80,7 @@ public class AudioManager : MonoBehaviour
         TowerDamage,
         TowerBroken,
         EnemyDamage,
-        EnemyBroken
+        EnemyDeath
     }
 
     private void Awake()
@@ -131,7 +131,7 @@ public class AudioManager : MonoBehaviour
             { SoundType.TowerDamage, _towerDamageSound },
             { SoundType.TowerBroken, _towerBrokenSound },
             { SoundType.EnemyDamage, _enemyDamageSound },
-            { SoundType.EnemyBroken, _enemyBrokenSound },
+            { SoundType.EnemyDeath, _enemyDeathSound },
             { SoundType.Footstep, _footstepSound },
 
             { SoundType.Build, _buildSound },
@@ -291,7 +291,7 @@ public class AudioManager : MonoBehaviour
     public void PlayTowerDamageSound() { PlaySound(SoundType.TowerDamage); }
     public void PlayEnemyDamageSound() { PlaySound(SoundType.EnemyDamage); }
     public void PlayTowerBrokenSound() { PlaySound(SoundType.TowerBroken); }
-    public void PlayEnemyBrokenSound() { PlaySound(SoundType.EnemyBroken); }
+    public void PlayEnemyDeathSound() { PlaySound(SoundType.EnemyDeath); }
 
     // 循环播放（手动停止）
     public void PlayAttackSound(GameObject owner) { PlayLoopingSound(SoundType.Attack, owner); }

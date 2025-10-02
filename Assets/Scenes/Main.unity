@@ -480,15 +480,17 @@ MonoBehaviour:
   _gameOverSound: {fileID: 8300000, guid: b41babd37b45df74b96136b041db185b, type: 3}
   _buttonClickSound: {fileID: 8300000, guid: a977d98f94a66444db6f05a0a57db524, type: 3}
   _attackSound: {fileID: 8300000, guid: f7459e5d8de4364428ca7bb979ebcd39, type: 3}
-  _damageSound: {fileID: 8300000, guid: 5288576496126324289e852ee45bac6c, type: 3}
-  _brokenSound: {fileID: 8300000, guid: bcf4a030c03bea0469ef9f5a6e895099, type: 3}
+  _towerDamageSound: {fileID: 0}
+  _towerBrokenSound: {fileID: 0}
+  _enemyDamageSound: {fileID: 0}
+  _enemyBrokenSound: {fileID: 0}
   _footstepSound: {fileID: 8300000, guid: a0c007ccfb1fca240b6ced3105bd1d43, type: 3}
   _buildSound: {fileID: 8300000, guid: c46e46b8a49921647852c1933abba531, type: 3}
   _levelUpSound: {fileID: 8300000, guid: 0b62ca90831232d4b8d5e710e32227e4, type: 3}
   _replaceSound: {fileID: 8300000, guid: b778610c3ac9f68469b7fdddfa7819f0, type: 3}
-  MasterVolume: 1
-  MusicVolume: 1
-  SfxVolume: 1
+  MasterVolume: 0.5
+  MusicVolume: 0.5
+  SfxVolume: 0.5
 --- !u!4 &304002483
 Transform:
   m_ObjectHideFlags: 0

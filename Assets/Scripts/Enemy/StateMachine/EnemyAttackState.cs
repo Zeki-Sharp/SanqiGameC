@@ -159,6 +159,8 @@ public class EnemyAttackState : EnemyState
             // 默认攻击行为：使用原来的逻辑
             ExecuteDefaultAttack(target, dir);
         }
+
+        AudioManager.Instance.PlayAttackSound();
     }
 
     private void ExecuteMeleeAttack(GameObject target, MeleeAttackBehavior melee)

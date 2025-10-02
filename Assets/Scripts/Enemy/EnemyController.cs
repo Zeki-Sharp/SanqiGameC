@@ -347,7 +347,7 @@ public class EnemyController : MonoBehaviour
     private void Die()
     {
         Debug.Log($"{name} 死亡");
-
+        AudioManager.Instance.PlayEnemyDeathSound();
         if (EventBus.Instance != null)
         {
             int goldReward = data != null ? data.GoldReward : 10;
