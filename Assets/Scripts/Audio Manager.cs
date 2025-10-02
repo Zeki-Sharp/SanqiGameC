@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Sirenix.OdinInspector;
 using UnityEngine;
 
 /// <summary>
@@ -24,9 +25,12 @@ public class AudioManager : MonoBehaviour
     [SerializeField] private AudioClip _buttonClickSound;   // 按键点击
 
     [Header("战斗系统音效")]
+
     [SerializeField] private AudioClip _attackSound;        // 攻击音效（循环）
-    [SerializeField] private AudioClip _damageSound;        // 塔受击音效（循环）
-    [SerializeField] private AudioClip _brokenSound;        // 塔摧毁音效（单次）
+    [BoxGroup("塔音效")][SerializeField] private AudioClip _towerDamageSound;        // 塔受击音效（循环）
+    [BoxGroup("塔音效")][SerializeField] private AudioClip _towerBrokenSound;        // 塔摧毁音效（单次）
+    [BoxGroup("敌人音效")][SerializeField] private AudioClip _enemyDamageSound;        // 塔受击音效（循环）
+    [BoxGroup("敌人音效")][SerializeField] private AudioClip _enemyBrokenSound;        // 塔摧毁音效（单次）
     [SerializeField] private AudioClip _footstepSound;      // 敌人行走音效（循环）
 
     [Header("建造系统音效")]
@@ -72,7 +76,11 @@ public class AudioManager : MonoBehaviour
         // 建造系统
         Build,
         LevelUp,
-        Replace
+        Replace,
+        TowerDamage,
+        TowerBroken,
+        EnemyDamage,
+        EnemyBroken
     }
 
     private void Awake()
@@ -120,8 +128,10 @@ public class AudioManager : MonoBehaviour
             { SoundType.ButtonClick, _buttonClickSound },
 
             { SoundType.Attack, _attackSound },
-            { SoundType.Damage, _damageSound },
-            { SoundType.Broken, _brokenSound },
+            { SoundType.TowerDamage, _towerDamageSound },
+            { SoundType.TowerBroken, _towerBrokenSound },
+            { SoundType.EnemyDamage, _enemyDamageSound },
+            { SoundType.EnemyBroken, _enemyBrokenSound },
             { SoundType.Footstep, _footstepSound },
 
             { SoundType.Build, _buildSound },
@@ -278,7 +288,10 @@ public class AudioManager : MonoBehaviour
     public void PlayLevelUpSound() { PlaySound(SoundType.LevelUp); }
     public void PlayReplaceSound() { PlaySound(SoundType.Replace); }
     public void PlayAttackSound() { PlaySound(SoundType.Attack); }
-    public void PlayDamageSound() { PlaySound(SoundType.Damage); }
+    public void PlayTowerDamageSound() { PlaySound(SoundType.TowerDamage); }
+    public void PlayEnemyDamageSound() { PlaySound(SoundType.EnemyDamage); }
+    public void PlayTowerBrokenSound() { PlaySound(SoundType.TowerBroken); }
+    public void PlayEnemyBrokenSound() { PlaySound(SoundType.EnemyBroken); }
 
     // 循环播放（手动停止）
     public void PlayAttackSound(GameObject owner) { PlayLoopingSound(SoundType.Attack, owner); }
