@@ -305,8 +305,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Enemy Preview
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 86c1420363eb9f341b1c6eb76ef264d1, type: 2}
-  m_sharedMaterial: {fileID: 467525188654070467, guid: 86c1420363eb9f341b1c6eb76ef264d1, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 089ddbb4d0e14164a961cb12f839b49e, type: 2}
+  m_sharedMaterial: {fileID: -8075356210350595809, guid: 089ddbb4d0e14164a961cb12f839b49e, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -441,8 +441,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: 
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 86c1420363eb9f341b1c6eb76ef264d1, type: 2}
-  m_sharedMaterial: {fileID: 467525188654070467, guid: 86c1420363eb9f341b1c6eb76ef264d1, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 089ddbb4d0e14164a961cb12f839b49e, type: 2}
+  m_sharedMaterial: {fileID: -8075356210350595809, guid: 089ddbb4d0e14164a961cb12f839b49e, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -542,9 +542,17 @@ PrefabInstance:
       propertyPath: m_fontStyle
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 336677158334142438, guid: 7a425609b33838b46ba04aafdf140d06, type: 3}
+      propertyPath: m_hasFontAssetChanged
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6336495001170930129, guid: 7a425609b33838b46ba04aafdf140d06, type: 3}
       propertyPath: m_Name
       value: EnemyPreviewCard
+      objectReference: {fileID: 0}
+    - target: {fileID: 6703153491134733565, guid: 7a425609b33838b46ba04aafdf140d06, type: 3}
+      propertyPath: m_fontStyle
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8338161789737474069, guid: 7a425609b33838b46ba04aafdf140d06, type: 3}
       propertyPath: m_Pivot.x
