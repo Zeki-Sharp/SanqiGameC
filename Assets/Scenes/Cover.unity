@@ -2686,7 +2686,7 @@ Canvas:
   m_AdditionalShaderChannelsFlag: 25
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 20
   m_TargetDisplay: 0
 --- !u!224 &719202141
 RectTransform:
@@ -3765,6 +3765,68 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1037254726}
   m_CullTransparentMesh: 1
+--- !u!1 &1138492265
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1138492267}
+  - component: {fileID: 1138492266}
+  m_Layer: 0
+  m_Name: AudioSystem
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1138492266
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1138492265}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ff4d87b99022f444baf84bae2072c798, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _musicSource: {fileID: 0}
+  _buildingBGM: {fileID: 8300000, guid: 3510321f5c514fc45a97ce55eeb99a1e, type: 3}
+  _combatBGM: {fileID: 8300000, guid: 37cd6f9d105881b4da19e21ee34af300, type: 3}
+  _victorySound: {fileID: 8300000, guid: a014a5e22e9657140aa8557cfbb6acac, type: 3}
+  _gameOverSound: {fileID: 8300000, guid: b41babd37b45df74b96136b041db185b, type: 3}
+  _buttonClickSound: {fileID: 8300000, guid: a977d98f94a66444db6f05a0a57db524, type: 3}
+  _attackSound: {fileID: 8300000, guid: f7459e5d8de4364428ca7bb979ebcd39, type: 3}
+  _towerDamageSound: {fileID: 8300000, guid: 5288576496126324289e852ee45bac6c, type: 3}
+  _towerBrokenSound: {fileID: 8300000, guid: bcf4a030c03bea0469ef9f5a6e895099, type: 3}
+  _enemyDamageSound: {fileID: 8300000, guid: 3984541d7b38259428d4d4f626daf897, type: 3}
+  _enemyDeathSound: {fileID: 0}
+  _footstepSound: {fileID: 8300000, guid: a0c007ccfb1fca240b6ced3105bd1d43, type: 3}
+  _buildSound: {fileID: 8300000, guid: c46e46b8a49921647852c1933abba531, type: 3}
+  _levelUpSound: {fileID: 8300000, guid: 0b62ca90831232d4b8d5e710e32227e4, type: 3}
+  _replaceSound: {fileID: 8300000, guid: b778610c3ac9f68469b7fdddfa7819f0, type: 3}
+  MasterVolume: 0.5
+  MusicVolume: 0.5
+  SfxVolume: 0.5
+--- !u!4 &1138492267
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1138492265}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0.44574234, y: 0.41778383, z: 318.67874}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1144133304
 GameObject:
   m_ObjectHideFlags: 0
@@ -4385,6 +4447,7 @@ SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
   - {fileID: 1609677835}
+  - {fileID: 1138492267}
   - {fileID: 719202141}
   - {fileID: 253641910}
   - {fileID: 2054579972}

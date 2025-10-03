@@ -313,6 +313,10 @@ public class GameStartManager : MonoBehaviour
         {
             foreach (Camera camera in mainSceneCameras)
             {
+                if (camera.name == "PreviewCamera")
+                {
+                    continue;
+                }
                 // 启用后处理渲染
                 var universalAdditionalCameraData = camera.GetComponent<UnityEngine.Rendering.Universal.UniversalAdditionalCameraData>();
                 if (universalAdditionalCameraData != null)
