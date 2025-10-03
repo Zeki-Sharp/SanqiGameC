@@ -27,7 +27,7 @@ public class GameStartManager : MonoBehaviour
     [Header("事件")]
     public UnityEvent OnAnimationComplete;
     public UnityEvent OnMainSceneLoaded;
-    
+
     [Header("调试")]
     [SerializeField] private bool enableDebugLog = true;
     
@@ -175,7 +175,7 @@ public class GameStartManager : MonoBehaviour
         // 将Main场景的所有根对象移动到指定位置
         foreach (GameObject rootObj in rootObjects)
         {
-            rootObj.transform.position = mainSceneOffset;
+            rootObj.transform.position += mainSceneOffset;
             if (enableDebugLog)
             {
                 Debug.Log($"GameStartManager: 设置Main场景对象位置: {rootObj.name} -> {mainSceneOffset}");
@@ -431,5 +431,10 @@ public class GameStartManager : MonoBehaviour
         {
             llsManager = FindFirstObjectByType<LoadingScreenManager>();
         }
+    }
+
+    public void ExitGame()
+    {
+        Application.Quit();
     }
 }

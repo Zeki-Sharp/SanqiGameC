@@ -54,11 +54,6 @@ public class GameMap : MonoBehaviour
         bulletManager = GameManager.Instance.GetSystem<BulletManager>();
         if (!InitializeScene())
             return;
-        InitializeMap();
-
-
-        var (worldMin, worldMax) = MapUtility.GetTilemapWorldBounds(tilemap);
-        // Debug.Log($"世界坐标范围: Min = {worldMin}，Max = {worldMax}");
     }
 
     public MapConfig GetMapConfig()
@@ -107,6 +102,7 @@ public class GameMap : MonoBehaviour
         return towerArea;
     }
 
+    public void Initialize() => InitializeMap();
     /// <summary>
     /// 初始化地图
     /// </summary>
