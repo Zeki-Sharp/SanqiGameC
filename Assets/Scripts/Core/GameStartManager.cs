@@ -138,7 +138,35 @@ public class GameStartManager : MonoBehaviour
         // 3. 设置Main场景位置到正下方
         StartCoroutine(SetMainScenePosition());
     }
-    
+    public void BackStartScence()
+    {
+        if (enableDebugLog)
+        {
+            Debug.Log("GameStartManager: 开始游戏序列");
+        }
+        
+        // 检查必要组件
+        if (llsManager == null)
+        {
+            Debug.LogError("GameStartManager: LLS Manager未找到！无法加载Main场景");
+            return;
+        }
+        
+        // 1. 开始播放MMF Player动画
+        if (startAnimationPlayer != null)
+        {
+            startAnimationPlayer.PlayFeedbacks();
+            if (enableDebugLog)
+            {
+                Debug.Log("GameStartManager: MMF Player动画开始播放");
+            }
+        }
+        else if (enableDebugLog)
+        {
+            Debug.LogWarning("GameStartManager: MMF Player未设置，跳过动画播放");
+        }
+        
+    }
     /// <summary>
     /// 设置Main场景位置到Cover场景正下方
     /// </summary>

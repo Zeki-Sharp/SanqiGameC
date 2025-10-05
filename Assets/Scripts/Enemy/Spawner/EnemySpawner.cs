@@ -30,10 +30,11 @@ public class EnemySpawner : MonoBehaviour
     private Coroutine spawnRoutine;
     
     private BulletManager bulletManager;
+    [SerializeField] private GameObject enemyContain;
     private void Start()
     {
         bulletManager = GameManager.Instance.GetSystem<BulletManager>();
-        
+        enemyContain = GameObject.Find("EnemyContain");
         // 订阅敌人死亡事件，用于更新敌人计数
         if (EventBus.Instance != null)
         {
@@ -149,6 +150,7 @@ public class EnemySpawner : MonoBehaviour
         enemyObject.GetComponent<BasicCaster2D>().poolManager = bulletManager.GetPoolManager();
         enemyObject.GetComponent<EnemyController>().SetEnemyData(enemyData);
         enemyObject.name = enemyData.EnemyName + FindObjectsByType<EnemyController>(sortMode: FindObjectsSortMode.InstanceID).Length;
+        enemyObject.transform.SetParent(enemyContain.transform);
         if (enemyData.EnemySprite != null)
         {
             enemyObject.GetComponent<SpriteRenderer>().sprite = enemyData.EnemySprite;

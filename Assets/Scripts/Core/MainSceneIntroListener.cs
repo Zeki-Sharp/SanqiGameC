@@ -2,13 +2,15 @@ using System;
 using MoreMountains.Feedbacks;
 using MoreMountains.FeedbacksForThirdParty;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class MainSceneIntroListener : MonoBehaviour
 {
     private MMF_Player _mmfPlayer;
     
     private GameStartManager _gameStartManager;
-
+    private string coverSceneName="Cover";
+    private string mainSceneName="Main";
     private void Start()
     {
         if (_mmfPlayer == null)
@@ -34,6 +36,13 @@ public class MainSceneIntroListener : MonoBehaviour
     void PlayIntroOnce()
     {
         if (_mmfPlayer != null) _mmfPlayer.PlayFeedbacks();
+        SceneManager.SetActiveScene(SceneManager.GetSceneByName(mainSceneName));
         // enabled = false;
+    }
+
+    public void ReturnToStart()
+    {
+        if (_gameStartManager != null) _gameStartManager.BackStartScence();
+        SceneManager.SetActiveScene(SceneManager.GetSceneByName(coverSceneName));
     }
 }
