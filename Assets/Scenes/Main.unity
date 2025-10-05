@@ -454,7 +454,7 @@ Canvas:
   m_GameObject: {fileID: 291653646}
   m_Enabled: 1
   serializedVersion: 3
-  m_RenderMode: 1
+  m_RenderMode: 0
   m_Camera: {fileID: 2058614372}
   m_PlaneDistance: 100
   m_PixelPerfect: 1
@@ -1206,6 +1206,7 @@ MonoBehaviour:
     max: {x: -0.82, y: -3.54}
   - min: {x: 1.16, y: -5.37}
     max: {x: 4.3, y: -3.61}
+  spawnAreaOffset: {x: 0, y: -2600}
   showSpawnAreas: 1
   debugSpawnInfo: 1
   enemyContain: {fileID: 0}
@@ -1218,7 +1219,7 @@ Transform:
   m_GameObject: {fileID: 635971281}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 1515.0023, y: 738.9059, z: 4.2797112}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -4606,7 +4607,7 @@ Canvas:
   m_GameObject: {fileID: 1898747789}
   m_Enabled: 1
   serializedVersion: 3
-  m_RenderMode: 1
+  m_RenderMode: 0
   m_Camera: {fileID: 2058614372}
   m_PlaneDistance: 100
   m_PixelPerfect: 0
@@ -6628,6 +6629,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4431917319420417039, guid: 3b66d0f80c3385243848c82d98b1223d, type: 3}
+      propertyPath: m_Material
+      value: 
+      objectReference: {fileID: 2100000, guid: b30a701edd7c889498ebd09e96a9daa8, type: 2}
     - target: {fileID: 5069408351208276628, guid: 3b66d0f80c3385243848c82d98b1223d, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0

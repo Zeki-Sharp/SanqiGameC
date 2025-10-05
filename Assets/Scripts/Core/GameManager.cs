@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 using System;
+using UnityEngine.SceneManagement;
 
 /// <summary>
 /// 游戏主管理器 - 唯一的全局访问点，统一管理所有子系统
@@ -246,6 +247,11 @@ public class GameManager : MonoBehaviour
         Time.timeScale = 1f;
         
         // 重新加载当前场景，这样会重新执行所有初始化流程
-        UnityEngine.SceneManagement.SceneManager.LoadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name);
+        SceneManager.LoadSceneAsync(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name).completed += _ =>
+        {
+            var gameMap = GetSystem<GameMap>();
+            gameMap.Initialize();
+        };
+
     }
 }

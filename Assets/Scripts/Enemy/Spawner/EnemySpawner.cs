@@ -17,7 +17,7 @@ public class EnemySpawner : MonoBehaviour
     
     [Header("生成区域 (可多选)")]
     public List<SpawnArea> spawnAreas = new List<SpawnArea>();
-
+    [SerializeField] private Vector2 spawnAreaOffset = Vector2.zero;
     [Header("调试")]
     public bool showSpawnAreas = true;
     public bool debugSpawnInfo = true;
@@ -40,7 +40,12 @@ public class EnemySpawner : MonoBehaviour
         {
             EventBus.Instance.Subscribe<EnemyDeathEventArgs>(OnEnemyDeath);
         }
-        
+
+        foreach (var SpawnArea in spawnAreas)
+        {
+            SpawnArea.max = spawnAreaOffset + SpawnArea.max;
+            SpawnArea.min = spawnAreaOffset + SpawnArea.min;
+        }
         // 不再自动开始，完全由RoundManager控制
         Debug.Log("EnemySpawner初始化完成，等待RoundManager调用");
     }

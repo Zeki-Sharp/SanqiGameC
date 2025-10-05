@@ -21,7 +21,10 @@ public class MainSceneIntroListener : MonoBehaviour
         if (_gameStartManager != null)
         {
             _gameStartManager.OnAnimationComplete.AddListener(PlayIntroOnce);
-
+        }
+        else if (_gameStartManager == null )
+        {
+            PlayIntroOnce();
         }
     }
 
@@ -35,8 +38,11 @@ public class MainSceneIntroListener : MonoBehaviour
 
     void PlayIntroOnce()
     {
-        if (_mmfPlayer != null) _mmfPlayer.PlayFeedbacks();
-        SceneManager.SetActiveScene(SceneManager.GetSceneByName(mainSceneName));
+        if (_mmfPlayer != null)
+        {
+            _mmfPlayer.PlayFeedbacks();
+            SceneManager.SetActiveScene(SceneManager.GetSceneByName(mainSceneName));
+        }
         // enabled = false;
     }
 
