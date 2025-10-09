@@ -133,6 +133,9 @@ public class DamageTaker : MonoBehaviour
         // 播放死亡特效（仅对敌人）
         if (gameObject.CompareTag("Enemy"))
         {
+            // 播放敌人死亡音效
+            AudioManager.Instance?.PlayEnemyDeathSound();
+            
             PlayDeathEffect();
             // 延迟销毁，确保特效播放完成
             StartCoroutine(DestroyAfterEffect());
@@ -197,4 +200,4 @@ public class DamageTaker : MonoBehaviour
         yield return new WaitForSeconds(0.4f);
         Destroy(gameObject);
     }
-} 
+}
