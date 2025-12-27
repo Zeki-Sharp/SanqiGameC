@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1f556f0894dd32c4691f268d4766ac85, type: 3}
+  m_Name: Remote LowBlood
+  m_EditorClassIdentifier: 
+  enemyName: "\u7F9E\u803B"
+  enemySprite: {fileID: 21300000, guid: 2046692a52194314eab048c5f7a0b915, type: 3}
+  description: "\u602F\u61E6\u7684\u85CF\u5728\u8FDC\u5904\uFF0C\u5374\u6295\u51FA\u51B0\u51B7\u7684\u5B62\u5B50\uFF0C\u8BA9\u4EBA\u96BE\u4EE5\u9762\u5BF9"
+  maxHealth: 20
+  moveSpeed: 1.2
+  attackRange: 1
+  attackBehavior: {fileID: 11400000, guid: f8e6a5643e2672f47b4f65008aaf27a2, type: 2}
+  goldReward: 10
+  enemyPrefab: {fileID: 9133360019857942620, guid: 8e19af0d194bc28419cddd955b2b213c, type: 3}
+  animatorController: {fileID: 9100000, guid: 13046487fb041ca478620cf31ba74e54, type: 2}

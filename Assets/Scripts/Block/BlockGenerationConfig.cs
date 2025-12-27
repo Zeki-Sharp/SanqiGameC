@@ -3,12 +3,12 @@ using Sirenix.OdinInspector;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-[CreateAssetMenu(fileName = "BlockGenerationConfig", menuName = "Scriptable Objects/BlockGenerationConfig"), Serializable]
+[CreateAssetMenu(fileName = "BlockGenerationConfig", menuName = "Tower Defense/Block/BlockGenerationConfig"), Serializable]
 public class BlockGenerationConfig : ScriptableObject
 {
     [SerializeField]
     private string shapeName;
-    
+    [SerializeField,HideInInspector]
     // 使用一维数组保存 4x4 网格数据
     public bool[] blockGrid = new bool[16];
 
@@ -45,18 +45,19 @@ public class BlockGenerationConfig : ScriptableObject
                     blockGrid[y * 4 + x] = value[y, x];
                 }
             }
-#if UNITY_EDITOR
-            UnityEditor.EditorUtility.SetDirty(this);
-            UnityEditor.AssetDatabase.SaveAssets();
-#endif
+// #if UNITY_EDITOR
+//             UnityEditor.EditorUtility.SetDirty(this);
+//             UnityEditor.AssetDatabase.SaveAssets();
+// #endif
+            Save(); // 新增：每次修改后自动同步
         }
     }
 
     [Button("保存")]
     public void Save()
     {
-        cellCount = GetCellCount(out int count);
-        coordinates = GetCellCoords(count);
+        // cellCount = GetCellCount();
+        coordinates = GetCellCoords();
 #if UNITY_EDITOR
         UnityEditor.EditorUtility.SetDirty(this);
         UnityEditor.AssetDatabase.SaveAssets();
@@ -65,27 +66,24 @@ public class BlockGenerationConfig : ScriptableObject
     [HideInInspector]
     public int cellCount;
     [HideInInspector]
-    public Vector2Int[] coordinates;
-
-    public Vector2Int[] Coordinates => coordinates;
+    public Vector3Int[] coordinates;
+    public string ShapeName => shapeName;
+    public Vector3Int[] Coordinates => coordinates;
     public int CellCount => cellCount;
+    
+    public Vector3Int offset;
 
     private void OnValidate()
     {
         shapeName = name;
-
-#if UNITY_EDITOR
-        // 调试信息只在编辑器下启用
-        for (int y = 0; y < 4; y++)
-        {
-            for (int x = 0; x < 4; x++)
-            {
-                Debug.Log(BlockGrid[y, x]);
-            }
-        }
-#endif
+        // Save(); // 新增：每次编辑器变更后自动同步
         
     }
+    // [Button("获取格子")]
+    // public void GetCell()
+    // {
+    //     TowerBuildUtility.GetTowerArea(BlockGrid);
+    // }
     [Button("旋转90°"), PropertySpace(10)]
     public void Rotate()
     {
@@ -110,22 +108,11 @@ public class BlockGenerationConfig : ScriptableObject
             }
         }
         
-        // 更新坐标缓存
-        // cellCount = GetCellCount(out int count);
-        // coordinates = GetCellCoords(count);
-        
-// #if UNITY_EDITOR
-//         if (!Application.isPlaying)
-//         {
-//             UnityEditor.EditorUtility.SetDirty(this);
-//             UnityEditor.AssetDatabase.SaveAssets();
-//         }
-// #endif
     }
 
-    public int GetCellCount(out int count)
+    public int GetCellCount()
     {
-        count = 0;
+        int count = 0;
         for (int i = 0; i < 16; i++)
         {
             if (blockGrid[i])
@@ -136,30 +123,106 @@ public class BlockGenerationConfig : ScriptableObject
         return count;
     }
 
-    public Vector2Int[] GetCellCoords(int cellCount)
+    public Vector3Int[] GetCellCoords()
     {
-        int count = Random.Range(0,5);
-        Rotate( count);
-        Vector2Int[] coords = new Vector2Int[cellCount];
+        // 验证blockGrid数组长度
+        if (blockGrid == null || blockGrid.Length != 16)
+        {
+            Debug.LogError($"[BlockGenerationConfig] blockGrid数组无效，长度应为16，当前长度：{blockGrid?.Length ?? 0}");
+            return Array.Empty<Vector3Int>();
+        }
+
+        // 验证cellCount是否有效
+        if (cellCount <= 0)
+        {
+            cellCount= GetCellCount();
+            // Debug.LogError($"[BlockGenerationConfig] 无效的cellCount值：{cellCount}，无法生成坐标数组");
+            // return Array.Empty<Vector3Int>();
+        }
+
+        // 创建坐标数组
+        Vector3Int[] coords = new Vector3Int[cellCount];
         int index = 0;
         for (int i = 0; i < 16; i++)
         {
             if (blockGrid[i])
             {
+                // 增加越界保护
+                if (index >= coords.Length)
+                {
+                    Debug.LogWarning($"[BlockGenerationConfig] 坐标数组溢出，可能与cellCount不一致（blockGrid中true值比cellCount多）当前i={i}, index={index}, coords.Length={coords.Length}");
+                    break;
+                }
                 int x = i % 4;
                 int y = i / 4;
-                coords[index] = new Vector2Int(x, y);
+                coords[index] = new Vector3Int(x, y, 0);
                 index++;
             }
         }
+    
+        // 如果实际有效格子数小于coords数组长度，裁剪数组
+        if (index < coords.Length)
+        {
+            System.Array.Resize(ref coords, index);
+        }
+    
         return coords;
     }
     //旋转几次
-    public void Rotate(int times)
+    // public void Rotate(int times)
+    // {
+    //     for (int i = 0; i < times; i++)
+    //     {
+    //         Rotate();
+    //     }
+    // }
+    
+    /// <summary>
+    /// 获取随机旋转后的配置副本（不修改原配置）
+    /// </summary>
+    /// <returns>旋转后的配置副本</returns>
+    public BlockGenerationConfig GetRandomRotatedCopy()
     {
-        for (int i = 0; i < times; i++)
-        {
-            Rotate();
-        }
+        // 创建配置副本
+        BlockGenerationConfig copy = ScriptableObject.CreateInstance<BlockGenerationConfig>();
+        
+        // 复制基础数据
+        copy.shapeName = this.shapeName;
+        copy.blockGrid = (bool[])this.blockGrid.Clone();
+        copy.offset = this.offset;
+        
+        // 随机旋转
+        int rotationTimes = Random.Range(0, 4);
+        //todo: 旋转
+        // copy.Rotate(rotationTimes);
+        copy.Save();
+        
+        // Debug.Log($"创建随机旋转副本: {this.name} -> {copy.name}, 旋转次数: {rotationTimes}");
+        
+        return copy;
+    }
+    
+    /// <summary>
+    /// 获取指定旋转次数的配置副本（不修改原配置）
+    /// </summary>
+    /// <param name="rotationTimes">旋转次数</param>
+    /// <returns>旋转后的配置副本</returns>
+    public BlockGenerationConfig GetRotatedCopy(int rotationTimes)
+    {
+        // 创建配置副本
+        BlockGenerationConfig copy = ScriptableObject.CreateInstance<BlockGenerationConfig>();
+        
+        // 复制基础数据
+        copy.shapeName = this.shapeName;
+        copy.blockGrid = (bool[])this.blockGrid.Clone();
+        copy.offset = this.offset;
+        
+        // todo:指定旋转
+        // copy.Rotate(rotationTimes);
+        copy.Save();
+        
+        Debug.Log($"创建旋转副本: {this.name} -> {copy.name}, 旋转次数: {rotationTimes}");
+        
+        return copy;
     }
 }

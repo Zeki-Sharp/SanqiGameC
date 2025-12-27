@@ -1,0 +1,38 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b05e87a53ccab084eb651ad2465ea153, type: 3}
+  m_Name: BlockBlockGenerationData01
+  m_EditorClassIdentifier: 
+  TowerProbabilities:
+  - Config: {fileID: 11400000, guid: 2c56d48c1b17cd04e8bfca12c88f6655, type: 2}
+    Value: 33.333332
+  - Config: {fileID: 11400000, guid: 6f3e3f82a00f30a4984541325bfcbbc0, type: 2}
+    Value: 33.333332
+  - Config: {fileID: 11400000, guid: 690df8d23f7d89247971ee730fb07deb, type: 2}
+    Value: 33.333332
+  Towerprobability: 100
+  BlockProbabilities:
+  - Config: {fileID: 11400000, guid: 8264c32692b608a47b699ace1e7aec1e, type: 2}
+    Value: 14.285714
+  - Config: {fileID: 11400000, guid: e6ef6c9b0425c744ba8a04f8e7c4cfbb, type: 2}
+    Value: 14.285714
+  - Config: {fileID: 11400000, guid: 8ce81e2111255f44780689b43a02fa21, type: 2}
+    Value: 14.285714
+  - Config: {fileID: 11400000, guid: b03985fdd09a84d44b76c39e8639910a, type: 2}
+    Value: 14.285714
+  - Config: {fileID: 11400000, guid: f62da1e755004f84ca7ffb86da418562, type: 2}
+    Value: 14.285714
+  - Config: {fileID: 11400000, guid: 7e417d25897d7644d94afdb10b9f13ce, type: 2}
+    Value: 14.285714
+  - Config: {fileID: 11400000, guid: d9d48ba79fef1514a9ea92618fb24869, type: 2}
+    Value: 14.285714
+  Blockprobability: 100

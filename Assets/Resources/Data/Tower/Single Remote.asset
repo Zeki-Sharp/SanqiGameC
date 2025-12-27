@@ -1,0 +1,77 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4d2069345180bbb488a3486ccb8bf728, type: 3}
+  m_Name: Single Remote
+  m_EditorClassIdentifier: 
+  id: 100
+  towerName: "\u7406\u6027"
+  towerDescription: "\u901A\u8FC7\u7406\u6027\u601D\u8003\u538B\u5236\u4E00\u5207\u51B2\u52A8\uFF0C\u4E13\u6CE8\u4E8E\u7CBE\u51C6\u6253\u51FB\u3002\u5B83\u80FD\u4F1A\u72D9\u51FB\u6700\u8FD1\u7684\u654C\u4EBA\uFF0C\u7528\u51B0\u51B7\u7684\u903B\u8F91\u6784\u7B51\u6700\u575A\u56FA\u7684\u9632\u7EBF\u3002"
+  towerSprite: {fileID: -5714696534973952748, guid: bab2e57048ddb7743bed3b63adb534c8, type: 3}
+  levels:
+  - towerSprite: {fileID: -5714696534973952748, guid: bab2e57048ddb7743bed3b63adb534c8, type: 3}
+    health: 30
+    skillSlots:
+    - skillType: 1
+      attackSkill:
+        skillName: "\u5355\u4F53\u8FDC\u7A0B1"
+        skillDescription: 
+        physicAttack: 10
+        attackRange: 2
+        attackInterval: 1
+        attackSpeed: 1
+      healSkill:
+        skillName: "\u65B0\u6280\u80FD"
+        skillDescription: 
+        healAmount: 50
+        healInterval: 2
+        healRangeType: 1
+        healEffectType: 0
+        maxHealTargets: 5
+  - towerSprite: {fileID: -8645551173486429497, guid: 77d0026e66e5c544e880d5caf1cf6957, type: 3}
+    health: 36
+    skillSlots:
+    - skillType: 1
+      attackSkill:
+        skillName: "\u5355\u4F53\u8FDC\u7A0B2"
+        skillDescription: 
+        physicAttack: 15
+        attackRange: 2
+        attackInterval: 1
+        attackSpeed: 1
+      healSkill:
+        skillName: "\u65B0\u6280\u80FD"
+        skillDescription: 
+        healAmount: 50
+        healInterval: 2
+        healRangeType: 1
+        healEffectType: 0
+        maxHealTargets: 5
+  - towerSprite: {fileID: -6514901823750137127, guid: 4db296c109c7a2744a19a9fc4aadec3a, type: 3}
+    health: 42
+    skillSlots:
+    - skillType: 1
+      attackSkill:
+        skillName: "\u5355\u4F53\u8FDC\u7A0B3"
+        skillDescription: 
+        physicAttack: 20
+        attackRange: 2
+        attackInterval: 1
+        attackSpeed: 1
+      healSkill:
+        skillName: "\u65B0\u6280\u80FD"
+        skillDescription: 
+        healAmount: 50
+        healInterval: 2
+        healRangeType: 1
+        healEffectType: 0
+        maxHealTargets: 5
+  bulletConfig: {fileID: 11400000, guid: 834d67b011e3c7144ad4ed8ac70e5225, type: 2}

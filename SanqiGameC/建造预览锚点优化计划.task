@@ -1,0 +1,73 @@
+# 建造预览锚点优化计划（2025.07）
+
+## 背景与目标
+当前建造系统中，方块的锚点（对齐点）通常为左下角或配置原点，导致旋转、非对称形状、或配置偏移时，鼠标点击生成的方块与预期位置偏离，影响体验。目标是让建造预览和实际建造时，方块的“视觉中心”始终对齐鼠标，提升交互一致性和直观性。
+
+---
+
+## 优化目标
+1. 鼠标建造预览时，预览块的“中心”始终跟随鼠标，无论形状、旋转、配置如何。
+2. 实际建造时，生成的方块锚点与预览一致，鼠标点哪里，方块中心就出现在哪里。
+3. showarea静态展示与建造流程彻底分离，互不影响。
+
+---
+
+## 详细优化方案（修正版）
+
+### 1. 形状中心锚点计算
+- 动态计算当前BlockGenerationConfig所有有效格子的中心点（平均x、y），作为锚点。
+- 旋转、镜像、任意形状都能正确计算中心。
+- 公式：
+  ```csharp
+  Vector3Int GetShapeCenterOffset(Vector3Int[] coords)
+  {
+      int minX = coords.Min(c => c.x);
+      int maxX = coords.Max(c => c.x);
+      int minY = coords.Min(c => c.y);
+      int maxY = coords.Max(c => c.y);
+      return new Vector3Int((minX + maxX) / 2, (minY + maxY) / 2, 0);
+  }
+  ```
+
+### 2. 预览与实际建造对齐
+- 鼠标点击showarea后，复制一份预览块，进入建造预览模式。
+- 预览块的视觉中心锚点始终对齐鼠标，且吸附在Tilemap格子中心。
+- 鼠标移动时，预览块整体以“视觉中心”为锚点，吸附在最近的格子中心。
+- 实际建造时，生成的方块锚点与预览一致，确保交互一致性。
+- 伪代码：
+  ```csharp
+  Vector3Int anchorOffset = GetShapeCenterOffset(config.Coordinates);
+  Vector3Int mouseCell = CoordinateUtility.WorldToCellPosition(tilemap, mouseWorldPos);
+  Vector3Int placeCell = mouseCell - anchorOffset;
+  // 预览块中心吸附在mouseCell格子中心
+  ```
+
+### 3. showarea与建造流程分离
+- showarea只负责静态展示，不跟随鼠标。
+- 点击showarea后，showarea不再跟随鼠标，进入建造预览流程。
+- 建造预览和实际建造流程独立，互不影响。
+- showarea生成时可继续用左下角锚点或自定义锚点。
+
+### 4. 兼容旋转与多形状
+- 旋转后重新计算锚点，保证预览和建造始终居中。
+- 支持任意形状、大小、配置的BlockGenerationConfig。
+
+---
+
+## 执行步骤
+1. 新增锚点计算工具方法（如GetShapeCenterOffset）。
+2. 修改建造预览逻辑，预览块中心对齐鼠标并吸附格子。
+3. 修改实际建造逻辑，生成方块锚点与预览一致。
+4. 保持showarea静态展示逻辑不变。
+5. 充分测试各种形状、旋转、配置下的建造体验。
+
+---
+
+## 预期收益
+- 鼠标移动到哪里，预览块中心就吸附到哪里，极大提升建造直观性。
+- 旋转、非对称、偏移等复杂形状也能完美对齐。
+- 预览与实际建造完全一致，减少用户困惑。
+- 代码结构更清晰，showarea与建造流程彻底解耦。
+
+---
+

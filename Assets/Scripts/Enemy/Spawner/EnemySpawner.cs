@@ -1,39 +1,57 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using RaycastPro.Casters2D;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
 
 /// <summary>
 /// 敌人生成器 - 多波次多类型敌人生成，支持多个手动框选区域
+/// 配置完全由RoundConfig管理，不再支持Inspector面板配置
 /// </summary>
 public class EnemySpawner : MonoBehaviour
 {
     [Header("生成设置")]
-    public List<Wave> waves = new List<Wave>();
-    public float unitSpawnDelay = 1f;
-
+    [SerializeField] private float unitSpawnDelay = 1f;
+    
     [Header("生成区域 (可多选)")]
     public List<SpawnArea> spawnAreas = new List<SpawnArea>();
 
     [Header("调试")]
-    public bool autoStart = true;
     public bool showSpawnAreas = true;
     public bool debugSpawnInfo = true;
 
+    // 私有字段，不再在Inspector中显示
+    private List<Wave> waves = new List<Wave>();
     private int currentWaveIndex = 0;
     private int currentEnemyCount = 0;
+    private int remainingEnemyCount = 0; // 新增：剩余敌人数量
     private Coroutine spawnRoutine;
-
+    
+    private BulletManager bulletManager;
     private void Start()
     {
-        if (autoStart)
-            StartWaves();
+        bulletManager = GameManager.Instance.GetSystem<BulletManager>();
+        
+        // 订阅敌人死亡事件，用于更新敌人计数
+        if (EventBus.Instance != null)
+        {
+            EventBus.Instance.Subscribe<EnemyDeathEventArgs>(OnEnemyDeath);
+        }
+        
+        // 不再自动开始，完全由RoundManager控制
+        Debug.Log("EnemySpawner初始化完成，等待RoundManager调用");
     }
 
     public void StartWaves()
     {
+        if (waves == null || waves.Count == 0)
+        {
+            Debug.LogWarning("EnemySpawner: 没有配置waves，无法开始生成");
+            return;
+        }
+        
         if (spawnRoutine != null)
             StopCoroutine(spawnRoutine);
         spawnRoutine = StartCoroutine(SpawnWavesCoroutine());
@@ -41,42 +59,108 @@ public class EnemySpawner : MonoBehaviour
 
     private IEnumerator SpawnWavesCoroutine()
     {
+        Debug.Log($"EnemySpawner: 开始生成 {waves.Count} 个Wave");
+        
         for (currentWaveIndex = 0; currentWaveIndex < waves.Count; currentWaveIndex++)
         {
             Wave wave = waves[currentWaveIndex];
-            if (debugSpawnInfo)
-                Debug.Log($"准备生成第{currentWaveIndex + 1}波，延迟{wave.delayBeforeWave}s");
             if (wave.delayBeforeWave > 0)
-                yield return new WaitForSeconds(wave.delayBeforeWave);
-            foreach (var enemyInfo in wave.enemies)
             {
-                for (int i = 0; i < enemyInfo.count; i++)
-                {
-                    SpawnEnemy(enemyInfo.enemyPrefab);
-                    yield return new WaitForSeconds(unitSpawnDelay);
-                }
+                Debug.Log($"EnemySpawner: Wave {currentWaveIndex + 1} 延迟 {wave.delayBeforeWave} 秒");
+                yield return new WaitForSeconds(wave.delayBeforeWave);
+            }
+            
+            Debug.Log($"EnemySpawner: 开始生成Wave {currentWaveIndex + 1}，包含 {wave.enemies.Count} 种敌人");
+            
+            // 创建随机打乱的敌人生成序列
+            List<EnemySpawnInfo> shuffledEnemySequence = CreateShuffledEnemySequence(wave);
+            
+            // 按照打乱后的顺序生成敌人
+            foreach (var enemyInfo in shuffledEnemySequence)
+            {
+                SpawnEnemy(wave, enemyInfo.enemyData);
+                yield return new WaitForSeconds(unitSpawnDelay);
             }
         }
+        
+        Debug.Log("EnemySpawner: 所有Wave生成完成");
+    }
+
+    /// <summary>
+    /// 创建随机打乱的敌人生成序列
+    /// 将同一wave中所有类型的敌人混合在一起，随机打乱顺序
+    /// </summary>
+    private List<EnemySpawnInfo> CreateShuffledEnemySequence(Wave wave)
+    {
+        List<EnemySpawnInfo> shuffledSequence = new List<EnemySpawnInfo>();
+        
+        // 为每种敌人类型创建对应数量的EnemySpawnInfo
+        foreach (var enemyInfo in wave.enemies)
+        {
+            for (int i = 0; i < enemyInfo.count; i++)
+            {
+                // 创建新的EnemySpawnInfo，避免修改原始配置
+                EnemySpawnInfo newEnemyInfo = new EnemySpawnInfo
+                {
+                    enemyData = enemyInfo.enemyData,
+                    count = 1 // 每个都是1个，用于随机打乱
+                };
+                shuffledSequence.Add(newEnemyInfo);
+            }
+        }
+        
+        // 使用Fisher-Yates洗牌算法随机打乱顺序
+        for (int i = shuffledSequence.Count - 1; i > 0; i--)
+        {
+            int randomIndex = Random.Range(0, i + 1);
+            var temp = shuffledSequence[i];
+            shuffledSequence[i] = shuffledSequence[randomIndex];
+            shuffledSequence[randomIndex] = temp;
+        }
+        
         if (debugSpawnInfo)
-            Debug.Log("所有波次生成完毕");
+        {
+            Debug.Log($"Wave {currentWaveIndex + 1}: 创建了 {shuffledSequence.Count} 个敌人的随机生成序列");
+        }
+        
+        return shuffledSequence;
     }
 
     /// <summary>
     /// 生成单个敌人
     /// </summary>
-    public void SpawnEnemy(GameObject enemyPrefab)
+    public void SpawnEnemy(Wave wave, EnemyData enemyData)
     {
-        if (enemyPrefab == null)
+        if (enemyData == null)
         {
-            Debug.LogError("未设置敌人Prefab！");
+            Debug.LogError("EnemySpawner: 未设置敌人Data！");
             return;
         }
+        
+        if (enemyData.EnemyPrefab == null)
+        {
+            Debug.LogError($"EnemySpawner: EnemyData '{enemyData.EnemyName}' 的enemyPrefab为空，无法生成敌人！");
+            return;
+        }
+        
         Vector3 spawnPosition = CalculateSpawnPositionInAreas();
+        GameObject enemyPrefab = enemyData.EnemyPrefab;
         GameObject enemyObject = Instantiate(enemyPrefab, spawnPosition, Quaternion.identity);
+        enemyObject.GetComponent<BasicCaster2D>().poolManager = bulletManager.GetPoolManager();
+        enemyObject.GetComponent<EnemyController>().SetEnemyData(enemyData);
+        enemyObject.name = enemyData.EnemyName + FindObjectsByType<EnemyController>(sortMode: FindObjectsSortMode.InstanceID).Length;
+        if (enemyData.EnemySprite != null)
+        {
+            enemyObject.GetComponent<SpriteRenderer>().sprite = enemyData.EnemySprite;
+        }
+        // 设置敌人朝向
+        SetEnemyDirection(enemyObject, spawnPosition);
+        
         currentEnemyCount++;
+        
         if (debugSpawnInfo)
         {
-            Debug.Log($"生成敌人: {enemyObject.name} 在位置 {spawnPosition} (当前敌人数: {currentEnemyCount})");
+            Debug.Log($"EnemySpawner: 生成敌人 {enemyPrefab.name} 在位置 {spawnPosition}，当前敌人总数: {currentEnemyCount}");
         }
     }
 
@@ -87,7 +171,7 @@ public class EnemySpawner : MonoBehaviour
     {
         if (spawnAreas == null || spawnAreas.Count == 0)
         {
-            Debug.LogWarning("未设置生成区域，使用(0,0,0)");
+            Debug.LogWarning("EnemySpawner: 未设置生成区域，使用(0,0,0)");
             return Vector3.zero;
         }
         int areaIndex = Random.Range(0, spawnAreas.Count);
@@ -97,22 +181,195 @@ public class EnemySpawner : MonoBehaviour
         return new Vector3(x, y, 0f);
     }
 
-    [ContextMenu("开始波次生成")]
-    public void StartWavesManual()
-    {
-        StartWaves();
-    }
-
     [ContextMenu("清除所有敌人")]
     public void ClearAllEnemies()
     {
         GameObject[] enemies = GameObject.FindGameObjectsWithTag("Enemy");
         foreach (GameObject enemy in enemies)
         {
-            DestroyImmediate(enemy);
+            Destroy(enemy);
         }
         currentEnemyCount = 0;
-        Debug.Log("已清除所有敌人");
+        remainingEnemyCount = 0; // 重置剩余敌人数
+        Debug.Log($"EnemySpawner: 清除所有敌人，共清除 {enemies.Length} 个敌人");
+    }
+    
+    /// <summary>
+    /// 处理敌人死亡事件，减少敌人计数
+    /// </summary>
+    private void OnEnemyDeath(EnemyDeathEventArgs e)
+    {
+        if (currentEnemyCount > 0)
+        {
+            currentEnemyCount--;
+        }
+        
+        // 更新剩余敌人数
+        if (remainingEnemyCount > 0)
+        {
+            remainingEnemyCount--;
+            if (debugSpawnInfo)
+            {
+                Debug.Log($"EnemySpawner: 敌人 {e.EnemyName} 死亡，剩余敌人: {remainingEnemyCount}/{CalculateTotalEnemyCount(waves)}");
+            }
+        }
+    }
+    
+    /// <summary>
+    /// 清理事件订阅
+    /// </summary>
+    private void OnDestroy()
+    {
+        if (EventBus.Instance != null)
+        {
+            EventBus.Instance.Unsubscribe<EnemyDeathEventArgs>(OnEnemyDeath);
+        }
+    }
+    
+    /// <summary>
+    /// 设置Wave配置（由RoundManager调用）
+    /// </summary>
+    /// <param name="newWaves">新的Wave列表</param>
+    public void SetWaves(List<Wave> newWaves)
+    {
+        waves = newWaves;
+        currentEnemyCount = 0; // 重置敌人计数，准备新回合
+        
+        // 计算当前round的敌人总数
+        remainingEnemyCount = CalculateTotalEnemyCount(newWaves);
+        
+        Debug.Log($"EnemySpawner: 设置Wave配置，共 {waves?.Count ?? 0} 个Wave，敌人总数: {remainingEnemyCount}，敌人计数已重置");
+    }
+
+    /// <summary>
+    /// 计算Wave列表中的敌人总数
+    /// </summary>
+    private int CalculateTotalEnemyCount(List<Wave> waveList)
+    {
+        if (waveList == null) return 0;
+        
+        int totalCount = 0;
+        foreach (var wave in waveList)
+        {
+            if (wave.enemies != null)
+            {
+                foreach (var enemyInfo in wave.enemies)
+                {
+                    totalCount += enemyInfo.count;
+                }
+            }
+        }
+        return totalCount;
+    }
+    
+    /// <summary>
+    /// 获取当前敌人数量
+    /// </summary>
+    public int GetCurrentEnemyCount()
+    {
+        return currentEnemyCount;
+    }
+
+    /// <summary>
+    /// 获取剩余敌人数量
+    /// </summary>
+    public int GetRemainingEnemyCount()
+    {
+        return remainingEnemyCount;
+    }
+
+    /// <summary>
+    /// 获取当前round的敌人总数
+    /// </summary>
+    public int GetTotalEnemyCount()
+    {
+        return CalculateTotalEnemyCount(waves);
+    }
+    
+    /// <summary>
+    /// 检查是否所有敌人都被消灭
+    /// </summary>
+    public bool AreAllEnemiesDefeated()
+    {
+        GameObject[] enemies = GameObject.FindGameObjectsWithTag("Enemy");
+        return enemies.Length == 0;
+    }
+
+    /// <summary>
+    /// 恢复Wave生成
+    /// </summary>
+    public void ResumeWaves()
+    {
+        Debug.Log("EnemySpawner: 恢复Wave生成");
+        
+        if (spawnRoutine == null && waves != null && waves.Count > 0)
+        {
+            // 如果协程被暂停，重新开始生成
+            spawnRoutine = StartCoroutine(SpawnWavesCoroutine());
+        }
+        else if (spawnRoutine != null)
+        {
+            Debug.Log("EnemySpawner: Wave生成协程正在运行中");
+        }
+        else
+        {
+            Debug.LogWarning("EnemySpawner: 没有配置waves或waves已结束，无法恢复");
+        }
+    }
+    
+    /// <summary>
+    /// 获取中心塔位置
+    /// </summary>
+    private Vector3 GetCenterTowerPosition()
+    {
+        GameObject centerTower = GameObject.FindGameObjectWithTag("CenterTower");
+        if (centerTower == null)
+        {
+            Debug.LogWarning("未找到中心塔，使用默认位置(0,0,0)");
+            return Vector3.zero;
+        }
+        return centerTower.transform.position;
+    }
+    
+    /// <summary>
+    /// 根据生成位置设置敌人朝向
+    /// </summary>
+    private void SetEnemyDirection(GameObject enemy, Vector3 spawnPosition)
+    {
+        Vector3 centerTowerPosition = GetCenterTowerPosition();
+        bool isOnLeftSide = spawnPosition.x < centerTowerPosition.x;
+        
+        // 确保Transform旋转为0
+        enemy.transform.rotation = Quaternion.identity;
+        
+        // 重置所有子对象的Transform（只影响敌人，不影响塔）
+        Transform[] children = enemy.GetComponentsInChildren<Transform>();
+        foreach (Transform child in children)
+        {
+            // 确保只影响敌人及其子对象，不影响塔
+            if (child.rotation != Quaternion.identity && 
+                (child.CompareTag("Enemy") || child.parent != null))
+            {
+                child.rotation = Quaternion.identity;
+            }
+        }
+        
+        SpriteRenderer spriteRenderer = enemy.GetComponent<SpriteRenderer>();
+        if (spriteRenderer != null)
+        {
+            // 左侧生成朝右，右侧生成朝左
+            spriteRenderer.flipX = !isOnLeftSide;
+            // 确保Y轴不翻转
+            spriteRenderer.flipY = false;
+        }
+        
+        // 调用控制器的SetDirection方法确保状态同步
+        var controller = enemy.GetComponent<EnemyController>();
+        if (controller != null)
+        {
+            Vector3 direction = (centerTowerPosition - spawnPosition).normalized;
+            controller.SetDirection(direction);
+        }
     }
 
     private void OnDrawGizmos()
